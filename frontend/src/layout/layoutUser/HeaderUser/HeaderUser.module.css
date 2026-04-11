@@ -1,0 +1,164 @@
+.header {
+  background: white;
+  padding-bottom: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* top bar */
+.topBar {
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  height: 70px;
+}
+
+/* logo */
+.logo {
+  flex:1;
+  font-size: 30px;
+  display: flex;
+  align-items: center;
+}
+
+.logoBlue {
+  color: rgba(80, 128, 190, 1);
+  font-weight: 700;
+}
+
+.logoBlack {
+  color: #000;
+  font-weight: 700;
+}
+
+.logoItalic {
+  font-style: italic;
+  margin-left: 6px;
+}
+
+/* menu center */
+.nav {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+}
+
+/* mặc định:  hiện hết */
+.hideOnSmall {
+  display: inline;
+}
+
+/* khi màn nhỏ hoặc zoom to */
+@media (max-width: 900px) {
+  .hideOnSmall {
+    display: none; /* ẩn  */
+  }
+}
+
+.nav a {
+  text-decoration: none;
+  color: #555;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+.nav a:hover {
+  color: #4a6fa5 ;
+
+}
+
+/* action*/
+.actions {
+  flex:1;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.signIn {
+  padding: 6px 16px;
+  border-radius: 10px;
+  border: 1px solid #4a6fa5;
+  background: white;
+  cursor: pointer;
+  font-weight: 500;
+  color: #4a6fa5;
+}
+
+.signUp {
+  background: #4a6fa5;
+  color: white;
+  border: none;
+}
+
+.signIn:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  transform: translateY(-1px);
+}
+/* container center content */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  align-items: center;
+}
+
+/* search */
+.searchSection {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.searchBox {
+  display: flex;
+  align-items: center;
+
+  background: white;
+  border-radius: 10px;
+  padding: 3px;
+  width: 650px;
+  margin: auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.searchBox input {
+  border: none;
+  outline: none;
+  padding: 10px;
+  flex: 1;
+  background: transparent;
+}
+
+.searchBox input:first-child {
+  border-right: 1px solid #eee;
+}
+
+.searchBox button {
+  background: #4a6fa5;
+  color: white;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+/* trending*/
+.trending {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #666;
+}
+
+.tags {
+  background: #e5e7eb;
+  margin: 2px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+}
+
+.tags:hover {
+  color: #4a6fa5;
+  background: white;
+  cursor: pointer;
+}

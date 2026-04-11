@@ -1,0 +1,112 @@
+.footer {
+  background: rgba(6, 16, 37, 1);
+  color: white;
+  padding: 50px 0;
+}
+
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+
+  display: flex;
+  justify-content: space-between;
+  gap: 60px;
+}
+
+/* LEFT */
+.left {
+  width: 650px;
+}
+
+.logo {
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.logoBlue {
+  color: rgba(80, 128, 190, 1);
+  font-weight: 700;
+}
+
+.logoItalic {
+  font-style: italic;
+  font-size: 26px;
+  font-weight:normal;
+}
+
+.desc {
+  margin: 15px 0;
+  font-size: 14px;
+  color: #aaa;
+  line-height: 1.6;
+}
+
+/* CONTACT */
+.contact h4 {
+  margin: 20px 0 10px;
+}
+
+.contact p {
+  font-size: 14px;
+  color: #ccc;
+  margin: 5px 0;
+}
+
+/* RIGHT GRID */
+.right {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 40px;
+}
+
+/* LINKS */
+.links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.links h4 {
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+.links a {
+  color: #aaa;
+  text-decoration: none;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.links a:hover {
+  color: white;
+}
+
+/* SOCIAL */
+.social {
+  margin-top: 40px;
+  text-align: center;
+  font-size: 22px;
+}
+
+.social span {
+  margin: 0 10px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.social span:hover {
+  transform: scale(1.2);
+}
+
+
+.bottom {
+  margin-top: 20px;
+  padding-top: 15px;
+  text-align: center;
+  font-size: 12px;
+  color: #aaa;
+  border-top: 1px solid #333;
+}
