@@ -1,12 +1,16 @@
 import styles from "./HeaderAuth.module.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const HeaderAuth = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const isLoginPage = location.pathname === "/login";
+  const isRegisterPage = location.pathname === "/register";
 
   return (
     <header className={styles.header}>
-      {/* LOGO */}
+      {/* logo */}
       <div className={styles.logo} onClick={() => navigate("/")}>
         <span className={styles.logoBlack}>H</span>
         <span className={styles.logoBlue}>KK</span>
@@ -14,18 +18,33 @@ const HeaderAuth = () => {
         <span className={styles.logoItalic}>Careers</span>
       </div>
 
-      {/* ACTION */}
+      {/* action */}
       <div className={styles.actions}>
         <button
           className={styles.homeBtn}
           onClick={() => navigate("/")}
         >
-         Home
+          Home
         </button>
 
-        <button className={`${styles.homeBtn} ${styles.signupBtn}`}>
-          Sign up
-        </button>
+        {/* hiển thị button phù hợp */}
+        {isLoginPage && (
+          <button
+            className={`${styles.homeBtn} ${styles.signupBtn}`}
+            onClick={() => navigate("/register")}
+          >
+            Sign up
+          </button>
+        )}
+
+        {isRegisterPage && (
+          <button
+            className={`${styles.homeBtn} ${styles.signupBtn}`}
+            onClick={() => navigate("/login")}
+          >
+            Login
+          </button>
+        )}
       </div>
     </header>
   );

@@ -1,0 +1,186 @@
+.wrapper {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f4f6fb;
+}
+
+.container {
+  width: 380px;
+  padding: 30px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* logo */
+.logoTitle {
+  text-align: center;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.logoBlue {
+  color: #4f80be;
+  font-weight: 700;
+}
+
+.logoBlack {
+  font-weight: 700;
+}
+
+.logoItalic {
+  font-style: italic;
+  margin-left: 4px;
+}
+
+/* tabs */
+.tabs {
+  display: flex;
+  background: #e3e7f1;
+  border-radius: 10px;
+  padding: 3px;
+  width: fit-content;
+  margin: 0 auto;
+}
+
+.tab {
+  border: none;
+  padding: 6px 14px;
+  border-radius: 10px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.active {
+  background: #fafafe;
+  box-shadow: 0 2px 6px rgba(82, 128, 188, 0.4);
+}
+
+/* form */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+label {
+  font-size: 13px;
+  font-weight: 500;
+  margin-top: 6px;
+}
+
+/* input + select */
+input,
+select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: none;
+  background: #f5f6fa;
+  outline: none;
+  font-size: 14px;
+}
+
+/* row (first/last name + date) */
+.row {
+  display: flex;
+  gap: 10px;
+}
+
+.row input,
+.row select {
+  flex: 1;
+}
+
+/* password icon */
+.inputIcon {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #f5f6fa;
+}
+
+.inputIcon input {
+  border: none;
+  outline: none;
+  background: transparent;
+  flex: 1;
+}
+
+.eye {
+  cursor: pointer;
+  color: #666;
+}
+
+/* button */
+button[type="submit"] {
+  background: #4f80be;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+button[type="submit"]:hover {
+  box-shadow: 0 2px 6px rgba(82, 128, 188, 0.4);
+}
+
+/* divider */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.divider span {
+  flex: 1;
+  height: 1px;
+  background: #ddd;
+}
+
+.divider p {
+  font-size: 12px;
+  color: #888;
+}
+
+/* social */
+.social {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.social:hover {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* footer */
+.signup {
+  text-align: center;
+  font-size: 13px;
+}
+
+.signup span {
+  color: #4f80be;
+  cursor: pointer;
+}

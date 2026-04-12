@@ -22,7 +22,7 @@ const FooterUser = () => {
           </div>
 
           <p className={styles.desc}>
-            Nền tảng tuyển dụng chính thức của Công ty HKKQ, kết nối ứng viên với cơ hội nghề nghiệp bền vững và môi trường làm việc chuyên nghiệp.
+            The official recruitment platform of HKKQ Company, connecting candidates with sustainable career opportunities and a professional working environment.
           </p>
 
           <div className={styles.contact}>

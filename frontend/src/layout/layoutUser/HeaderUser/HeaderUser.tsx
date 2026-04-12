@@ -1,17 +1,33 @@
 import styles from "./HeaderUser.module.css";
-
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+
+import { useAuth } from "../../../feature/auth/context/AuthContext";
+
+import type { User } from "../../../dataMock/User";
+
+import UserDropdown from "../../components/UserDropdown/UserDropdown";
+
+
+import { FaUser } from "react-icons/fa";
 
 const HeaderUser = () => {
+  const navigate = useNavigate();
 
-    const navigate = useNavigate();
+  const { user, logout } = useAuth();
+
+
+    const handleLogout = () => {
+      logout();
+      navigate("/login");
+    };
 
   return (
     <header className={styles.header}>
-      
-      {/* ===== TOP BAR ===== */}
+
+      {/* top bar */}
       <div className={styles.topBar}>
-        
+
         {/* logo */}
         <div className={styles.logo}>
           <span className={styles.logoBlack}>H</span>
@@ -22,27 +38,45 @@ const HeaderUser = () => {
 
         {/* menu */}
         <nav className={styles.nav}>
-          <a href="#" className={styles.home}>Home</a>
+          <a href="#">Home</a>
           <a href="#" className={styles.hideOnSmall}>Job</a>
           <a href="#" className={styles.hideOnSmall}>Companies</a>
           <a href="#" className={styles.hideOnSmall}>Salary Guide</a>
           <a href="#" className={styles.hideOnSmall}>Blog</a>
         </nav>
 
-        {/* action */}
+        {/* ACTION */}
         <div className={styles.actions}>
-          <button className={styles.signIn} onClick={() => navigate("/login")}>Sign in</button>
-          <button className={`${styles.signIn} ${styles.signUp}`}>
-            Sign up
-          </button>
-        </div>
 
+          {/* CHƯA LOGIN */}
+          {!user ? (
+            <>
+              <button
+                className={styles.signIn}
+                onClick={() => navigate("/login")}
+              >
+                Sign in
+              </button>
+
+              <button
+                className={`${styles.signIn} ${styles.signUp}`}
+                onClick={() => navigate("/register")}
+              >
+                Sign up
+              </button>
+            </>
+          ) : (
+            /* ĐÃ LOGIN */
+                <UserDropdown user={user}  onLogout={handleLogout} />
+          )}
+
+        </div>
       </div>
 
-      {/* search en trending */}
+      {/* search */}
       <div className={styles.container}>
         <div className={styles.searchSection}>
-          
+
           <div className={styles.searchBox}>
             <input placeholder="Job title, Skills, ..." />
             <input placeholder="Address (TP Ho Chi Minh, Ha Noi ...)" />
@@ -52,11 +86,11 @@ const HeaderUser = () => {
           <div className={styles.trending}>
             <span>Trending Searches: </span>
 
-              <span className ={styles.tags}>Frontend Developer</span>
-              <span className ={styles.tags}>Marketing</span>
-              <span className ={styles.tags}>Remote</span>
-              <span className ={styles.tags}>Java</span>
-              <span className ={styles.tags}>Data Analyst</span>
+            <span className={styles.tags}>Frontend Developer</span>
+            <span className={styles.tags}>Marketing</span>
+            <span className={styles.tags}>Remote</span>
+            <span className={styles.tags}>Java</span>
+            <span className={styles.tags}>Data Analyst</span>
 
           </div>
 
