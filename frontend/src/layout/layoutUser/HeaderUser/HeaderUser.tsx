@@ -1,6 +1,11 @@
 import styles from "./HeaderUser.module.css";
 
+import { useNavigate } from "react-router-dom";
+
 const HeaderUser = () => {
+
+    const navigate = useNavigate();
+
   return (
     <header className={styles.header}>
       
@@ -26,7 +31,7 @@ const HeaderUser = () => {
 
         {/* action */}
         <div className={styles.actions}>
-          <button className={styles.signIn}>Sign in</button>
+          <button className={styles.signIn} onClick={() => navigate("/login")}>Sign in</button>
           <button className={`${styles.signIn} ${styles.signUp}`}>
             Sign up
           </button>

@@ -1,13 +1,21 @@
 import { Routes, Route } from "react-router-dom";
 
 import MainLayoutUser from "../layout/layoutUser/MainLayoutUser/MainLayoutUser";
+import AuthLayout from "../layout/layoutAuth/layoutAuth";
+
 import Home from "../feature/home/pages/Home/Home";
+import Login from "../feature/auth/pages/Login/Login";
 
 export default function AppRoutes() {
   return (
     <Routes>
 
-      {/* USER LAYOUT */}
+      {/* auth layout*/}
+      <Route path="/login" element={<AuthLayout />}>
+        <Route index element={<Login />} />
+      </Route>
+
+      {/* layout User home normal */}
       <Route path="/" element={<MainLayoutUser />}>
         <Route index element={<Home />} />
       </Route>
