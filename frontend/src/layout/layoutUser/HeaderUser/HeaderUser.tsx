@@ -2,6 +2,7 @@ import styles from "./HeaderUser.module.css";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
+
 import { useAuth } from "../../../feature/auth/context/AuthContext";
 
 import type { User } from "../../../dataMock/User";
@@ -29,7 +30,11 @@ const HeaderUser = () => {
       <div className={styles.topBar}>
 
         {/* logo */}
-        <div className={styles.logo}>
+        <div
+          className={styles.logo}
+          onClick={() => navigate("/")}
+          style={{ cursor: "pointer" }}
+        >
           <span className={styles.logoBlack}>H</span>
           <span className={styles.logoBlue}>KK</span>
           <span className={styles.logoBlack}>Q</span>

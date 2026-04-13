@@ -7,6 +7,13 @@ import Home from "../feature/home/pages/Home/Home";
 import Login from "../feature/auth/pages/Login/Login";
 import Register from "../feature/auth/pages/Register/Register";
 
+import Profile from "../feature/userProfile/pages/userProfile/Profile";
+import PersonalProfile from "../feature/userProfile/components/PersonalProfile/PersonalProfile";
+import ManageCV from "../feature/userProfile/components/CVManagement/CVManagement";
+import SavedJobs from "../feature/userProfile/components/SavedJob/SavedJob";
+import AppliedJobs from "../feature/userProfile/components/AppliedJob/AppliedJob";
+import Settings from "../feature/userProfile/components/Settings/Settings";
+
 export default function AppRoutes() {
   return (
     <Routes>
@@ -15,11 +22,21 @@ export default function AppRoutes() {
       <Route element={<AuthLayout />}>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+
       </Route>
 
       {/* layout User home normal */}
       <Route path="/" element={<MainLayoutUser />}>
         <Route index element={<Home />} />
+        <Route>
+            <Route path="/profile" element={<Profile />}>
+            <Route index element={<PersonalProfile />} />
+            <Route path="cv" element={<ManageCV />} />
+            <Route path="saved" element={<SavedJobs />} />
+            <Route path="applied" element={<AppliedJobs />} />
+            <Route path="settings" element={<Settings />} />
+                    </Route>
+        </Route>
       </Route>
 
     </Routes>

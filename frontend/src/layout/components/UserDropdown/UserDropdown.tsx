@@ -52,22 +52,22 @@ const UserDropdown = ({ user }: Props) => {
         <div className={styles.dropdown}>
 
           <div onClick={() => navigate("/profile")}>
-            Thông tin cá nhân
+            Personal information
           </div>
 
-          <div onClick={() => navigate("/settings")}>
-            Cài đặt
+          <div onClick={() => navigate("profile/settings")}>
+            Settings
           </div>
 
           <div onClick={() => navigate("/help")}>
-            Trợ giúp
+            Help
           </div>
 
           <div
             className={styles.logout}
             onClick={handleLogout}
           >
-            Đăng xuất
+            Logout
           </div>
 
         </div>
