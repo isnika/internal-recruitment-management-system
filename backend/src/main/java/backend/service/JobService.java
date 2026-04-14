@@ -3,6 +3,7 @@ package backend.service;
 import java.util.List;
 
 import backend.DTO.job.CreateJobRequest;
+import backend.DTO.job.JobFilterRequest;
 import backend.DTO.job.JobResponse;
 
 public interface JobService {
@@ -18,4 +19,6 @@ public interface JobService {
   void deleteJob(Long jobId);
 
   JobResponse softDeleteJob(Long jobId);
+
+  List<JobResponse> filterJobs(JobFilterRequest request);
 }

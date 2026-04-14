@@ -5,11 +5,13 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import backend.entity.Job;
 
-public interface JobRepository extends JpaRepository<Job, Long> {
+public interface JobRepository extends JpaRepository<Job, Long>, JpaSpecificationExecutor<Job> {
 
   @Override
   @EntityGraph(attributePaths = { "company", "category", "experienceLevel", "skills" })
@@ -18,6 +20,10 @@ public interface JobRepository extends JpaRepository<Job, Long> {
   @Override
   @EntityGraph(attributePaths = { "company", "category", "experienceLevel", "skills" })
   Optional<Job> findById(Long id);
+
+  @Override
+  @EntityGraph(attributePaths = { "company", "category", "experienceLevel", "skills" })
+  List<Job> findAll(Specification<Job> spec);
 
   List<Job> findByStatus(String status);
 

@@ -5,10 +5,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import backend.DTO.job.CreateJobRequest;
+import backend.DTO.job.JobFilterRequest;
 import backend.DTO.job.JobResponse;
 import backend.entity.Category;
 import backend.entity.Company;
@@ -24,6 +26,7 @@ import backend.repository.ExperienceLevelRepository;
 import backend.repository.JobRepository;
 import backend.repository.SkillRepository;
 import backend.service.JobService;
+import backend.specification.JobSpecification;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -110,7 +113,8 @@ public class JobServiceImpl implements JobService {
     if (request.getCompanyId() == null || request.getCategoryId() == null || request.getExperienceLevelId() == null) {
       throw new BadRequestException("Company, category va experience level khong duoc de trong");
     }
-    if (request.getSalaryMin() != null && request.getSalaryMax() != null && request.getSalaryMin() > request.getSalaryMax()) {
+    if (request.getSalaryMin() != null && request.getSalaryMax() != null
+        && request.getSalaryMin() > request.getSalaryMax()) {
       throw new BadRequestException("Salary min khong duoc lon hon salary max");
     }
   }
@@ -155,5 +159,18 @@ public class JobServiceImpl implements JobService {
 
     return jobRepository.findById(jobId)
         .orElseThrow(() -> new ResourceNotFoundException("Khong tim thay job voi id: " + jobId));
+  }
+
+  // Filter Job
+  @Override
+  @Transactional(readOnly = true)
+  public List<JobResponse> filterJobs(JobFilterRequest request) {
+    Specification<Job> spec = JobSpecification.filter(request);
+
+    List<Job> jobs = jobRepository.findAll(spec);
+
+    return jobs.stream()
+        .map(JobMapper::toResponse)
+        .toList();
   }
 }

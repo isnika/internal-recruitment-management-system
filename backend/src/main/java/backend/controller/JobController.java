@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import backend.DTO.job.CreateJobRequest;
+import backend.DTO.job.JobFilterRequest;
 import backend.DTO.job.JobResponse;
 import backend.service.JobService;
 import jakarta.validation.Valid;
@@ -58,5 +59,10 @@ public class JobController {
   public ResponseEntity<Void> deleteJob(@PathVariable Long jobId) {
     jobService.deleteJob(jobId);
     return ResponseEntity.noContent().build();
+  }
+
+  @GetMapping("/filter")
+  public ResponseEntity<List<JobResponse>> filterJobs(JobFilterRequest request) {
+    return ResponseEntity.ok(jobService.filterJobs(request));
   }
 }
