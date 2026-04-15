@@ -1,0 +1,105 @@
+.wrapper {
+  position: relative;
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  height: 32px;
+  color: #4a6fa5;
+}
+.icon:hover {
+  color: #2f4f7f;
+}
+
+.badge {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  background: red;
+  color: white;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 50%;
+}
+
+.dropdown {
+  position: absolute;
+  top: 30px;
+  right: 0;
+  width: 450px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  padding: 10px 0;
+  z-index: 100;
+}
+
+.empty {
+  text-align: center;
+  padding: 12px;
+  cursor: pointer;
+}
+
+.loginText {
+  font-weight: bold; /* hoặc bold */
+  color: #4a6fa5;
+}
+
+.item {
+  display: flex;
+  gap: 10px;
+  padding: 12px 15px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.item:hover {
+  background: #f3f4f6;
+}
+
+/* icon trái */
+.left {
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  color: rgba(80, 128, 190, 1);
+  font-weight: bold;
+}
+
+/* content */
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* dòng trên */
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* title */
+.title {
+  font-weight: 600;
+  font-size: 14px;
+  color: #111;
+}
+
+/* thời gian */
+.time {
+  font-size: 12px;
+  color: #888;
+  white-space: nowrap;
+}
+
+/* mô tả */
+.desc {
+  font-size: 13px;
+  color: #666;
+  margin-top: 2px;
+}

@@ -8,9 +8,11 @@ import { useAuth } from "../../../feature/auth/context/AuthContext";
 import type { User } from "../../../dataMock/User";
 
 import UserDropdown from "../../components/UserDropdown/UserDropdown";
+import MailDropdown from "../../components/MailDropdown/MailDropdown";
 
 
 import { FaUser } from "react-icons/fa";
+import { FaEnvelope } from "react-icons/fa";
 
 const HeaderUser = () => {
   const navigate = useNavigate();
@@ -51,31 +53,29 @@ const HeaderUser = () => {
         </nav>
 
         {/* ACTION */}
-        <div className={styles.actions}>
+            <div className={styles.actions}>
+              <MailDropdown user={user} />
 
-          {/* CHƯA LOGIN */}
-          {!user ? (
-            <>
-              <button
-                className={styles.signIn}
-                onClick={() => navigate("/login")}
-              >
-                Sign in
-              </button>
+              {!user ? (
+                <>
+                  <button
+                    className={styles.signIn}
+                    onClick={() => navigate("/login")}
+                  >
+                    Sign in
+                  </button>
 
-              <button
-                className={`${styles.signIn} ${styles.signUp}`}
-                onClick={() => navigate("/register")}
-              >
-                Sign up
-              </button>
-            </>
-          ) : (
-            /* ĐÃ LOGIN */
-                <UserDropdown user={user}  onLogout={handleLogout} />
-          )}
-
-        </div>
+                  <button
+                    className={`${styles.signIn} ${styles.signUp}`}
+                    onClick={() => navigate("/register")}
+                  >
+                    Sign up
+                  </button>
+                </>
+              ) : (
+                <UserDropdown user={user} onLogout={handleLogout} />
+              )}
+            </div>
       </div>
 
       {/* search */}

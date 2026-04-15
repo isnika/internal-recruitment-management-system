@@ -1,0 +1,118 @@
+.container {
+  padding: 24px;
+  min-height: 100vh;
+}
+
+.sectionTitle {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 20px 0;
+}
+
+/* 50/50 */
+.gridTwo {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 40px;
+  margin-bottom: 20px;
+  align-items: start;
+}
+
+/* avata */
+.avatarBox {
+  display: flex;
+  justify-content: center;
+}
+
+.avatarCircle {
+  width: 120px;
+  height: 120px;
+  background: #dbe4f0;
+  border-radius: 50%;
+}
+
+/* from */
+.formBox {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.rowTwo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* form group */
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.formGroup label {
+  font-size: 14px;
+  color: #555;
+}
+
+/* input  */
+input {
+  height: 34px;
+  padding: 0 12px;
+  border-radius: 13px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  outline: none;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+input:focus {
+  border-color: #4a90e2;
+}
+
+/* date of b*/
+.dob {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+.dob input {
+  min-width: 0;
+}
+
+
+/* social */
+.socialRow {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.socialRow input {
+  flex: 1;
+}
+
+.add {
+  font-size: 13px;
+  color: #4a90e2;
+  cursor: pointer;
+}
+
+/* responsive */
+@media (max-width: 768px) {
+  .gridTwo {
+    grid-template-columns: 1fr;
+  }
+
+  .dob {
+    grid-template-columns: 1fr;
+  }
+}
