@@ -1,0 +1,235 @@
+.jobCard {
+  display: flex;
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  gap: 20px;
+  border: 1px solid #e2e8f0;
+  transition: box-shadow 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.jobCard:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+/* Logo */
+.jobLogoCol {
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-start;
+}
+
+.logoImage {
+  width: 80px;
+  height: 80px;
+  min-width: 80px;
+  border-radius: 50%;
+  object-fit: contain;
+  background-color: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 10px;
+  color: #94a3b8;
+}
+
+/* Info */
+.jobInfoCol {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.jobTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: #4338CA;
+  margin: 0;
+}
+
+.jobCategory {
+  font-size: 13px;
+  color: #475569;
+  margin: 0;
+}
+
+.jobSkills {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+  font-weight: 600;
+}
+
+.skillLabel {
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.skillTag {
+  background: #eef2ff;
+  color: #4338ca;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+}
+
+.jobMetaList {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  margin-top: 6px;
+}
+
+.metaItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.metaIconYellow {
+  color: #f59e0b;
+  font-size: 16px;
+}
+
+.metaIconRed {
+  color: #ef4444;
+  font-size: 16px;
+  margin-left: 100px;
+}
+
+.metaBold {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.metaText {
+  font-size: 13px;
+  color: #334155;
+}
+
+/* Actions */
+.jobActionCol {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  min-width: 130px;
+  flex-shrink: 0;
+}
+
+.jobTopRight {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.jobPostedAt {
+  color: #5280BC;
+  font-size: 12px;
+}
+
+.bookmarkBtn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bookmarkIcon {
+  color: #334155;
+  font-size: 30px;
+}
+
+.bookmarkIconActive {
+  color: #4338ca;
+}
+
+.actionButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.viewDetailsBtn {
+  background: white;
+  border: 1px solid #5280BC;
+  color: #5280BC;
+  border-radius: 10px;
+  padding: 7px 0;
+  font-size: 12px;
+  font-weight: 500;
+  width: 100%;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.viewDetailsBtn:hover {
+  border-color: #475569;
+  color: #1e293b;
+}
+
+.applyBtn {
+  background: #9F191B;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 7px 0;
+  font-size: 12px;
+  font-weight: 600;
+  width: 100%;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.applyBtn:hover {
+  background: #7f1d1d;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .jobCard {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .jobActionCol {
+    flex-direction: row;
+    min-width: auto;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .actionButtons {
+    flex-direction: row;
+    width: auto;
+    gap: 8px;
+  }
+
+  .viewDetailsBtn,
+  .applyBtn {
+    width: auto;
+    padding: 7px 16px;
+  }
+
+  .logoImage {
+    width: 60px;
+    height: 60px;
+  }
+}
