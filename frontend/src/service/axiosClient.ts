@@ -1,6 +1,6 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 
-const IS_MOCK = true; // 👉 đổi false khi dùng backend thật
+const IS_MOCK = true;
 
 //
 const axiosClient = axios.create({

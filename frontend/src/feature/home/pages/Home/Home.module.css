@@ -4,7 +4,6 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px 24px;
-  font-family: 'Inter', 'Segoe UI', sans-serif;
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -25,7 +24,7 @@
 }
 
 .heroTitle {
-  font-size: 36px;
+  font-size: 25px;
   font-weight: 400;
   margin: 0 0 12px;
   line-height: 1.4;
@@ -51,7 +50,7 @@
 }
 
 .heroSubtitle {
-  font-size: 24px;
+  font-size: 20px;
   color: #94a3b8;
   margin: 0 0 20px;
   line-height: 1.6;
@@ -63,7 +62,7 @@
   border: none;
   border-radius: 20px;
   padding: 10px 24px;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.2s;

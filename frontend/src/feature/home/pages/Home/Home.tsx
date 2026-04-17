@@ -178,7 +178,7 @@ const Home = () => {
           <span className={styles.logoWhite}>Q</span>
             </h1>
             <p className={styles.heroSubtitle}>
-              ""We are looking for talented individuals who are ready to innovate and create value that makes a difference.""
+              "We are looking for talented individuals who are ready to innovate and create value that makes a difference."
             </p>
             <button className={styles.primaryButton}>Apply Job Now</button>
           </div>
