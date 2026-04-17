@@ -6,23 +6,25 @@ import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
 import { FaRegEye } from "react-icons/fa";
 
-import { login } from "../../../../service/authApi";
+import { login as loginApi } from "../../../../service/authApi";
+import { useAuth } from "../../context/AuthContext";
 
 const Login = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const [showPassword, setShowPassword] = useState(false);
-
   const [account, setAccount] = useState("");
   const [password, setPassword] = useState("");
 
   const handleLogin = async () => {
     try {
-      const user = await login(account, password);
+      const res = await loginApi(account, password);
 
-      console.log("LOGIN SUCCESS:", user);
+      // IMPORTANT: update context
+      login(res.user, res.accessToken);
 
-      navigate("/"); // vào home
+      navigate("/");
     } catch (err: any) {
       alert(err.message || "Login failed");
     }
@@ -47,7 +49,7 @@ const Login = () => {
           <button className={styles.tab}>Company</button>
         </div>
 
-        {/* email */}
+        {/* account */}
         <label>Email or phone number</label>
         <div className={styles.inputGroup}>
           <input
@@ -77,7 +79,7 @@ const Login = () => {
 
         <div className={styles.forgot}>Forgot password</div>
 
-        {/* login button */}
+        {/* login */}
         <button className={styles.signIn} onClick={handleLogin}>
           Sign in
         </button>

@@ -1,140 +1,52 @@
-import { useEffect, useState } from "react";
-import { getCurrentUser, login } from "../../../../service/authApi";
-import type { User } from "../../../../dataMock/User";
+import { useState } from "react";
+import { useAuth } from "../../../auth/context/AuthContext";
 import styles from "./PersonalProfile.module.css";
 
 export default function PersonalProfile() {
-  const [user, setUser] = useState<User | null>(null);
+  const { user } = useAuth();
 
-  const [dob, setDob] = useState({
-    day: "",
-    month: "",
-    year: "",
-  });
+  const [editPersonal, setEditPersonal] = useState(false);
+  const [editRecruitment, setEditRecruitment] = useState(false);
 
   const [gender, setGender] = useState("");
+
   const [releaseDate, setReleaseDate] = useState({
     day: "",
     month: "",
     year: "",
   });
 
+  const genders = ["male", "female", "other"];
+
   const days = Array.from({ length: 31 }, (_, i) => i + 1);
   const months = Array.from({ length: 12 }, (_, i) => i + 1);
   const years = Array.from({ length: 50 }, (_, i) => 2026 - i);
-  const genders = ["Male", "Female", "Other"];
-
-  useEffect(() => {
-    const current = getCurrentUser();
-
-    if (current) {
-      setUser(current);
-    } else {
-      login("user@gmail.com", "123456")
-        .then(setUser)
-        .catch(console.error);
-    }
-  }, []);
-
 
   if (!user) return <div>Loading...</div>;
 
-  const firstName = user.fullName.split(" ")[0];
-  const lastName = user.fullName.split(" ").slice(1).join(" ");
+  const nameParts = user.fullName?.split(" ") || [];
+  const firstName = nameParts[0] || "";
+  const lastName = nameParts.slice(1).join(" ");
+
+  const dobParts = user.dob ? user.dob.split("-") : ["", "", ""];
+
+  const [dob, setDob] = useState({
+    year: dobParts[0],
+    month: dobParts[1],
+    day: dobParts[2],
+  });
 
   return (
     <div className={styles.container}>
       <h2 className={styles.sectionTitle}>PERSONAL PROFILE</h2>
 
-      {/* top 50 50*/}
+      {/* TOP */}
       <div className={styles.gridTwo}>
-        {/* left avata*/}
         <div className={styles.avatarBox}>
           <div className={styles.avatarCircle}></div>
         </div>
 
-        {/* right form*/}
         <div className={styles.formBox}>
-          <div className={styles.formGroup}>
-            <label>Address</label>
-            <input placeholder="Address" />
-          </div>
-
-            <div className={styles.formGroup}>
-              <label>Date of Birth</label>
-              <div className={styles.dob}>
-                <select
-                  value={dob.day}
-                  onChange={(e) => setDob({ ...dob, day: e.target.value })}
-                >
-                  <option>Day</option>
-                  {days.map((d) => (
-                    <option key={d}>{d}</option>
-                  ))}
-                </select>
-
-                <select
-                  value={dob.month}
-                  onChange={(e) => setDob({ ...dob, month: e.target.value })}
-                >
-                  <option>Month</option>
-                  {months.map((m) => (
-                    <option key={m}>{m}</option>
-                  ))}
-                </select>
-
-                <select
-                  value={dob.year}
-                  onChange={(e) => setDob({ ...dob, year: e.target.value })}
-                >
-                  <option>Year</option>
-                  {years.map((y) => (
-                    <option key={y}>{y}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-        </div>
-      </div>
-
-      {/* basic info 50 50 */}
-      <div className={styles.gridTwo}>
-        {/* left */}
-        <div className={styles.column}>
-
-            <div className={styles.rowTwo}>
-              <div className={styles.formGroup}>
-                <label>First Name</label>
-                <input value={firstName} readOnly />
-              </div>
-
-              <div className={styles.formGroup}>
-                <label>Last Name</label>
-                <input value={lastName} readOnly />
-              </div>
-            </div>
-
-          <div className={styles.rowTwo}>
-
-             <div className={styles.formGroup}>
-               <label>Gender</label>
-               <select value={gender} onChange={(e) => setGender(e.target.value)}>
-                 <option value="">Select Gender</option>
-                 {genders.map((g) => (
-                   <option key={g} value={g}>
-                     {g}
-                   </option>
-                 ))}
-               </select>
-             </div>
-
-              <div className={styles.formGroup}>
-                <label>Phone Number</label>
-                <input placeholder ="Phone Number" />
-              </div>
-          </div>
-
 
           <div className={styles.formGroup}>
             <label>Email</label>
@@ -142,41 +54,42 @@ export default function PersonalProfile() {
           </div>
 
           <div className={styles.formGroup}>
-            <label>Password</label>
-            <input value={user.password} readOnly />
+            <label>Address</label>
+            <input
+              value={user.address || ""}
+              readOnly={!editPersonal}
+            />
           </div>
 
 
         </div>
-
-        {/* RIGHT (trống hoặc bổ sung sau) */}
-        <div className={styles.column}></div>
       </div>
 
-      <h2 className={styles.sectionTitle}>RECRUITMENT INFORMATION</h2>
-
-      {/* RECRUITMENT 50/50 */}
+      {/* PERSONAL INFO */}
       <div className={styles.gridTwo}>
-        {/* LEFT */}
         <div className={styles.column}>
 
-            <div className={styles.rowTwo}>
-              <div className={styles.formGroup}>
-                <label>First Name</label>
-                <input value={firstName} readOnly />
-              </div>
-
-              <div className={styles.formGroup}>
-                <label>Last Name</label>
-                <input value={lastName} readOnly />
-              </div>
+          <div className={styles.rowTwo}>
+            <div className={styles.formGroup}>
+              <label>First Name</label>
+              <input value={firstName} readOnly />
             </div>
 
-          <div className={styles.rowTwo}>
+            <div className={styles.formGroup}>
+              <label>Last Name</label>
+              <input value={lastName} readOnly />
+            </div>
+          </div>
 
-              <div className={styles.formGroup}>
-                <label>Gender</label>
-                <select value={gender} onChange={(e) => setGender(e.target.value)}>
+          <div className={styles.rowTwo}>
+            <div className={styles.formGroup}>
+              <label>Gender</label>
+
+              {editPersonal ? (
+                <select
+                  value={gender || user.gender}
+                  onChange={(e) => setGender(e.target.value)}
+                >
                   <option value="">Select Gender</option>
                   {genders.map((g) => (
                     <option key={g} value={g}>
@@ -184,39 +97,162 @@ export default function PersonalProfile() {
                     </option>
                   ))}
                 </select>
-              </div>
+              ) : (
+                <input value={user.gender} readOnly />
+              )}
+            </div>
 
-              <div className={styles.formGroup}>
-                <label>Phone Number</label>
-                <input placeholder ="Phone Number" />
-              </div>
+            <div className={styles.formGroup}>
+              <label>Phone Number</label>
+              <input
+                value={user.phone || ""}
+                readOnly={!editPersonal}
+              />
+            </div>
+
           </div>
 
           <div className={styles.formGroup}>
             <label>Date of Birth</label>
+
             <div className={styles.dob}>
               <select
                 value={dob.day}
+                disabled={!editPersonal && !editRecruitment}
                 onChange={(e) => setDob({ ...dob, day: e.target.value })}
               >
                 <option>Day</option>
                 {days.map((d) => (
-                  <option key={d}>{d}</option>
+                  <option key={d} value={String(d).padStart(2, "0")}>
+                    {d}
+                  </option>
                 ))}
               </select>
 
               <select
                 value={dob.month}
+                disabled={!editPersonal && !editRecruitment}
                 onChange={(e) => setDob({ ...dob, month: e.target.value })}
               >
                 <option>Month</option>
                 {months.map((m) => (
-                  <option key={m}>{m}</option>
+                  <option key={m} value={String(m).padStart(2, "0")}>
+                    {m}
+                  </option>
                 ))}
               </select>
 
               <select
                 value={dob.year}
+                disabled={!editPersonal && !editRecruitment}
+                onChange={(e) => setDob({ ...dob, year: e.target.value })}
+              >
+                <option>Year</option>
+                {years.map((y) => (
+                  <option key={y}>{y}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div className={styles.column}></div>
+      </div>
+
+      {/* BUTTON PERSONAL */}
+      <div className={styles.headerActions}>
+        {!editPersonal ? (
+          <button onClick={() => setEditPersonal(true)}>
+            Edit Personal
+          </button>
+        ) : (
+          <button onClick={() => setEditPersonal(false)}>
+            Save Personal
+          </button>
+        )}
+      </div>
+
+      {/* RECRUITMENT */}
+      <h2 className={styles.sectionTitle}>RECRUITMENT INFORMATION</h2>
+
+      <div className={styles.gridTwo}>
+        <div className={styles.column}>
+
+          <div className={styles.rowTwo}>
+            <div className={styles.formGroup}>
+              <label>First Name</label>
+              <input value={firstName} readOnly />
+            </div>
+
+            <div className={styles.formGroup}>
+              <label>Last Name</label>
+              <input value={lastName} readOnly />
+            </div>
+          </div>
+
+          <div className={styles.rowTwo}>
+            <div className={styles.formGroup}>
+              <label>Gender</label>
+
+              {editPersonal ? (
+                <select
+                  value={gender || user.gender}
+                  onChange={(e) => setGender(e.target.value)}
+                >
+                  <option value="">Select Gender</option>
+                  {genders.map((g) => (
+                    <option key={g} value={g}>
+                      {g}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <input value={user.gender} readOnly />
+              )}
+            </div>
+
+            <div className={styles.formGroup}>
+              <label>Phone Number</label>
+              <input
+                value={user.phone || ""}
+                readOnly={!editPersonal}
+              />
+            </div>
+          </div>
+
+          <div className={styles.formGroup}>
+            <label>Date of Birth</label>
+
+            <div className={styles.dob}>
+              <select
+                value={dob.day}
+                disabled={!editPersonal && !editRecruitment}
+                onChange={(e) => setDob({ ...dob, day: e.target.value })}
+              >
+                <option>Day</option>
+                {days.map((d) => (
+                  <option key={d} value={String(d).padStart(2, "0")}>
+                    {d}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                value={dob.month}
+                disabled={!editPersonal && !editRecruitment}
+                onChange={(e) => setDob({ ...dob, month: e.target.value })}
+              >
+                <option>Month</option>
+                {months.map((m) => (
+                  <option key={m} value={String(m).padStart(2, "0")}>
+                    {m}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                value={dob.year}
+                disabled={!editPersonal && !editRecruitment}
                 onChange={(e) => setDob({ ...dob, year: e.target.value })}
               >
                 <option>Year</option>
@@ -232,58 +268,42 @@ export default function PersonalProfile() {
             <input value={user.email} readOnly />
           </div>
 
-
           <div className={styles.formGroup}>
             <label>Address</label>
-            <input placeholder="Address" />
+            <input value={user.address || ""} readOnly />
           </div>
         </div>
 
-        {/* RIGHT */}
         <div className={styles.column}>
           <div className={styles.formGroup}>
             <label>Personal Tax ID</label>
-            <input placeholder="Tax Number" />
+            <input placeholder="Tax Number" readOnly={!editRecruitment} />
           </div>
 
           <div className={styles.formGroup}>
             <label>Citizen ID</label>
-            <input placeholder="Citizen ID" />
+            <input placeholder="Citizen ID" readOnly={!editRecruitment} />
           </div>
 
           <div className={styles.formGroup}>
             <label>Release Date</label>
+
             <div className={styles.dob}>
-              <select
-                value={releaseDate.day}
-                onChange={(e) =>
-                  setReleaseDate({ ...releaseDate, day: e.target.value })
-                }
-              >
+              <select disabled={!editRecruitment}>
                 <option>Day</option>
                 {days.map((d) => (
                   <option key={d}>{d}</option>
                 ))}
               </select>
 
-              <select
-                value={releaseDate.month}
-                onChange={(e) =>
-                  setReleaseDate({ ...releaseDate, month: e.target.value })
-                }
-              >
+              <select disabled={!editRecruitment}>
                 <option>Month</option>
                 {months.map((m) => (
                   <option key={m}>{m}</option>
                 ))}
               </select>
 
-              <select
-                value={releaseDate.year}
-                onChange={(e) =>
-                  setReleaseDate({ ...releaseDate, year: e.target.value })
-                }
-              >
+              <select disabled={!editRecruitment}>
                 <option>Year</option>
                 {years.map((y) => (
                   <option key={y}>{y}</option>
@@ -295,8 +315,8 @@ export default function PersonalProfile() {
           <div className={styles.formGroup}>
             <label>Social Network</label>
             <div className={styles.socialRow}>
-              <input placeholder="Name" />
-              <input placeholder="Link" />
+              <input placeholder="Name" readOnly={!editRecruitment} />
+              <input placeholder="Link" readOnly={!editRecruitment} />
               <span className={styles.add}>Add</span>
             </div>
           </div>
@@ -304,11 +324,24 @@ export default function PersonalProfile() {
           <div className={styles.formGroup}>
             <label>Bank Account</label>
             <div className={styles.socialRow}>
-              <input placeholder="Bank Account Name" />
+              <input placeholder="Bank Account Name" readOnly={!editRecruitment} />
               <span className={styles.add}>Add</span>
             </div>
           </div>
         </div>
+      </div>
+
+      {/* BUTTON RECRUITMENT */}
+      <div className={styles.headerActions}>
+        {!editRecruitment ? (
+          <button onClick={() => setEditRecruitment(true)}>
+            Edit Recruitment
+          </button>
+        ) : (
+          <button onClick={() => setEditRecruitment(false)}>
+            Save Recruitment
+          </button>
+        )}
       </div>
     </div>
   );

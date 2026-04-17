@@ -1,48 +1,106 @@
-import { loginApi, registerApi } from "./userApi";
-import type { User } from "../dataMock/User";
+import { request } from "./axiosClient";
+import { IS_MOCK } from "../config/index";
+import { users } from "../dataMock/User";
 
-const TOKEN_KEY = "token";
-const USER_KEY = "user";
+export interface User {
+  id: number;
+  email: string;
+  password?: string;
+  name: string;
+}
 
-export const login = async (account: string, password: string) => {
-  const res = await loginApi(account, password);
+export interface AuthResponse {
+  accessToken: string;
+  refreshToken: string;
+  user: User;
+}
 
-  localStorage.setItem(TOKEN_KEY, res.token);
-  localStorage.setItem(USER_KEY, JSON.stringify(res.user));
+const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
+// LOGIN
+export const login = async (
+  email: string,
+  password: string
+): Promise<AuthResponse> => {
+  if (IS_MOCK) {
+    await delay(500);
 
-  window.dispatchEvent(new Event("authChange"));
+    const user = users.find(
+      (u) => u.email === email && u.password === password
+    );
 
-  return res.user;
+    if (!user) throw new Error("Sai tài khoản hoặc mật khẩu");
+
+    const res: AuthResponse = {
+      accessToken: "mock_token_" + user.id,
+      refreshToken: "mock_refresh_" + user.id,
+      user,
+    };
+
+    localStorage.setItem("token", res.accessToken);
+    localStorage.setItem("refreshToken", res.refreshToken);
+    localStorage.setItem("user", JSON.stringify(res.user));
+
+    return res;
+  }
+
+  const res = await request.post<AuthResponse>("/auth/login", {
+    email,
+    password,
+  });
+
+  localStorage.setItem("token", res.accessToken);
+  localStorage.setItem("refreshToken", res.refreshToken);
+  localStorage.setItem("user", JSON.stringify(res.user));
+
+  return res;
 };
 
-export const register = async (data: any) => {
-  const res = await registerApi(data);
+//  REGISTER
+export const register = async (data: {
+  email: string;
+  password: string;
+  name: string;
+}): Promise<AuthResponse> => {
+  if (IS_MOCK) {
+    await delay(500);
 
-  localStorage.setItem(TOKEN_KEY, res.token);
-  localStorage.setItem(USER_KEY, JSON.stringify(res.user));
+    const existed = users.find((u) => u.email === data.email);
+    if (existed) throw new Error("Email đã tồn tại");
 
+    const newUser: User = {
+      id: Date.now(),
+      email: data.email,
+      password: data.password,
+      name: data.name,
+    };
 
-  window.dispatchEvent(new Event("authChange"));
+    users.push(newUser);
 
-  return res.user;
+    const res: AuthResponse = {
+      accessToken: "mock_token_" + newUser.id,
+      refreshToken: "mock_refresh_" + newUser.id,
+      user: newUser,
+    };
+
+    localStorage.setItem("token", res.accessToken);
+    localStorage.setItem("refreshToken", res.refreshToken);
+    localStorage.setItem("user", JSON.stringify(res.user));
+
+    return res;
+  }
+
+  return request.post<AuthResponse>("/auth/register", data);
 };
 
-
+//  LOGOUT
 export const logout = () => {
-  localStorage.removeItem(TOKEN_KEY);
-  localStorage.removeItem(USER_KEY);
-
-  window.dispatchEvent(new Event("authChange"));
+  localStorage.clear();
+  window.location.href = "/login";
 };
 
-// GET USER
+//  GET CURRENT USER
 export const getCurrentUser = (): User | null => {
-  const data = localStorage.getItem(USER_KEY);
-  return data ? JSON.parse(data) : null;
-};
-
-// GET TOKEN
-export const getToken = (): string | null => {
-  return localStorage.getItem(TOKEN_KEY);
+  const user = localStorage.getItem("user");
+  return user ? JSON.parse(user) : null;
 };

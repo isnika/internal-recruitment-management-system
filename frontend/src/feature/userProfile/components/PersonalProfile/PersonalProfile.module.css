@@ -116,3 +116,42 @@ input:focus {
     grid-template-columns: 1fr;
   }
 }
+
+
+.headerActions {
+  display: flex;
+  justify-content: flex-end;
+  margin: 10px 0 20px;
+}
+
+.headerActions button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.headerActions button:first-child {
+  background: #2563eb;
+  color: white;
+}
+
+.headerActions button:first-child:hover {
+  background: #1d4ed8;
+}
+
+.headerActions button:last-child {
+  background: #16a34a;
+  color: white;
+}
+
+.headerActions button:last-child:hover {
+  background: #15803d;
+}
+
+.headerActions button:hover {
+  transform: translateY(-1px);
+}

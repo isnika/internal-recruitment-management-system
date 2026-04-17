@@ -1,4 +1,9 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+} from "react";
 
 type User = {
   id?: number;
@@ -18,47 +23,27 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(() => {
+    const storedUser = localStorage.getItem("user");
+    const token = localStorage.getItem("token");
 
-  useEffect(() => {
-    const syncAuth = () => {
-      const storedUser = localStorage.getItem("user");
-      const token = localStorage.getItem("token");
+    if (storedUser && token) {
+      return JSON.parse(storedUser);
+    }
 
-      if (storedUser && token) {
-        setUser(JSON.parse(storedUser));
-      } else {
-        setUser(null);
-      }
-    };
-
-    syncAuth();
-
-    window.addEventListener("authChange", syncAuth);
-
-    return () => {
-      window.removeEventListener("authChange", syncAuth);
-    };
-  }, []);
+    return null;
+  });
 
   const login = (userData: User, token: string) => {
     localStorage.setItem("user", JSON.stringify(userData));
     localStorage.setItem("token", token);
 
     setUser(userData);
-
-    //
-    window.dispatchEvent(new Event("authChange"));
   };
 
   const logout = () => {
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
-
+    localStorage.clear();
     setUser(null);
-
-    // sync UI
-    window.dispatchEvent(new Event("authChange"));
   };
 
   return (

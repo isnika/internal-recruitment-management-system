@@ -1,46 +1,62 @@
+import { request } from "./axiosClient";
+import { IS_MOCK } from "../config/index";
 import { users } from "../dataMock/User";
-import type { User } from "../dataMock/User";
+import type { User } from "./authApi";
 
-export const loginApi = (
-  account: string,
-  password: string
-): Promise<{ user: User; token: string }> => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      const user = users.find(
-        (u) =>
-          (u.email === account || u.username === account) &&
-          u.password === password
-      );
+const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
-      if (!user) {
-        reject(new Error("Sai tài khoản hoặc mật khẩu"));
-        return;
-      }
+//  GET PROFILE
+export const getMyProfile = async (): Promise<User> => {
+  if (IS_MOCK) {
+    await delay(300);
 
-      resolve({
-        user,
-        token: "mock_token_" + user.id + "_" + Date.now(),
-      });
-    }, 700);
-  });
+    const token = localStorage.getItem("token");
+    if (!token) throw new Error("Not authenticated");
+
+    const user = JSON.parse(localStorage.getItem("user") || "null");
+
+    if (!user) throw new Error("User not found");
+
+    return user;
+  }
+
+  return request.get<User>("/users/me");
 };
 
-// REGISTER MOCK (optional)
-export const registerApi = (data: any) => {
-  return new Promise<{ user: User; token: string }>((resolve) => {
-    setTimeout(() => {
-      const newUser: User = {
-        id: users.length + 1,
-        ...data,
-      };
+// UPDATE PROFILE
+export const updateProfile = async (data: Partial<User>): Promise<User> => {
+  if (IS_MOCK) {
+    await delay(300);
 
-      users.push(newUser);
+    const user = JSON.parse(localStorage.getItem("user") || "null");
 
-      resolve({
-        user: newUser,
-        token: "mock_token_" + newUser.id + "_" + Date.now(),
-      });
-    }, 700);
-  });
+    if (!user) throw new Error("User not found");
+
+    const updated = { ...user, ...data };
+
+    localStorage.setItem("user", JSON.stringify(updated));
+
+    const index = users.findIndex((u) => u.id === user.id);
+    if (index !== -1) {
+      users[index] = { ...users[index], ...data };
+    }
+
+    return updated;
+  }
+
+  return request.put<User>("/users/me", data);
+};
+
+// GET USER BY ID
+export const getUserById = async (id: number): Promise<User> => {
+  if (IS_MOCK) {
+    await delay(200);
+
+    const user = users.find((u) => u.id === id);
+    if (!user) throw new Error("User not found");
+
+    return user;
+  }
+
+  return request.get<User>(`/users/${id}`);
 };

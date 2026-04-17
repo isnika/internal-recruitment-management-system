@@ -1,40 +1,31 @@
 import styles from "./HeaderUser.module.css";
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
-
-
 import { useAuth } from "../../../feature/auth/context/AuthContext";
-
-import type { User } from "../../../dataMock/User";
 
 import UserDropdown from "../../components/UserDropdown/UserDropdown";
 import MailDropdown from "../../components/MailDropdown/MailDropdown";
 
-
-import { FaUser } from "react-icons/fa";
-import { FaEnvelope } from "react-icons/fa";
-
 const HeaderUser = () => {
   const navigate = useNavigate();
-
   const { user, logout } = useAuth();
 
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
 
-    const handleLogout = () => {
-      logout();
-      navigate("/login");
-    };
+  const handleNavigate = (path: string) => {
+    navigate(path);
+  };
 
   return (
     <header className={styles.header}>
-
-      {/* top bar */}
+      {/* TOP BAR */}
       <div className={styles.topBar}>
-
-        {/* logo */}
+        {/* LOGO */}
         <div
           className={styles.logo}
-          onClick={() => navigate("/")}
+          onClick={() => handleNavigate("/")}
           style={{ cursor: "pointer" }}
         >
           <span className={styles.logoBlack}>H</span>
@@ -45,46 +36,69 @@ const HeaderUser = () => {
 
         {/* menu */}
         <nav className={styles.nav}>
-          <a href="#">Home</a>
-          <a href="#" className={styles.hideOnSmall}>Job</a>
-          <a href="#" className={styles.hideOnSmall}>Companies</a>
-          <a href="#" className={styles.hideOnSmall}>Salary Guide</a>
-          <a href="#" className={styles.hideOnSmall}>Blog</a>
+          <a onClick={() => navigate("/")}>Home</a>
+
+          <a
+            className={styles.hideOnSmall}
+            onClick={() => navigate("/jobs")}
+          >
+            Job
+          </a>
+
+          <a
+            className={styles.hideOnSmall}
+            onClick={() => navigate("/companies")}
+          >
+            Companies
+          </a>
+
+          <a
+            className={styles.hideOnSmall}
+            onClick={() => navigate("/salary-guide")}
+          >
+            Salary Guide
+          </a>
+
+          <a
+            className={styles.hideOnSmall}
+            onClick={() => navigate("/blog")}
+          >
+            Blog
+          </a>
         </nav>
 
-        {/* ACTION */}
-            <div className={styles.actions}>
-              <MailDropdown user={user} />
+        {/* ACTIONS */}
+        <div className={styles.actions}>
+          <MailDropdown user={user} />
 
-              {!user ? (
-                <>
-                  <button
-                    className={styles.signIn}
-                    onClick={() => navigate("/login")}
-                  >
-                    Sign in
-                  </button>
+          {!user ? (
+            <>
+              <button
+                className={styles.signIn}
+                onClick={() => handleNavigate("/login")}
+              >
+                Sign in
+              </button>
 
-                  <button
-                    className={`${styles.signIn} ${styles.signUp}`}
-                    onClick={() => navigate("/register")}
-                  >
-                    Sign up
-                  </button>
-                </>
-              ) : (
-                <UserDropdown user={user} onLogout={handleLogout} />
-              )}
-            </div>
+              <button
+                className={`${styles.signIn} ${styles.signUp}`}
+                onClick={() => handleNavigate("/register")}
+              >
+                Sign up
+              </button>
+            </>
+          ) : (
+            <UserDropdown user={user} onLogout={handleLogout} />
+          )}
+        </div>
       </div>
 
-      {/* search */}
+      {/* SEARCH */}
       <div className={styles.container}>
         <div className={styles.searchSection}>
-
           <div className={styles.searchBox}>
             <input placeholder="Job title, Skills, ..." />
-            <input placeholder="Address (TP Ho Chi Minh, Ha Noi ...)" />
+            <input placeholder="Address (TP HCM, Ha Noi ...)" />
             <button>Search</button>
           </div>
 
@@ -96,12 +110,9 @@ const HeaderUser = () => {
             <span className={styles.tags}>Remote</span>
             <span className={styles.tags}>Java</span>
             <span className={styles.tags}>Data Analyst</span>
-
           </div>
-
         </div>
       </div>
-
     </header>
   );
 };

@@ -1,11 +1,10 @@
 import { useState, useRef, useEffect } from "react";
 import { FaEnvelope } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-
 import styles from "./MailDropdown.module.css";
 
 interface Props {
-  user: any; // bạn có thể thay bằng type User nếu có
+  user: any;
 }
 
 const MailDropdown = ({ user }: Props) => {
@@ -13,7 +12,23 @@ const MailDropdown = ({ user }: Props) => {
   const ref = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
 
-  // click ngoài để đóng
+  // MOCK MAILS (sau này thay API)
+  const mails = [
+    {
+      id: 1,
+      title: "Kết quả duyệt CV",
+      time: "10:30 PM 16/4/2026",
+      desc: "Mã phỏng vấn: #1272336",
+    },
+    {
+      id: 2,
+      title: "Thư mời phỏng vấn",
+      time: "8:30 PM 16/4/2026",
+      desc: "Mã phỏng vấn: #1272999",
+    },
+  ];
+
+  // click outside close
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) {
@@ -22,78 +37,53 @@ const MailDropdown = ({ user }: Props) => {
     };
 
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    return () =>
+      document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   return (
     <div className={styles.wrapper} ref={ref}>
-      {/* icon */}
-      <div
-        className={styles.icon}
-        onClick={() => setOpen(!open)}
-      >
+      {/* ICON */}
+      <div className={styles.icon} onClick={() => setOpen(!open)}>
         <FaEnvelope />
-        {user && <span className={styles.badge}>3</span>}
+
+        {user && mails.length > 0 && (
+          <span className={styles.badge}>{mails.length}</span>
+        )}
       </div>
 
-      {/* dropdown */}
+      {/* DROPDOWN */}
       {open && (
         <div className={styles.dropdown}>
           {!user ? (
-<div
-  className={styles.empty}
-  onClick={() => navigate("/login")}
->
-  Vui lòng <span className={styles.loginText}>đăng nhập</span>
-</div>
+            <div
+              className={styles.empty}
+              onClick={() => navigate("/login")}
+            >
+              Vui lòng <span className={styles.loginText}>đăng nhập</span>
+            </div>
           ) : (
-            <>
-                <div className={styles.item}>
-                  <div className={styles.left}>
-                    HR
+            mails.map((mail) => (
+              <div key={mail.id} className={styles.item}>
+                <div className={styles.left}>HR</div>
+
+                <div className={styles.content}>
+                  <div className={styles.top}>
+                    <span className={styles.title}>
+                      {mail.title}
+                    </span>
+
+                    <span className={styles.time}>
+                      {mail.time}
+                    </span>
                   </div>
 
-                  <div className={styles.content}>
-                    <div className={styles.top}>
-                      <span className={styles.title}>
-                        Kết quả duyệt CV
-                      </span>
-
-                      <span className={styles.time}>
-                        10:30 PM 16/4/2026
-                      </span>
-                    </div>
-
-                    <div className={styles.desc}>
-                      Mã phỏng vấn: #1272336
-                    </div>
+                  <div className={styles.desc}>
+                    {mail.desc}
                   </div>
                 </div>
-
-
-
-                <div className={styles.item}>
-                  <div className={styles.left}>
-                    HR
-                  </div>
-
-                  <div className={styles.content}>
-                    <div className={styles.top}>
-                      <span className={styles.title}>
-                        Thư mời phỏng vấn
-                      </span>
-
-                      <span className={styles.time}>
-                        8:30 PM 16/4/2016
-                      </span>
-                    </div>
-
-                    <div className={styles.desc}>
-                      Mã phỏng vấn: #1272999
-                    </div>
-                  </div>
-                </div>
-            </>
+              </div>
+            ))
           )}
         </div>
       )}
