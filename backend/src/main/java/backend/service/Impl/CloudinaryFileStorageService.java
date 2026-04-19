@@ -25,17 +25,39 @@ public class CloudinaryFileStorageService implements FileStorageService {
   @Value("${cloudinary.cv-folder:recruitment/cvs}")
   private String cvFolder;
 
+  @Value("${cloudinary.company-logo-folder:recruitment/company-logos}")
+  private String companyLogoFolder;
+
   @Override
   public UploadResult uploadCv(MultipartFile file) {
+    return uploadFile(file, cvFolder, true);
+  }
+
+  @Override
+  public UploadResult uploadCompanyLogo(MultipartFile file) {
+    return uploadFile(file, companyLogoFolder, false);
+  }
+
+  @Override
+  public void deleteCv(String publicId, String resourceType) {
+    deleteFile(publicId, resourceType);
+  }
+
+  @Override
+  public void deleteCompanyLogo(String publicId, String resourceType) {
+    deleteFile(publicId, resourceType);
+  }
+
+  private UploadResult uploadFile(MultipartFile file, String folder, boolean isCv) {
     try {
-      String originalFilename = StringUtils.cleanPath(Objects.requireNonNullElse(file.getOriginalFilename(), "cv"));
-      String extension = getFileExtension(originalFilename);
-      String resourceType = "pdf".equals(extension) ? "image" : "raw";
+      String fallbackName = isCv ? "cv" : "company-logo";
+      String originalFilename = StringUtils.cleanPath(Objects.requireNonNullElse(file.getOriginalFilename(), fallbackName));
+      String resourceType = resolveUploadResourceType(getFileExtension(originalFilename), isCv);
 
       @SuppressWarnings("unchecked")
       Map<String, Object> uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap(
           "resource_type", resourceType,
-          "folder", cvFolder,
+          "folder", folder,
           "use_filename", true,
           "unique_filename", true,
           "overwrite", false,
@@ -50,12 +72,11 @@ public class CloudinaryFileStorageService implements FileStorageService {
 
       return new UploadResult(fileUrl, publicId, resourceType);
     } catch (IOException exception) {
-      throw new BadRequestException("Khong the upload CV len cloud");
+      throw new BadRequestException(isCv ? "Khong the upload CV len cloud" : "Khong the upload logo len cloud");
     }
   }
 
-  @Override
-  public void deleteCv(String publicId, String resourceType) {
+  private void deleteFile(String publicId, String resourceType) {
     if (!StringUtils.hasText(publicId)) {
       return;
     }
@@ -79,5 +100,13 @@ public class CloudinaryFileStorageService implements FileStorageService {
 
   private String resolveResourceType(String resourceType) {
     return StringUtils.hasText(resourceType) ? resourceType : "raw";
+  }
+
+  private String resolveUploadResourceType(String extension, boolean isCv) {
+    if (!isCv) {
+      return "image";
+    }
+
+    return "pdf".equals(extension) ? "image" : "raw";
   }
 }

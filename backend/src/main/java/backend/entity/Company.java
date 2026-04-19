@@ -40,6 +40,8 @@ public class Company {
   private String address;
   private String website;
   private String logoUrl;
+  private String logoStoragePublicId;
+  private String logoStorageResourceType;
   private String status;
 
   private LocalDateTime createdAt;

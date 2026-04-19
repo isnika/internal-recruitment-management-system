@@ -86,6 +86,7 @@ public final class EnvFileLoader {
     mappings.put("CLOUDINARY_API_KEY", "cloudinary.api-key");
     mappings.put("CLOUDINARY_API_SECRET", "cloudinary.api-secret");
     mappings.put("CLOUDINARY_CV_FOLDER", "cloudinary.cv-folder");
+    mappings.put("CLOUDINARY_COMPANY_LOGO_FOLDER", "cloudinary.company-logo-folder");
     return Map.copyOf(mappings);
   }
 }
