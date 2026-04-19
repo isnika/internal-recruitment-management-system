@@ -1,10 +1,11 @@
 package backend.service.Impl;
 
-import backend.Enum.UserRole;
+import backend.DTO.notifications.NotificationResponse;
 import backend.entity.Notification;
 import backend.entity.User;
 import backend.exception.BadRequestException;
 import backend.exception.ResourceNotFoundException;
+import backend.mapper.NotificationMapper;
 import backend.repository.NotificationRepository;
 import backend.repository.UserRepository;
 import backend.security.AuthUser;
@@ -26,7 +27,6 @@ public class NotificationServiceImpl implements NotificationService {
     private final UserRepository userRepository;
     private final EmailService emailService;
 
-    // ==================== LẤY USER HIỆN TẠI ====================
     private User getCurrentUser() {
         Object principal = SecurityContextHolder.getContext()
                 .getAuthentication()
@@ -40,7 +40,6 @@ public class NotificationServiceImpl implements NotificationService {
                 .orElseThrow(() -> new ResourceNotFoundException("User không tồn tại"));
     }
 
-    // ==================== TẠO THÔNG BÁO ====================
     @Override
     @Transactional
     public String createNotification(Long receiverId, String content, boolean sendEmail) {
@@ -59,7 +58,6 @@ public class NotificationServiceImpl implements NotificationService {
 
         notificationRepository.save(notification);
 
-        // gửi email nếu bật
         if (sendEmail) {
             emailService.sendSimpleMail(
                     receiver.getEmail(),
@@ -71,23 +69,8 @@ public class NotificationServiceImpl implements NotificationService {
         return "Gửi thông báo thành công";
     }
 
-    // ==================== LẤY TẤT CẢ THÔNG BÁO ====================
     @Override
-    public List<Notification> getNotificationsByUserId(Long userId) {
-
-        User currentUser = getCurrentUser();
-
-        // chỉ được xem của mình
-        if (!currentUser.getId().equals(userId)) {
-            throw new BadRequestException("Không có quyền");
-        }
-
-        return notificationRepository.findByUserId(userId);
-    }
-
-    // ==================== LẤY CHƯA ĐỌC ====================
-    @Override
-    public List<Notification> getUnreadNotifications(Long userId) {
+    public List<NotificationResponse> getNotificationsByUserId(Long userId) {
 
         User currentUser = getCurrentUser();
 
@@ -95,10 +78,27 @@ public class NotificationServiceImpl implements NotificationService {
             throw new BadRequestException("Không có quyền");
         }
 
-        return notificationRepository.findByUserIdAndIsRead(userId, false);
+        return notificationRepository.findByUserId(userId)
+                .stream()
+                .map(NotificationMapper::toDTO)
+                .toList();
     }
 
-    // ==================== ĐÁNH DẤU ĐÃ ĐỌC ====================
+    @Override
+    public List<NotificationResponse> getUnreadNotifications(Long userId) {
+
+        User currentUser = getCurrentUser();
+
+        if (!currentUser.getId().equals(userId)) {
+            throw new BadRequestException("Không có quyền");
+        }
+
+        return notificationRepository.findByUserIdAndIsRead(userId, false)
+                .stream()
+                .map(NotificationMapper::toDTO)
+                .toList();
+    }
+
     @Override
     @Transactional
     public String markAsRead(Long notificationId) {
@@ -118,5 +118,4 @@ public class NotificationServiceImpl implements NotificationService {
 
         return "Đã đọc";
     }
-
 }

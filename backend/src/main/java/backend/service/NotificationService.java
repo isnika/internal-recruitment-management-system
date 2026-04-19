@@ -1,6 +1,6 @@
 package backend.service;
 
-import backend.entity.Notification;
+import backend.DTO.notifications.NotificationResponse;
 
 import java.util.List;
 
@@ -8,13 +8,9 @@ public interface NotificationService {
 
     String createNotification(Long receiverId, String content, boolean sendEmail);
 
-    List<Notification> getNotificationsByUserId(Long userId);
+    List<NotificationResponse> getNotificationsByUserId(Long userId);
 
-    List<Notification> getUnreadNotifications(Long userId);
+    List<NotificationResponse> getUnreadNotifications(Long userId);
 
     String markAsRead(Long notificationId);
-
-
-
-
 }

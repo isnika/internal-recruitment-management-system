@@ -27,10 +27,9 @@ public class InterviewServiceImpl implements InterviewService {
     private final InterviewRepository interviewRepository;
     private final ApplicationRepository applicationRepository;
     private final UserRepository userRepository;
-
     private final NotificationService notificationService;
 
-    // ==================== LẤY USER HIỆN TẠI ====================
+    // ================= USER =================
     private User getCurrentUser() {
         Object principal = SecurityContextHolder.getContext()
                 .getAuthentication()
@@ -44,29 +43,27 @@ public class InterviewServiceImpl implements InterviewService {
                 .orElseThrow(() -> new ResourceNotFoundException("User không tồn tại"));
     }
 
-    // ==================== CHECK ROLE ====================
     private void checkRole(User user, UserRole role) {
         if (user.getRole() != role) {
             throw new BadRequestException("Không có quyền truy cập");
         }
     }
 
-    // ==================== CANDIDATE ====================
+    // ================= CANDIDATE =================
 
-    // Xem lịch phỏng vấn của mình
     @Override
     public List<Interview> getMyInterviews() {
         User user = getCurrentUser();
         checkRole(user, UserRole.CANDIDATE);
 
-        return applicationRepository.findByUserId(user.getId())
+        return interviewRepository.findAll()
                 .stream()
-                .map(Application::getInterview)
-                .filter(i -> i != null)
+                .filter(i -> i.getApplication() != null)
+                .filter(i -> i.getApplication().getUser() != null)
+                .filter(i -> i.getApplication().getUser().getId().equals(user.getId()))
                 .toList();
     }
 
-    // ACCEPT interview
     @Override
     public Interview acceptInterview(Long id) {
         User user = getCurrentUser();
@@ -75,7 +72,9 @@ public class InterviewServiceImpl implements InterviewService {
         Interview interview = interviewRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy lịch"));
 
-        if (!interview.getApplication().getUser().getId().equals(user.getId())) {
+        if (interview.getApplication() == null ||
+                interview.getApplication().getUser() == null ||
+                !interview.getApplication().getUser().getId().equals(user.getId())) {
             throw new BadRequestException("Không có quyền");
         }
 
@@ -95,7 +94,6 @@ public class InterviewServiceImpl implements InterviewService {
         return saved;
     }
 
-    // REJECT interview
     @Override
     public Interview rejectInterview(Long id) {
         User user = getCurrentUser();
@@ -104,7 +102,9 @@ public class InterviewServiceImpl implements InterviewService {
         Interview interview = interviewRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy lịch"));
 
-        if (!interview.getApplication().getUser().getId().equals(user.getId())) {
+        if (interview.getApplication() == null ||
+                interview.getApplication().getUser() == null ||
+                !interview.getApplication().getUser().getId().equals(user.getId())) {
             throw new BadRequestException("Không có quyền");
         }
 
@@ -124,9 +124,8 @@ public class InterviewServiceImpl implements InterviewService {
         return saved;
     }
 
-    // ==================== RECRUITER ====================
+    // ================= RECRUITER =================
 
-    // CREATE interview
     @Override
     public Interview createInterview(CreateInterviewRequest request) {
 
@@ -136,12 +135,18 @@ public class InterviewServiceImpl implements InterviewService {
         Application application = applicationRepository.findById(request.getApplicationId())
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy application"));
 
+
         if (!application.getJob().getCompany().getId()
-                .equals(application.getJob().getCompany().getId())) {
+                .equals(user.getCompany().getId())) {
             throw new BadRequestException("Không có quyền");
         }
 
-        if (application.getInterview() != null) {
+
+        boolean exists = interviewRepository.findAll()
+                .stream()
+                .anyMatch(i -> i.getApplication().getId().equals(application.getId()));
+
+        if (exists) {
             throw new BadRequestException("Application đã có lịch phỏng vấn");
         }
 
