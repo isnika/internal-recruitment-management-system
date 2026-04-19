@@ -1,10 +1,10 @@
 package backend.controller;
 
-import backend.entity.Notification;
+import backend.DTO.notifications.NotificationRequest;
+import backend.DTO.notifications.NotificationResponse;
 import backend.security.AuthUser;
 import backend.service.NotificationService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -21,23 +21,24 @@ public class NotificationController {
     // ==================== RECRUITER GỬI THÔNG BÁO ====================
     @PostMapping("/send")
     public ResponseEntity<String> sendNotification(
-            @RequestParam Long userId,
-            @RequestParam String content,
-            @RequestParam(defaultValue = "false") boolean sendEmail
+            @RequestBody NotificationRequest request
     ) {
-
-        String result = notificationService.createNotification(userId, content, sendEmail);
+        String result = notificationService.createNotification(
+                request.getUserId(),
+                request.getContent(),
+                request.isSendEmail()
+        );
 
         return ResponseEntity.ok(result);
     }
 
     // ==================== LẤY THÔNG BÁO CỦA CHÍNH MÌNH ====================
     @GetMapping
-    public ResponseEntity<List<Notification>> getMyNotifications() {
+    public ResponseEntity<List<NotificationResponse>> getMyNotifications() {
 
         Long userId = getCurrentUserId();
 
-        List<Notification> notifications =
+        List<NotificationResponse> notifications =
                 notificationService.getNotificationsByUserId(userId);
 
         return ResponseEntity.ok(notifications);
@@ -45,11 +46,11 @@ public class NotificationController {
 
     // ==================== LẤY THÔNG BÁO CHƯA ĐỌC ====================
     @GetMapping("/unread")
-    public ResponseEntity<List<Notification>> getUnreadNotifications() {
+    public ResponseEntity<List<NotificationResponse>> getUnreadNotifications() {
 
         Long userId = getCurrentUserId();
 
-        List<Notification> notifications =
+        List<NotificationResponse> notifications =
                 notificationService.getUnreadNotifications(userId);
 
         return ResponseEntity.ok(notifications);

@@ -1,12 +1,14 @@
 package backend.controller;
 
 import backend.DTO.interview.CreateInterviewRequest;
-import org.springframework.security.access.prepost.PreAuthorize;
+import backend.DTO.interview.InterviewResponse;
+import backend.mapper.InterviewMapper;
 import backend.entity.Interview;
 import backend.service.InterviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,41 +19,55 @@ import java.util.List;
 public class InterviewController {
 
     private final InterviewService interviewService;
-    
-    // CANDIDATE - XEM LỊCH
 
+    // ================= CANDIDATE - XEM LỊCH =================
     @GetMapping("/my")
     @PreAuthorize("hasRole('CANDIDATE')")
-    public ResponseEntity<List<Interview>> getMyInterviews() {
-        return ResponseEntity.ok(interviewService.getMyInterviews());
+    public ResponseEntity<List<InterviewResponse>> getMyInterviews() {
+
+        List<Interview> interviews = interviewService.getMyInterviews();
+
+        List<InterviewResponse> response = interviews.stream()
+                .map(InterviewMapper::toResponse)
+                .toList();
+
+        return ResponseEntity.ok(response);
     }
 
-
-    // CANDIDATE - ACCEPT
-
+    // ================= CANDIDATE - ACCEPT =================
     @PostMapping("/{id}/accept")
     @PreAuthorize("hasRole('CANDIDATE')")
-    public ResponseEntity<Interview> accept(@PathVariable Long id) {
-        return ResponseEntity.ok(interviewService.acceptInterview(id));
+    public ResponseEntity<InterviewResponse> accept(@PathVariable Long id) {
+
+        Interview interview = interviewService.acceptInterview(id);
+
+        return ResponseEntity.ok(
+                InterviewMapper.toResponse(interview)
+        );
     }
 
-    // CANDIDATE - REJECT
-
+    // ================= CANDIDATE - REJECT =================
     @PostMapping("/{id}/reject")
     @PreAuthorize("hasRole('CANDIDATE')")
-    public ResponseEntity<Interview> reject(@PathVariable Long id) {
-        return ResponseEntity.ok(interviewService.rejectInterview(id));
+    public ResponseEntity<InterviewResponse> reject(@PathVariable Long id) {
+
+        Interview interview = interviewService.rejectInterview(id);
+
+        return ResponseEntity.ok(
+                InterviewMapper.toResponse(interview)
+        );
     }
 
-    // =========================
-    // RECRUITER - CREATE INTERVIEW
-    // =========================
+    // ================= RECRUITER - CREATE =================
     @PostMapping
     @PreAuthorize("hasAnyRole('RECRUITER','ADMIN')")
-    public ResponseEntity<Interview> createInterview(
+    public ResponseEntity<InterviewResponse> createInterview(
             @RequestBody CreateInterviewRequest request
     ) {
+
         Interview interview = interviewService.createInterview(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(interview);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(InterviewMapper.toResponse(interview));
     }
 }
