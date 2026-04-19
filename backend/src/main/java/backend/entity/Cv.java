@@ -28,6 +28,10 @@ public class Cv {
 
   private String fileUrl;
 
+  private String storagePublicId;
+
+  private String storageResourceType;
+
   private LocalDateTime createdAt;
 
   @ManyToOne
