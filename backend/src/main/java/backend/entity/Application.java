@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.time.LocalDateTime;
 
@@ -36,6 +38,7 @@ public class Application {
     @JoinColumn(name = "cv_id")
     private Cv cv;
 
-    @OneToOne(mappedBy = "application")
-    private Interview interview;
+    @OneToMany(mappedBy = "application")
+    @JsonIgnore
+    private List<Interview> interviews;
 }

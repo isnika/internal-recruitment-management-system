@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Data
 @Builder
+
 public class Interview {
 
   @Id
@@ -32,7 +34,7 @@ public class Interview {
   @Column(columnDefinition = "TEXT")
   private String note;
 
-  @OneToOne
+  @ManyToOne
   @JoinColumn(name = "application_id")
   private Application application;
 }
