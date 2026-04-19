@@ -8,9 +8,13 @@ public interface FileStorageService {
 
   UploadResult uploadCompanyLogo(MultipartFile file);
 
+  UploadResult uploadCandidateAvatar(MultipartFile file);
+
   void deleteCv(String publicId, String resourceType);
 
   void deleteCompanyLogo(String publicId, String resourceType);
+
+  void deleteCandidateAvatar(String publicId, String resourceType);
 
   record UploadResult(String fileUrl, String publicId, String resourceType) {
   }

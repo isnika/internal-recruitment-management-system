@@ -28,6 +28,9 @@ public class CloudinaryFileStorageService implements FileStorageService {
   @Value("${cloudinary.company-logo-folder:recruitment/company-logos}")
   private String companyLogoFolder;
 
+  @Value("${cloudinary.candidate-avatar-folder:recruitment/candidate-avatars}")
+  private String candidateAvatarFolder;
+
   @Override
   public UploadResult uploadCv(MultipartFile file) {
     return uploadFile(file, cvFolder, true);
@@ -39,12 +42,22 @@ public class CloudinaryFileStorageService implements FileStorageService {
   }
 
   @Override
+  public UploadResult uploadCandidateAvatar(MultipartFile file) {
+    return uploadFile(file, candidateAvatarFolder, false);
+  }
+
+  @Override
   public void deleteCv(String publicId, String resourceType) {
     deleteFile(publicId, resourceType);
   }
 
   @Override
   public void deleteCompanyLogo(String publicId, String resourceType) {
+    deleteFile(publicId, resourceType);
+  }
+
+  @Override
+  public void deleteCandidateAvatar(String publicId, String resourceType) {
     deleteFile(publicId, resourceType);
   }
 

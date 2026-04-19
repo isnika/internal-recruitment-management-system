@@ -49,6 +49,7 @@ public final class CandidateProfileMapper {
         .email(profile.getUser() != null ? profile.getUser().getEmail() : null)
         .firstName(profile.getUser() != null ? profile.getUser().getFirstName() : null)
         .lastName(profile.getUser() != null ? profile.getUser().getLastName() : null)
+        .avatarUrl(profile.getUser() != null ? profile.getUser().getAvatarUrl() : null)
         .build();
   }
 
