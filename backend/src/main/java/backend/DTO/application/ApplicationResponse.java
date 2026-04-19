@@ -23,4 +23,5 @@ public class ApplicationResponse {
   private UserResponse user;
   private JobResponse job;
   private CvResponse cv;
+
 }
