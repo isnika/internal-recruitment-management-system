@@ -1,3 +1,4 @@
+/* Tabs */
 .tabsContainer {
   display: flex;
   gap: 32px;
@@ -12,9 +13,11 @@
   color: #64748b;
   cursor: pointer;
   border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
 }
 
 .activeTab {
   color: #4338ca;
   border-bottom-color: #4338ca;
 }
+

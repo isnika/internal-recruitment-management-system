@@ -3,13 +3,22 @@ import JobCard from "../JobCard/JobCard";
 import styles from "./RelatedJobs.module.css";
 
 const RelatedJobs = ({ currentJobId }) => {
-  const list = jobs.filter((j) => j.id !== currentJobId);
-
+  const relatedJobs = jobs
+    .filter((j) => j.id !== currentJobId)
+    .slice(0, 3); //  lấy 4 job
   return (
     <div>
-      {list.map((job) => (
-        <JobCard key={job.id} job={job} onBookmark={() => {}} />
-      ))}
+      <h2 className={styles.relatedTitle}>Related Work</h2>
+
+      <div className={styles.relatedList}>
+        {relatedJobs.map((job, index) => (
+          <JobCard
+            key={`${job.id}-${index}`}
+            job={job}
+            onBookmark={async () => {}}
+          />
+        ))}
+      </div>
     </div>
   );
 };

@@ -1,40 +1,88 @@
 import styles from "./JobSections.module.css";
 
-const JobSections = ({ job, refs }) => {
+const JobSections = ({ job, refs }: any) => {
+
   return (
     <>
-      <div ref={refs.descriptionRef} className={styles.sectionCard}>
-        <h3 className={styles.title}>Description</h3>
-        <div className={styles.content}>
-          {job.description.map((d, i) => (
-            <p key={i}>{d}</p>
-          ))}
-        </div>
+      {/* Job Description */}
+            <div ref={refs.Description} className={styles.greyCard}>
+              <h3 className={styles.sectionTitle}>Job Description:</h3>
+              <div className={styles.textContent}>
+                <ul>
+                  {job.description?.map((desc: string, i: number) => (
+                    <li key={i}>{desc}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            {/* Requirements */}
+            <div ref={refs.Requirements} className={styles.greyCard}>
+              <h3 className={styles.sectionTitle}>Candidate Requirements:</h3>
+              <div className={styles.textContent}>
+                <ul>
+                  {job.requirements?.map((req: string, i: number) => (
+                    <li key={i}>{req}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            {/* Benefits */}
+            <div ref={refs.Benefits} className={styles.greyCard}>
+              <h3 className={styles.sectionTitle}>Benefits:</h3>
+              <div className={styles.textContent}>
+                <ul>
+                  {job.benefits?.map((benefit: string, i: number) => (
+                    <li key={i}>{benefit}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            {/* Company */}
+            <div ref={refs.Company} className={styles.greyCard}>
+              <h3 className={styles.sectionTitle}>Company:</h3>
+              <div className={styles.textContent}>
+                <ul>
+                  <li>{job.company?.name}</li>
+                  <li>Address: {job.company?.address}</li>
+                  {job.company?.bio && <li>{job.company.bio}</li>}
+                </ul>
+              </div>
+            </div>
+
+      {/* Working Hours */}
+      <div className={styles.greyCard}>
+        <h3 className={styles.sectionTitle}>
+          Working Hours:{" "}
+          <span
+            style={{
+              fontWeight: "normal",
+              fontSize: "14px",
+              color: "#334155",
+            }}
+          >
+            {job.workingHours}
+          </span>
+        </h3>
       </div>
 
-      <div ref={refs.requirementsRef} className={styles.sectionCard}>
-        <h3 className={styles.title}>Requirements</h3>
-        <div className={styles.content}>
-          {job.requirements.map((r, i) => (
-            <p key={i}>{r}</p>
-          ))}
+      {/* Apply */}
+      <div className={styles.greyCard}>
+        <h3 className={styles.sectionTitle}>How to Apply:</h3>
+        <div className={styles.textContent}>
+          Applicants can submit their applications online by clicking "Apply Now" below.
         </div>
-      </div>
 
-      <div ref={refs.benefitsRef} className={styles.sectionCard}>
-        <h3 className={styles.title}>Benefits</h3>
-        <div className={styles.content}>
-          {job.benefits.map((b, i) => (
-            <p key={i}>{b}</p>
-          ))}
+        <div className={styles.applyActions}>
+          <button className={styles.applyBtn}>Apply Now</button>
+          <button className={styles.saveTaskBtn}>Save task</button>
         </div>
-      </div>
 
-      <div ref={refs.companyRef} className={styles.sectionCard}>
-        <h3 className={styles.title}>Company</h3>
-        <div className={styles.content}>
-          <p>{job.company?.name}</p>
-        </div>
+        <span className={styles.deadlineText}>
+          Application deadline: {job.deadline}
+        </span>
       </div>
     </>
   );
