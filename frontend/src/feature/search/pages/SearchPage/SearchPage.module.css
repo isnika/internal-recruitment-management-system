@@ -1,0 +1,53 @@
+/* SearchPage.module.css */
+.searchPage {
+  min-height: 100vh;
+  background: #f5f7fa;
+  padding: 24px;
+}
+
+/* Wrapper căn giữa */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* TITLE */
+.title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #222;
+}
+
+.title span {
+  color: #4f46e5;
+}
+
+/* LIST CARD */
+.list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px; /*  khoảng cách giữa 2 card */
+}
+
+/* Nếu muốn responsive */
+@media (max-width: 768px) {
+  .list {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+/* LOADING / EMPTY */
+.loading,
+.empty {
+  font-size: 16px;
+  color: #666;
+  padding: 20px 0;
+  text-align: center;
+}
+
+.cardItem {
+  width: 100%;
+}

@@ -1,6 +1,7 @@
 import styles from "./HeaderUser.module.css";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../feature/auth/context/AuthContext";
+import { useState } from "react";
 
 import UserDropdown from "../../components/UserDropdown/UserDropdown";
 import MailDropdown from "../../components/MailDropdown/MailDropdown";
@@ -17,6 +18,20 @@ const HeaderUser = () => {
   const handleNavigate = (path: string) => {
     navigate(path);
   };
+
+const [keyword, setKeyword] = useState("");
+const [location, setLocation] = useState("");
+
+
+/*ham search*/
+const handleSearch = () => {
+  if (!keyword.trim() && !location.trim()) return;
+
+  navigate(
+    `/search?q=${encodeURIComponent(keyword)}&location=${encodeURIComponent(location)}`
+  );
+};
+
 
   return (
     <header className={styles.header}>
@@ -97,9 +112,21 @@ const HeaderUser = () => {
       <div className={styles.container}>
         <div className={styles.searchSection}>
           <div className={styles.searchBox}>
-            <input placeholder="Job title, Skills, ..." />
-            <input placeholder="Address (TP HCM, Ha Noi ...)" />
-            <button>Search</button>
+            <input
+              placeholder="Job title, Skills, ..."
+              value={keyword}
+              onChange={(e) => setKeyword(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+            />
+
+            <input
+              placeholder="Address (TP HCM, Ha Noi ...)"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+            />
+
+            <button onClick={handleSearch}>Search</button>
           </div>
 
           <div className={styles.trending}>

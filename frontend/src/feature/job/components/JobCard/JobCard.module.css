@@ -8,6 +8,7 @@
   transition: all 0.2s ease;
   width: 100%;
   box-sizing: border-box;
+  margin: 0 auto;
 }
 
 .jobCard:hover {
