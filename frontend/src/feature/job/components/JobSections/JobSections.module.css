@@ -1,0 +1,34 @@
+.greyCard {
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 20px;
+  border: 1px solid #f1f5f9;
+}
+
+.sectionTitle {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.textContent {
+  font-size: 14px;
+  color: #334155;
+  line-height: 1.6;
+}
+
+.textContent ul {
+  padding-left: 20px;
+}
+
+.applyActions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.deadlineText {
+  color: #dc2626;
+  font-size: 13px;
+}

@@ -173,7 +173,6 @@ const Home = () => {
               and create value that makes a difference."
             </p>
 
-            {/* ✅ giữ nguyên UI, chỉ thêm onClick */}
             <button
               className={styles.primaryButton}
               onClick={handleApplyNow}
@@ -262,7 +261,7 @@ const Home = () => {
           </div>
 
           {/* JOB LIST */}
-          {/* ✅ FIX: gắn ref ở đây */}
+          {/* FIX: gắn ref ở đây */}
           <section ref={jobListRef} className={styles.jobList}>
             {isLoading ? (
               <div className={styles.loadingInfo}>Loading jobs...</div>

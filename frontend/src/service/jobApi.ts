@@ -61,7 +61,7 @@ export const fetchJobsApi = async (
 
     if (filters.departments.length > 0) {
       result = result.filter(job =>
-        filters.departments.includes(job.category) // ✅
+        filters.departments.includes(job.category)
       );
     }
 

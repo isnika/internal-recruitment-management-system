@@ -97,9 +97,12 @@ const JobCard: React.FC<JobCardProps> = ({ job, onBookmark }) => {
         </div>
 
         <div className={styles.actionButtons}>
-          <button 
+          <button
             className={styles.viewDetailsBtn}
-            onClick={() => navigate(`/jobs/${job.id}`)}
+            onClick={() => {
+              navigate(`/jobs/${job.id}`);
+              window.scrollTo(0, 0);
+            }}
           >
             View Details
           </button>

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useRef } from "react";
+
 import styles from "./JobDetail.module.css";
 import { FiMapPin, FiBriefcase, FiUsers, FiClock } from "react-icons/fi";
 import { BsCash } from "react-icons/bs";
@@ -21,6 +23,17 @@ const JobDetail = () => {
 
   // Mock related jobs for the bottom section
   const [relatedJobs, setRelatedJobs] = useState<Job[]>([]);
+  const descriptionRef = useRef<HTMLDivElement>(null);
+  const requirementsRef = useRef<HTMLDivElement>(null);
+  const benefitsRef = useRef<HTMLDivElement>(null);
+  const companyRef = useRef<HTMLDivElement>(null);
+
+  const tabRefs: Record<string, React.RefObject<HTMLDivElement | null>> = {
+    Description: descriptionRef,
+    Requirements: requirementsRef,
+    Benefits: benefitsRef,
+    Company: companyRef,
+  };
 
   useEffect(() => {
     const getJob = async () => {
@@ -29,7 +42,7 @@ const JobDetail = () => {
       try {
         const data = await fetchJobByIdApi(id);
         setJob(data);
-        
+
         // Mock 3 related jobs
         setRelatedJobs([data, data, data]);
       } catch (err) {
@@ -70,7 +83,7 @@ const JobDetail = () => {
       <div className={styles.contentLayout}>
         {/* Left Column (70%) */}
         <div className={styles.leftCol}>
-          
+
           {/* Header Card now inside leftCol */}
           <div className={styles.headerCard}>
             <div className={styles.logoWrapper}>
@@ -124,10 +137,17 @@ const JobDetail = () => {
           {/* Tabs */}
           <div className={styles.tabsContainer}>
             {["Description", "Requirements", "Benefits", "Company"].map((tab) => (
-              <div 
+              <div
                 key={tab}
                 className={`${styles.tab} ${activeTab === tab ? styles.activeTab : ""}`}
-                onClick={() => setActiveTab(tab)}
+                onClick={() => {
+                  setActiveTab(tab);
+
+                  tabRefs[tab]?.current?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start",
+                  });
+                }}
               >
                 {tab}
               </div>
@@ -135,7 +155,7 @@ const JobDetail = () => {
           </div>
 
           {/* Cards below tabs */}
-          <div className={styles.greyCard}>
+          <div ref={descriptionRef} className={styles.greyCard}>
             <h3 className={styles.sectionTitle}>Job Description:</h3>
             <div className={styles.textContent}>
               <ul>
@@ -146,7 +166,7 @@ const JobDetail = () => {
             </div>
           </div>
 
-          <div className={styles.greyCard}>
+          <div ref={requirementsRef} className={styles.greyCard}>
             <h3 className={styles.sectionTitle}>Candidate Requirements:</h3>
             <div className={styles.textContent}>
               <ul>
@@ -157,7 +177,7 @@ const JobDetail = () => {
             </div>
           </div>
 
-          <div className={styles.greyCard}>
+          <div ref={benefitsRef} className={styles.greyCard}>
             <h3 className={styles.sectionTitle}>Benefits:</h3>
             <div className={styles.textContent}>
               <ul>
@@ -168,7 +188,7 @@ const JobDetail = () => {
             </div>
           </div>
 
-          <div className={styles.greyCard}>
+          <div ref={companyRef} className={styles.greyCard}>
             <h3 className={styles.sectionTitle}>Company:</h3>
             <div className={styles.textContent}>
               <ul>

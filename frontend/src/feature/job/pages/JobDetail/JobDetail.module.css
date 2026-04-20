@@ -9,6 +9,7 @@
   min-height: 100vh;
 }
 
+
 /* Header Card (looks like a large JobCard) */
 .headerCard {
   background: #FFFFFF;
@@ -23,14 +24,30 @@
   flex-shrink: 0;
 }
 
+/* ===== LOGO ===== */
+.jobLogoCol {
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-start;
+}
+
 .logoImage {
-  width: 100px;
-  height: 100px;
+  width: 80px;
+  height: 80px;
+  min-width: 80px;
   border-radius: 50%;
+  object-fit: contain;
   background-color: #f1f5f9;
   border: 1px solid #e2e8f0;
-  object-fit: cover;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 10px;
+  color: #94a3b8;
 }
+
 
 .headerInfo {
   flex: 1;
@@ -350,4 +367,29 @@
     align-items: flex-start;
     gap: 16px;
   }
+}
+
+.contentLayout {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+}
+
+/* LEFT 70% */
+.leftCol {
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+  background: #FFFFFF;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+/* RIGHT 30% */
+.rightCol {
+  width: 30%;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
