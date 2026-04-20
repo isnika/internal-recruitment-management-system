@@ -6,17 +6,15 @@ import { FiMapPin, FiBookmark } from "react-icons/fi";
 import { BsCash } from "react-icons/bs";
 import { FaBookmark } from "react-icons/fa";
 
-import type { Job } from "../../../../types/job";
+import type { Job } from "../../../../service/jobApi";
 
 // format salary từ object → string hiển thị
-const formatSalary = (salary?: Job["salary"]) => {
-  if (!salary) return "Negotiable";
-
+const formatSalary = (salary: Job["salary"]) => {
   const min = salary.min / 1000000;
   const max = salary.max / 1000000;
-
   return `${min}M - ${max}M ${salary.currency}`;
 };
+
 interface JobCardProps {
   job: Job;
   onBookmark: (id: string) => void;
@@ -112,7 +110,7 @@ const JobCard: React.FC<JobCardProps> = ({ job, onBookmark }) => {
           <button
             className={styles.applyBtn}
             onClick={() => {
-              navigate(`/jobs/${job.id}/apply`);
+              navigate(`/jobs/${job.id}`, { state: { autoApply: true } });
               window.scrollTo(0, 0);
             }}
           >

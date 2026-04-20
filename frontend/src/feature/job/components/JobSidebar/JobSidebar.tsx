@@ -4,7 +4,7 @@ import { FiUsers, FiClock, FiBriefcase } from "react-icons/fi";
 import { AiOutlineUser } from "react-icons/ai";
 import { PiGraduationCap } from "react-icons/pi";
 
-const JobSidebar = ({ job }: any) => {
+const JobSidebar = ({ job, isApplying = false }: any) => {
   return (
     <>
       {/* General Info */}
@@ -49,7 +49,9 @@ const JobSidebar = ({ job }: any) => {
         </div>
       </div>
 
-      {/* See more */}
+      {!isApplying && (
+        <>
+          {/* See more */}
       <h3 className={styles.seeMoreTitle}>See more</h3>
 
       {/* Skill Tags */}
@@ -118,6 +120,8 @@ const JobSidebar = ({ job }: any) => {
           ))}
         </div>
       </div>
+      </>
+      )}
     </>
   );
 };

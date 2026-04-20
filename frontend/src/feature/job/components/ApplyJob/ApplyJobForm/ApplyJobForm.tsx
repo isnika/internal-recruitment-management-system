@@ -2,13 +2,15 @@ import { useState } from "react";
 import PersonalInfoSection from "../PersonalInfoSection/PersonalInfoSection";
 import DocumentInfoSection from "../DocumentInfoSection/DocumentInfoSection";
 import ProfessionalInfoSection from "../ProfessionalInfoSection/ProfessionalInfoSection";
+import { FiX } from "react-icons/fi";
 import styles from "./ApplyJobForm.module.css";
 
 interface ApplyJobFormProps {
   onSubmitSuccess: () => void;
+  onCancel?: () => void;
 }
 
-const ApplyJobForm = ({ onSubmitSuccess }: ApplyJobFormProps) => {
+const ApplyJobForm = ({ onSubmitSuccess, onCancel }: ApplyJobFormProps) => {
   const [agreed, setAgreed] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -18,7 +20,14 @@ const ApplyJobForm = ({ onSubmitSuccess }: ApplyJobFormProps) => {
 
   return (
     <form className={styles.formCard} onSubmit={handleSubmit}>
-      <h2 className={styles.formTitle}>RECRUITMENT INFORMATION</h2>
+      <div className={styles.formHeader}>
+        <h2 className={styles.formTitle}>RECRUITMENT INFORMATION</h2>
+        {onCancel && (
+          <button type="button" className={styles.closeBtn} onClick={onCancel}>
+            <FiX />
+          </button>
+        )}
+      </div>
 
       <div className={styles.formColumns}>
         {/* Left Column: Personal */}

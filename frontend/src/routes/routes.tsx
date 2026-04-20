@@ -8,7 +8,6 @@ import Login from "../feature/auth/pages/Login/Login";
 import Register from "../feature/auth/pages/Register/Register";
 
 import JobDetail from "../feature/job/pages/JobDetail/JobDetail";
-import ApplyJob from "../feature/job/pages/ApplyJob/ApplyJob";
 
 import Profile from "../feature/userProfile/pages/userProfile/Profile";
 import PersonalProfile from "../feature/userProfile/components/PersonalProfile/PersonalProfile";
@@ -16,8 +15,6 @@ import ManageCV from "../feature/userProfile/components/CVManagement/CVManagemen
 import SavedJobs from "../feature/userProfile/components/SavedJob/SavedJob";
 import AppliedJobs from "../feature/userProfile/components/AppliedJob/AppliedJob";
 import Settings from "../feature/userProfile/components/Settings/Settings";
-
-import SearchPage from "../feature/Search/pages/SearchPage/SearchPage";
 
 export default function AppRoutes() {
   return (
@@ -34,8 +31,6 @@ export default function AppRoutes() {
       <Route path="/" element={<MainLayoutUser />}>
         <Route index element={<Home />} />
         <Route path="jobs/:id" element={<JobDetail />} />
-        <Route path="jobs/:id/apply" element={<ApplyJob />} />
-        <Route path="search" element = {<SearchPage/>} />
         <Route>
           <Route path="/profile" element={<Profile />}>
             <Route index element={<PersonalProfile />} />

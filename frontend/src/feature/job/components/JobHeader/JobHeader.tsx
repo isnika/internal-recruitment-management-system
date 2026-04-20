@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom";
+
 import styles from "./JobHeader.module.css";
 import { BsCash } from "react-icons/bs";
 import { FiMapPin } from "react-icons/fi";
@@ -9,17 +9,12 @@ import type { Job } from "../../../../types/job";
 const JobHeader = ({
   job,
   onBookmark,
+  onApply,
 }: {
   job: Job;
   onBookmark: () => void;
+  onApply: () => void;
 }) => {
-  const navigate = useNavigate();
-  const { id } = useParams<{ id: string }>();
-
-  const handleApply = () => {
-    navigate(`/jobs/${id}/apply`);
-  };
-
   return (
     <div className={styles.headerCard}>
       <div className={styles.logoWrapper}>
@@ -77,7 +72,7 @@ const JobHeader = ({
           </button>
         </div>
 
-        <button className={styles.applyBtn} onClick={handleApply}>
+        <button className={styles.applyBtn} onClick={onApply}>
           Apply Now
         </button>
       </div>

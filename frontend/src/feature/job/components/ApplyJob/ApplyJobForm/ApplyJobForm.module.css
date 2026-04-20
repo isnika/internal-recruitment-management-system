@@ -8,12 +8,37 @@
   gap: 28px;
 }
 
+.formHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .formTitle {
   font-size: 18px;
   font-weight: 800;
   color: #0f172a;
   margin: 0;
   letter-spacing: 0.5px;
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #64748b;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+
+.closeBtn:hover {
+  background: #f1f5f9;
+  color: #0f172a;
 }
 
 .formColumns {

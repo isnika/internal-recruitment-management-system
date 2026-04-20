@@ -13,17 +13,49 @@
 .contentLayout {
   display: flex;
   gap: 32px;
-  align-items: flex-start;
+  align-items: stretch;
 }
 
 .leftCol {
   flex: 7;
   display: flex;
   flex-direction: column;
+  gap: 24px;
+}
+
+.headerCard {
   background: #FFFFFF;
   padding: 30px;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.seeMore {
+  text-align: center;
+  font-size: 14px;
+  color: #475569;
+  margin-top: 16px;
+  cursor: pointer;
+}
+
+.collapseIcon {
+  width: 32px;
+  height: 32px;
+  background: #0f172a;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  cursor: pointer;
+  position: absolute;
+  bottom: -16px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .rightCol {
