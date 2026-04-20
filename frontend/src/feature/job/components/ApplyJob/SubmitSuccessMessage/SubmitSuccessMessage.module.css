@@ -1,0 +1,59 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 20px 24px;
+}
+
+.card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 20px 48px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  max-width: 720px;
+  width: 100%;
+}
+
+.icon {
+  font-size: 40px;
+  color: #1EA7FF;
+  flex-shrink: 0;
+}
+
+.message {
+  font-size: 14px;
+  color: #334155;
+  line-height: 1.7;
+  margin: 0;
+  font-weight: 500;
+  max-width: 540px;
+}
+
+.returnBtn {
+  background: transparent;
+  border: none;
+  color: #0f172a;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 8px 16px;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  transition: color 0.2s;
+}
+
+.returnBtn:hover {
+  color: #4338ca;
+}
+
+@media (max-width: 640px) {
+  .card {
+    padding: 32px 20px 24px;
+  }
+}

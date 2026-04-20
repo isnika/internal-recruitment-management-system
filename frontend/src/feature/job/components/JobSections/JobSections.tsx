@@ -1,6 +1,13 @@
+import { useNavigate, useParams } from "react-router-dom";
 import styles from "./JobSections.module.css";
 
 const JobSections = ({ job, refs }: any) => {
+  const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
+
+  const handleApply = () => {
+    navigate(`/jobs/${id}/apply`);
+  };
 
   return (
     <>
@@ -76,7 +83,7 @@ const JobSections = ({ job, refs }: any) => {
         </div>
 
         <div className={styles.applyActions}>
-          <button className={styles.applyBtn}>Apply Now</button>
+          <button className={styles.applyBtn} onClick={handleApply}>Apply Now</button>
           <button className={styles.saveTaskBtn}>Save task</button>
         </div>
 
