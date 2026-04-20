@@ -11,7 +11,6 @@
 /* ── BODY LAYOUT ── */
 .bodyLayout {
   display: flex;
-  align-items: flex-start;
   gap: 20px;
   width: 100%;
 }
@@ -284,3 +283,4 @@
     padding-top: 16px;
   }
 }
+
