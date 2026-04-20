@@ -16,6 +16,16 @@ export interface Job {
   jobType: string;
   experienceLevel: string;
   department: string;
+  description?: string[];
+  requirements?: string[];
+  benefits?: string[];
+  company?: {
+    name: string;
+    address: string;
+    bio?: string;
+  };
+  workingHours?: string;
+  deadline?: string;
 }
 
 export interface HomeMetadata {

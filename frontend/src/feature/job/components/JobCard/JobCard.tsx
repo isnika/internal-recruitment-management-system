@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import styles from "./JobCard.module.css";
 
 import { FiMapPin, FiBookmark } from "react-icons/fi";
@@ -20,6 +21,8 @@ interface JobCardProps {
 }
 
 const JobCard: React.FC<JobCardProps> = ({ job, onBookmark }) => {
+  const navigate = useNavigate();
+
   return (
     <div className={styles.jobCard}>
       {/* LOGO */}
@@ -94,7 +97,10 @@ const JobCard: React.FC<JobCardProps> = ({ job, onBookmark }) => {
         </div>
 
         <div className={styles.actionButtons}>
-          <button className={styles.viewDetailsBtn}>
+          <button 
+            className={styles.viewDetailsBtn}
+            onClick={() => navigate(`/jobs/${job.id}`)}
+          >
             View Details
           </button>
 

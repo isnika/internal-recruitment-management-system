@@ -1,0 +1,353 @@
+.wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  background-color: #F5F7FA;
+  min-height: 100vh;
+}
+
+/* Header Card (looks like a large JobCard) */
+.headerCard {
+  background: #FFFFFF;
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  gap: 24px;
+  position: relative;
+}
+
+.logoWrapper {
+  flex-shrink: 0;
+}
+
+.logoImage {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  object-fit: cover;
+}
+
+.headerInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.jobTitle {
+  font-size: 22px;
+  font-weight: 700;
+  color: #4338ca;
+  margin: 0;
+}
+
+.jobCategory {
+  font-size: 14px;
+  color: #475569;
+  margin: 0;
+}
+
+.skillsRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.skillsLabel {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.skillTag {
+  background: #EEF2FF;
+  color: #4338ca;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.metaRow {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.metaItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.metaIconYellow {
+  color: #f59e0b;
+  font-size: 18px;
+}
+
+.metaIconRed {
+  color: #ef4444;
+  font-size: 18px;
+}
+
+.headerRight {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  min-width: 140px;
+}
+
+.topRight {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.postedAt {
+  font-size: 13px;
+  color: #5280bc;
+}
+
+.bookmarkBtn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bookmarkIcon {
+  font-size: 24px;
+  color: #64748b;
+}
+
+.bookmarkIconActive {
+  color: #4338ca;
+}
+
+.applyBtn {
+  background: #9f191b;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.applyBtn:hover {
+  background: #7f1d1d;
+}
+
+.saveTaskBtn {
+  background: white;
+  color: #5280bc;
+  border: 1px solid #5280bc;
+  border-radius: 12px;
+  padding: 10px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Two Columns Layout */
+.contentLayout {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+}
+
+.leftCol {
+  flex: 7;
+  display: flex;
+  flex-direction: column;
+  background: #FFFFFF;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.rightCol {
+  flex: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Tabs */
+.tabsContainer {
+  display: flex;
+  gap: 32px;
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 24px;
+}
+
+.tab {
+  padding: 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+
+.activeTab {
+  color: #4338ca;
+  border-bottom-color: #4338ca;
+}
+
+/* Grey Content Cards */
+.greyCard {
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 20px;
+  border: 1px solid #f1f5f9;
+}
+
+.sectionTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 16px;
+}
+
+.textContent {
+  font-size: 14px;
+  color: #334155;
+  line-height: 1.6;
+}
+
+.textContent ul {
+  padding-left: 20px;
+  margin: 0;
+}
+
+.textContent li {
+  margin-bottom: 8px;
+}
+
+.applyActions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.deadlineText {
+  color: #dc2626;
+  font-size: 13px;
+  margin-top: 12px;
+  display: block;
+}
+
+/* Right Sidebar Cards */
+.generalInfoCard {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.generalInfoTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 20px;
+}
+
+.infoList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.infoItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.infoIcon {
+  color: #4338ca;
+  font-size: 18px;
+  margin-top: 2px;
+}
+
+.infoText {
+  font-size: 14px;
+  color: #1e293b;
+}
+
+.seeMoreTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 16px;
+}
+
+.blueCard {
+  background: #e0f2fe;
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.blueCardTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 12px;
+}
+
+.blueCardList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.blueCardItem {
+  font-size: 14px;
+  color: #334155;
+}
+
+/* Related Work */
+.relatedTitle {
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 40px 0 20px;
+}
+
+.relatedList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (max-width: 992px) {
+  .contentLayout {
+    flex-direction: column;
+  }
+  .headerCard {
+    flex-direction: column;
+  }
+  .headerRight {
+    align-items: flex-start;
+    gap: 16px;
+  }
+}

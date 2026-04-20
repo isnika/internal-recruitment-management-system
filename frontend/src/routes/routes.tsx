@@ -7,6 +7,8 @@ import Home from "../feature/home/pages/Home/Home";
 import Login from "../feature/auth/pages/Login/Login";
 import Register from "../feature/auth/pages/Register/Register";
 
+import JobDetail from "../feature/job/pages/JobDetail/JobDetail";
+
 import Profile from "../feature/userProfile/pages/userProfile/Profile";
 import PersonalProfile from "../feature/userProfile/components/PersonalProfile/PersonalProfile";
 import ManageCV from "../feature/userProfile/components/CVManagement/CVManagement";
@@ -28,6 +30,7 @@ export default function AppRoutes() {
       {/* layout User home normal */}
       <Route path="/" element={<MainLayoutUser />}>
         <Route index element={<Home />} />
+        <Route path="jobs/:id" element={<JobDetail />} />
         <Route>
             <Route path="/profile" element={<Profile />}>
             <Route index element={<PersonalProfile />} />

@@ -2,7 +2,7 @@ import { request } from "./axiosClient";
 import { IS_MOCK } from "../config/index";
 import { jobs } from "../dataMock/Job";
 import { metadataMock } from "../dataMock/metadata";
-import type { Job } from "../types/job";
+import type { Job, HomeMetadata, JobFilters, FetchJobsResponse } from "../types/job";
 
 // ================= METADATA =================
 export const fetchMetadataApi = async (): Promise<HomeMetadata> => {
@@ -67,7 +67,7 @@ export const fetchJobsApi = async (
 
     if (filters.salaryRanges.length > 0) {
       result = result.filter(job =>
-        filters.salaryRanges.some(range =>
+        filters.salaryRanges.some((range: string) =>
           checkSalaryInRange(range, job.salary)
         )
       );
@@ -109,6 +109,17 @@ export const toggleBookmarkApi = async (jobId: string) => {
   }
 
   return request.post(`/jobs/${jobId}/bookmark`);
+};
+
+// GET JOB BY ID
+export const fetchJobByIdApi = async (jobId: string): Promise<Job> => {
+  if (IS_MOCK) {
+    const job = jobs.find(j => j.id === jobId);
+    if (!job) throw new Error("Job not found");
+    return Promise.resolve(job);
+  }
+
+  return request.get<Job>(`/jobs/${jobId}`);
 };
 
 //  FORMAT SALARY
