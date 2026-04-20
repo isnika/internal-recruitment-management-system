@@ -1,41 +1,70 @@
-.card {
+/* Right Sidebar Cards */
+.generalInfoCard {
   background: white;
   border-radius: 16px;
   padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  height: 100%;
-  display: flex;
-  flex-direction: column;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
-.title {
+.generalInfoTitle {
   font-size: 16px;
   font-weight: 700;
   color: #0f172a;
   margin: 0 0 20px;
 }
 
-.list {
+.infoList {
   display: flex;
   flex-direction: column;
-  flex: 1;
-  justify-content: space-between;
+  gap: 16px;
 }
 
-.item {
+.infoItem {
   display: flex;
   align-items: flex-start;
   gap: 12px;
 }
 
-.icon {
+.infoIcon {
   color: #4338ca;
   font-size: 18px;
   margin-top: 2px;
-  flex-shrink: 0;
 }
 
-.text {
+.infoText {
   font-size: 14px;
   color: #1e293b;
 }
+
+.seeMoreTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 16px;
+}
+
+.blueCard {
+  background: #e0f2fe;
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.blueCardTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 12px;
+}
+
+.blueCardList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.blueCardItem {
+  font-size: 14px;
+  color: #334155;
+}
+
+

@@ -7,46 +7,49 @@ import type { Job } from "../../../../../types/job";
 
 const GeneralInfoCard = ({ job }: { job: Job }) => {
   return (
-    <div className={styles.card}>
-      <h3 className={styles.title}>General Information</h3>
+    <>
+      {/* General Info */}
+      <div className={styles.generalInfoCard}>
+        <h3 className={styles.generalInfoTitle}>General Information</h3>
 
-      <div className={styles.list}>
-        <div className={styles.item}>
-          <AiOutlineUser className={styles.icon} />
-          <span className={styles.text}>
-            Job Title: {job?.title || "Employee"}
-          </span>
-        </div>
+        <div className={styles.infoList}>
+          <div className={styles.infoItem}>
+            <AiOutlineUser className={styles.infoIcon} />
+            <span className={styles.infoText}>
+              Job Title: {job?.title || "Employee"}
+            </span>
+          </div>
 
-        <div className={styles.item}>
-          <PiGraduationCap className={styles.icon} />
-          <span className={styles.text}>
-            Education: University degree or higher
-          </span>
-        </div>
+          <div className={styles.infoItem}>
+            <PiGraduationCap className={styles.infoIcon} />
+            <span className={styles.infoText}>
+              Education: {job?.education || "University degree or higher"}
+            </span>
+          </div>
 
-        <div className={styles.item}>
-          <FiUsers className={styles.icon} />
-          <span className={styles.text}>
-            Number of Vacancies: 1 person
-          </span>
-        </div>
+          <div className={styles.infoItem}>
+            <FiUsers className={styles.infoIcon} />
+            <span className={styles.infoText}>
+              Number of Vacancies: {job?.vacancies || 1}
+            </span>
+          </div>
 
-        <div className={styles.item}>
-          <FiBriefcase className={styles.icon} />
-          <span className={styles.text}>
-            Employment Type: {job?.jobType || "Full-time"}
-          </span>
-        </div>
+          <div className={styles.infoItem}>
+            <FiBriefcase className={styles.infoIcon} />
+            <span className={styles.infoText}>
+              Employment Type: {job?.jobType || "Full-time"}
+            </span>
+          </div>
 
-        <div className={styles.item}>
-          <FiClock className={styles.icon} />
-          <span className={styles.text}>
-            Application Deadline: {job?.deadline || "N/A"}
-          </span>
+          <div className={styles.infoItem}>
+            <FiClock className={styles.infoIcon} />
+            <span className={styles.infoText}>
+              Application Deadline: {job?.deadline || "N/A"}
+            </span>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
