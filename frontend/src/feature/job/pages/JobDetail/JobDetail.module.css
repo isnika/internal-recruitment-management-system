@@ -41,6 +41,10 @@
   cursor: pointer;
 }
 
+.sectionsContainer {
+  margin-top: 24px;
+}
+
 .collapseIcon {
   width: 32px;
   height: 32px;

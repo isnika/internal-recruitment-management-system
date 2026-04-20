@@ -87,12 +87,14 @@ const JobDetail = () => {
                 </div>
               </>
             )}
-          </div>
 
-          {/* If NOT applying, show the job details right here */}
-          {!isApplying && (
-            <JobSections job={job} refs={tabRefs} onApply={handleApply} />
-          )}
+            {/* If NOT applying, show the job details right here so it shares the white background */}
+            {!isApplying && (
+              <div className={styles.sectionsContainer}>
+                <JobSections job={job} refs={tabRefs} onApply={handleApply} />
+              </div>
+            )}
+          </div>
         </div>
 
         <div className={styles.rightCol}>
