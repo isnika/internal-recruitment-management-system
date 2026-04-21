@@ -78,7 +78,7 @@ const JobDetail = () => {
             <JobHeader job={job} onBookmark={handleBookmark} onApply={handleApply} />
             <JobTabs activeTab={activeTab} setActiveTab={setActiveTab} tabRefs={tabRefs} />
 
-            {/* Show See More only when applying, to allow cancelling/expanding */}
+            {/* Show See More only when applying, to allow cancelling/expanding,  */}
             {isApplying && (
               <>
                 <div className={styles.seeMore} onClick={handleCancelApply}>See More</div>

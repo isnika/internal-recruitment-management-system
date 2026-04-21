@@ -16,6 +16,8 @@ import SavedJobs from "../feature/userProfile/components/SavedJob/SavedJob";
 import AppliedJobs from "../feature/userProfile/components/AppliedJob/AppliedJob";
 import Settings from "../feature/userProfile/components/Settings/Settings";
 
+import SearchPage from "../feature/Search/pages/SearchPage/SearchPage";
+
 export default function AppRoutes() {
   return (
     <Routes>
@@ -31,6 +33,8 @@ export default function AppRoutes() {
       <Route path="/" element={<MainLayoutUser />}>
         <Route index element={<Home />} />
         <Route path="jobs/:id" element={<JobDetail />} />
+        <Route path="search" element = {<SearchPage/>} />
+
         <Route>
           <Route path="/profile" element={<Profile />}>
             <Route index element={<PersonalProfile />} />
