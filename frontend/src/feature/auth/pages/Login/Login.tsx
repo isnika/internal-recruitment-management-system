@@ -16,19 +16,39 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [account, setAccount] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState<"candidate" | "company">("candidate");
 
-  const handleLogin = async () => {
-    try {
-      const res = await loginApi(account, password);
 
-      // IMPORTANT: update context
-      login(res.user, res.accessToken);
+const handleLogin = async () => {
+  try {
+    const res = await loginApi(account, password);
 
-      navigate("/");
-    } catch (err: any) {
-      alert(err.message || "Login failed");
-    }
-  };
+    const userRole = res.user.role; //  đổi tên
+
+    // check role với tab
+     const normalizedRole =
+       userRole === "admin" ? "company" : userRole;
+
+     // check role
+     if (normalizedRole !== role) {
+       alert("Sai loại tài khoản (Candidate / Company)");
+       setPassword(""); // optional
+       return;
+     }
+
+     login(res.user, res.accessToken);
+
+     // điều hướng theo normalizedRole
+     if (normalizedRole === "candidate") {
+       navigate("/");
+     } else if (normalizedRole === "company") {
+       navigate("/layoutManagement");
+     }
+
+  } catch (err: any) {
+    alert(err.message || "Login failed");
+  }
+};
 
   return (
     <div className={styles.wrapper}>
@@ -45,9 +65,21 @@ const Login = () => {
 
         {/* role */}
         <div className={styles.tabs}>
-          <button className={`${styles.tab} ${styles.active}`}>Candidate</button>
-          <button className={styles.tab}>Company</button>
+          <button
+            className={`${styles.tab} ${role === "candidate" ? styles.active : ""}`}
+            onClick={() => setRole("candidate")}
+          >
+            Candidate
+          </button>
+
+          <button
+            className={`${styles.tab} ${role === "company" ? styles.active : ""}`}
+            onClick={() => setRole("company")}
+          >
+            Company
+          </button>
         </div>
+
 
         {/* account */}
         <label>Email or phone number</label>
