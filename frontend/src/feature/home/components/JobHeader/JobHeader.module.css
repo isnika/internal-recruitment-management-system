@@ -1,0 +1,89 @@
+/* ── HEADER ── */
+.jobsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #c3ddf6;
+  padding: 8px 16px;
+  border-radius: 13px;
+  margin: 20px 0;
+}
+
+.showingText {
+  font-size: 16px;
+  font-weight: 700;
+  color: black;
+}
+
+/* FILTER BUTTON */
+.filterToggleBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #c3ddf6;
+  border: none;
+  border-radius: 8px;
+  width: 34px;
+  height: 34px;
+  color: black;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.filterToggleBtn:hover {
+  background: #3b82f6;
+  color: #c3ddf6;
+  transform: translateY(-1px);
+}
+
+.filterToggleBtnActive {
+  background: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.filterIconWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.filterBadge {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background-color: #ef4444;
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #dbeafe;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .bodyLayout {
+    flex-direction: column;
+  }
+
+  .filterSidebar {
+    width: 100%;
+  }
+
+  .bodyLayoutWithSidebar .jobsColumn {
+    border-left: none;
+    padding-left: 0;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 16px;
+  }
+}
+

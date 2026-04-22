@@ -12,8 +12,14 @@ type Props = {
 const UserDropdown = ({ user }: Props) => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
-
   const boxRef = useRef<HTMLDivElement>(null);
+
+  const isCandidate = user.role === "candidate";
+
+  // base route theo role
+  const baseRoute = isCandidate
+    ? "/profile"
+    : "managementProfile";
 
   const handleLogout = () => {
     logout();
@@ -23,19 +29,13 @@ const UserDropdown = ({ user }: Props) => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        boxRef.current &&
-        !boxRef.current.contains(event.target as Node)
-      ) {
+      if (boxRef.current && !boxRef.current.contains(event.target as Node)) {
         setOpen(false);
       }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   return (
@@ -51,18 +51,28 @@ const UserDropdown = ({ user }: Props) => {
       {open && (
         <div className={styles.dropdown}>
 
-          <div onClick={() => navigate("/profile")}>
+          {/* PROFILE */}
+          <div
+            onClick={() => navigate(baseRoute)}
+          >
             Personal information
           </div>
 
-          <div onClick={() => navigate("profile/settings")}>
+          {/* SETTINGS */}
+          <div
+            onClick={() => navigate(`${baseRoute}/settings`)}
+          >
             Settings
           </div>
 
-          <div onClick={() => navigate("/help")}>
+          {/* HELP */}
+          <div
+            onClick={() => navigate(isCandidate ? "/help" : "managementProfile/help")}
+          >
             Help
           </div>
 
+          {/* LOGOUT */}
           <div
             className={styles.logout}
             onClick={handleLogout}

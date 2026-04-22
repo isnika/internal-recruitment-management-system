@@ -1,0 +1,27 @@
+/* ── JOB LIST ── */
+.jobList {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .bodyLayout {
+    flex-direction: column;
+  }
+
+  .filterSidebar {
+    width: 100%;
+  }
+
+  .bodyLayoutWithSidebar .jobsColumn {
+    border-left: none;
+    padding-left: 0;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 16px;
+  }
+}
+

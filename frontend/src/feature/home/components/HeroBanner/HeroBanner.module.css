@@ -1,0 +1,56 @@
+/* ── HERO ── */
+.heroSection {
+  background-color: #061025;
+  border-radius: 16px;
+  padding: 20px 24px;
+  text-align: center;
+  color: white;
+}
+
+.heroContent {
+  max-width: 930px;
+  margin: 0 auto;
+}
+
+.heroTitle {
+  font-size: 25px;
+  font-weight: 400;
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
+.heroSubtitle {
+  font-size: 20px;
+  color: #94a3b8;
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.primaryButton {
+  background-color: #5880c8;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 10px 24px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .bodyLayout {
+    flex-direction: column;
+  }
+
+  .filterSidebar {
+    width: 100%;
+  }
+
+  .bodyLayoutWithSidebar .jobsColumn {
+    border-left: none;
+    padding-left: 0;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 16px;
+  }
+}
+

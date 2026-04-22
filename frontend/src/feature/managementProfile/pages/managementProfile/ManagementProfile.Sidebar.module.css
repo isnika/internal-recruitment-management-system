@@ -1,0 +1,84 @@
+/* =layout chính */
+.accountPage {
+  display: flex;
+  gap: 24px;
+  padding: 24px;
+
+  width: 100%;
+  box-sizing: border-box;
+
+  align-items: flex-start;
+}
+
+/* sidebar */
+.sidebar {
+  width: 220px;
+  flex-shrink: 0;
+
+  position: sticky;
+  top: 20px;
+
+  align-self: flex-start;
+  height: fit-content;
+
+  padding: 16px;
+  border-radius: 12px;
+
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+/* title */
+.title {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+/* list */
+.sidebar ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sidebar li {
+  margin-bottom: 6px;
+}
+
+/* link */
+.sidebar a {
+  display: block;
+  padding: 10px 12px;
+  border-radius: 8px;
+
+  font-size: 14px;
+  color: #333;
+  text-decoration: none;
+
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+/* hover */
+.sidebar a:hover {
+  background: #f2f4f7;
+}
+
+/* active */
+.sidebar a.active {
+  background: #1677ff;
+  color: #fff;
+  font-weight: 500;
+}
+
+/* khung content */
+.content {
+  flex: 1;
+  min-width: 0;
+
+  padding: 24px;
+  border-radius: 12px;
+
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}

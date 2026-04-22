@@ -1,4 +1,5 @@
 import { Routes, Route } from "react-router-dom";
+import ProtectedRoute from "./ProtectedRoute";
 
 import MainLayoutUser from "../layout/layoutUser/MainLayoutUser/MainLayoutUser";
 import AuthLayout from "../layout/layoutAuth/layoutAuth";
@@ -19,13 +20,15 @@ import Settings from "../feature/userProfile/components/Settings/Settings";
 
 import SearchPage from "../feature/Search/pages/SearchPage/SearchPage";
 
+/*admin */
+import HomeEmployer from "../feature/employer/home/pages/HomeEmployer/homeEmployer";
+import ManagementProfile from "../feature/managementProfile/pages/managementProfile/ManagementProfile";
+import PersonalManagement from "../feature/employer/home/components/PersonalManagement/PersonalManagement";
 
-import { Navigate } from "react-router-dom";
 import { useAuth } from "../feature/auth/context/AuthContext";
 
 export default function AppRoutes() {
 
-const { user } = useAuth();
 
   return (
     <Routes>
@@ -38,42 +41,35 @@ const { user } = useAuth();
       </Route>
 
       {/* layout User home normal */}
-      <Route path="/"
-      element={
-          user?.role == "company" ? ( <Navigate to ="/layoutManagement"/>)
-          : user?.role == "admin" ? ( <Navigate to ="/layoutManagement"/>)
-          :  (<MainLayoutUser />)}>
-
+      <Route path="/" element={<MainLayoutUser />}>
         <Route index element={<Home />} />
         <Route path="jobs/:id" element={<JobDetail />} />
-        <Route path="search" element = {<SearchPage/>} />
+        <Route path="search" element={<SearchPage />} />
 
-
-        <Route path="/profile" element={<Profile />}>
-            <Route index element={<PersonalProfile />} />
-            <Route path="cv" element={<ManageCV />} />
-            <Route path="saved" element={<SavedJobs />} />
-            <Route path="applied" element={<AppliedJobs />} />
-            <Route path="settings" element={<Settings />} />
+        <Route path="profile" element={<Profile />}>
+          <Route index element={<PersonalProfile />} />
+          <Route path="cv" element={<ManageCV />} />
+          <Route path="saved" element={<SavedJobs />} />
+          <Route path="applied" element={<AppliedJobs />} />
+          <Route path="settings" element={<Settings />} />
         </Route>
-
       </Route>
 
-       {/* MANAGEMENT (EMPLOYER / ADMIN) */}
-      <Route
-              path="/layoutManagement"
-              element={
-                user?.role === "company" || user?.role === "admin" ? (
-                  <MainLayoutManagement />
-                ) : (
-                  <Navigate to="/" />
-                )
-              }
-            >
-              <Route index element={<div>Dashboard</div>} />
-              <Route path="jobs" element={<div>Manage Jobs</div>} />
-              <Route path="users" element={<div>Manage Users</div>} />
-      </Route>
+       {/* management */}
+        <Route
+          path="/layoutManagement"
+          element={
+            <ProtectedRoute allowRoles={["company", "admin"]}>
+              <MainLayoutManagement />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<HomeEmployer />} />
+
+          <Route path="managementProfile" element={<ManagementProfile />}>
+            <Route index element={<PersonalManagement />} />
+          </Route>
+        </Route>
 
     </Routes>
   );
