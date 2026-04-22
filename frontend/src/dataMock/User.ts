@@ -1,19 +1,3 @@
-export type UserRole = "candidate" | "company" | "admin";
-export type Gender = "male" | "female" | "other";
-
-export interface User {
-  id: number;
-  username: string;
-  email: string;
-  password: string;
-  phone: string;
-  fullName: string;
-  role: UserRole;
-  address: string;
-  dob: string;
-  gender: Gender;
-}
-
 export const users: User[] = [
   {
     id: 1,
@@ -41,7 +25,7 @@ export const users: User[] = [
   },
   {
     id: 3,
-    username: "user",
+    username: "user1",
     email: "user1@gmail.com",
     password: "123456",
     phone: "0800000001",
@@ -50,5 +34,57 @@ export const users: User[] = [
     address: "Thủ Đức, TP. Hồ Chí Minh",
     dob: "2005-01-01",
     gender: "male",
+  },
+
+  // ===== EMPLOYER (COMPANY) =====
+  {
+    id: 4,
+    username: "company1",
+    email: "company1@gmail.com",
+    password: "123456",
+    phone: "0900000010",
+    fullName: "Công ty ABC",
+    role: "company",
+    address: "Quận 1, TP. Hồ Chí Minh",
+    dob: "2000-01-01",
+    gender: "other",
+  },
+  {
+    id: 5,
+    username: "company2",
+    email: "company2@gmail.com",
+    password: "123456",
+    phone: "0900000011",
+    fullName: "Công ty XYZ",
+    role: "company",
+    address: "Hà Nội",
+    dob: "1998-06-15",
+    gender: "other",
+  },
+
+  // ===== ADMIN =====
+  {
+    id: 6,
+    username: "admin2",
+    email: "admin2@gmail.com",
+    password: "123456",
+    phone: "0900000020",
+    fullName: "Admin Manager",
+    role: "admin",
+    address: "Đà Nẵng",
+    dob: "1988-03-10",
+    gender: "male",
+  },
+  {
+    id: 7,
+    username: "admin3",
+    email: "admin3@gmail.com",
+    password: "123456",
+    phone: "0900000021",
+    fullName: "System Admin",
+    role: "admin",
+    address: "Cần Thơ",
+    dob: "1992-11-25",
+    gender: "female",
   },
 ];
