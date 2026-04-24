@@ -19,7 +19,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "experience_levels")
+@Table(name = "categories")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -27,7 +27,7 @@ import lombok.ToString;
 @Builder
 @ToString(exclude = "jobs")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class ExperienceLevel {
+public class Category {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,6 +37,6 @@ public class ExperienceLevel {
   private String name;
 
   @JsonIgnore
-  @OneToMany(mappedBy = "experienceLevel")
+  @OneToMany(mappedBy = "category")
   private List<Job> jobs;
 }

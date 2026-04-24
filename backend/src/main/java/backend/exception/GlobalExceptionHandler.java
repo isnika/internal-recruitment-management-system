@@ -62,7 +62,8 @@ public class GlobalExceptionHandler {
   public ResponseEntity<ApiError> handleGeneric(
       Exception ex,
       HttpServletRequest request) {
-    return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), request, null);
+    String message = ex.getMessage() != null ? ex.getMessage() : ex.getClass().getSimpleName();
+    return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, message, request, null);
   }
 
   private ResponseEntity<ApiError> buildResponse(
