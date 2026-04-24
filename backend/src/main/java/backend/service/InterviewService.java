@@ -14,6 +14,8 @@ public interface InterviewService {
 
     Interview rejectInterview(Long id);
 
+    Interview getInterviewById(Long id);
+
     // ==================== RECRUITER ====================
     Interview createInterview(CreateInterviewRequest request);
 }
