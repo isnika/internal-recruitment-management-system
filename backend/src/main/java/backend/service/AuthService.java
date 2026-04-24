@@ -32,4 +32,6 @@ public interface AuthService {
     String updateUser(Long id, CreateUserRequest request);
 
     String deleteUser(Long id);
+
+    long countUsers();
 }
