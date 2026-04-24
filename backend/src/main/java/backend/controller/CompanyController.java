@@ -2,10 +2,21 @@ package backend.controller;
 
 import java.util.List;
 
-import org.springframework.http.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import backend.DTO.company.CompanyResponse;
@@ -24,8 +35,8 @@ public class CompanyController {
 
   @GetMapping
   public ResponseEntity<List<CompanyResponse>> getAllCompanies(
-          @RequestParam(required = false) String keyword,
-          @RequestParam(required = false) String status) {
+      @RequestParam(required = false) String keyword,
+      @RequestParam(required = false) String status) {
     return ResponseEntity.ok(companyService.getAllCompanies(keyword, status));
   }
 
@@ -43,16 +54,16 @@ public class CompanyController {
   @PutMapping("/{id}")
   @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<CompanyResponse> updateCompany(
-          @PathVariable Long id,
-          @Valid @RequestBody CreateCompanyRequest request) {
+      @PathVariable Long id,
+      @Valid @RequestBody CreateCompanyRequest request) {
     return ResponseEntity.ok(companyService.updateCompany(id, request));
   }
 
   @PostMapping(value = "/{id}/logo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<CompanyResponse> uploadCompanyLogo(
-          @PathVariable Long id,
-          @RequestPart("file") MultipartFile file) {
+      @PathVariable Long id,
+      @RequestPart("file") MultipartFile file) {
     return ResponseEntity.ok(companyService.uploadCompanyLogo(id, file));
   }
 

@@ -9,7 +9,7 @@ import backend.entity.Skill;
 
 public interface SkillRepository extends JpaRepository<Skill, Long> {
 
-    Optional<Skill> findByNameIgnoreCase(String name);
+  Optional<Skill> findByNameIgnoreCase(String name);
 
-    List<Skill> findByNameContainingIgnoreCase(String keyword);
+  List<Skill> findByNameContainingIgnoreCase(String keyword);
 }

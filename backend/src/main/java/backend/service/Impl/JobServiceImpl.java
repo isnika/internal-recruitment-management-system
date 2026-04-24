@@ -21,13 +21,13 @@ import backend.exception.BadRequestException;
 import backend.exception.ResourceNotFoundException;
 import backend.mapper.JobMapper;
 import backend.repository.CategoryRepository;
+import backend.repository.CompanyRepository;
 import backend.repository.ExperienceLevelRepository;
 import backend.repository.JobRepository;
 import backend.repository.SkillRepository;
 import backend.service.JobService;
 import backend.specification.JobSpecification;
 import lombok.RequiredArgsConstructor;
-import backend.repository.CompanyRepository;
 
 @Service
 @RequiredArgsConstructor

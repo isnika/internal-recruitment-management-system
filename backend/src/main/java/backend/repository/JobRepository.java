@@ -14,15 +14,15 @@ import backend.entity.Job;
 public interface JobRepository extends JpaRepository<Job, Long>, JpaSpecificationExecutor<Job> {
 
   @Override
-  @EntityGraph(attributePaths = { "company", "backend/DTO/category", "experienceLevel", "skills" })
+  @EntityGraph(attributePaths = { "company", "category", "experienceLevel", "skills" })
   List<Job> findAll();
 
   @Override
-  @EntityGraph(attributePaths = { "company", "backend/DTO/category", "experienceLevel", "skills" })
+  @EntityGraph(attributePaths = { "company", "category", "experienceLevel", "skills" })
   Optional<Job> findById(Long id);
 
   @Override
-  @EntityGraph(attributePaths = { "company", "backend/DTO/category", "experienceLevel", "skills" })
+  @EntityGraph(attributePaths = { "company", "category", "experienceLevel", "skills" })
   List<Job> findAll(Specification<Job> spec);
 
   List<Job> findByStatus(String status);

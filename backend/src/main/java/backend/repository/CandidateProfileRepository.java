@@ -1,9 +1,10 @@
 package backend.repository;
 
-import backend.entity.CandidateProfile;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Optional;
+import backend.entity.CandidateProfile;
 
 public interface CandidateProfileRepository extends JpaRepository<CandidateProfile, Long> {
 

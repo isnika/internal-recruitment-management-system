@@ -7,7 +7,6 @@ import backend.DTO.category.CategoryResponse;
 import backend.DTO.company.CompanyResponse;
 import backend.DTO.experiencelevel.ExperienceLevelResponse;
 import backend.DTO.skill.SkillResponse;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

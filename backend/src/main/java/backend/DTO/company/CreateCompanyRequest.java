@@ -11,10 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class CreateCompanyRequest {
-
   @NotBlank(message = "Name khong duoc de trong")
   private String name;
-
   private String description;
   private String address;
   private String website;

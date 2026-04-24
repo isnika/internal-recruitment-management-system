@@ -20,6 +20,9 @@ public final class CandidateProfileMapper {
         .dateOfBirth(request.getDateOfBirth())
         .phone(request.getPhone())
         .address(request.getAddress())
+        .taxCode(request.getTaxCode())
+        .citizenId(request.getCitizenId())
+        .releaseDate(request.getReleaseDate())
         .socialLink(request.getSocialLink())
         .bankAccountName(request.getBankAccountName())
         .user(user)
@@ -37,8 +40,15 @@ public final class CandidateProfileMapper {
         .dateOfBirth(profile.getDateOfBirth())
         .phone(profile.getPhone())
         .address(profile.getAddress())
+        .taxCode(profile.getTaxCode())
+        .citizenId(profile.getCitizenId())
+        .releaseDate(profile.getReleaseDate())
         .socialLink(profile.getSocialLink())
         .bankAccountName(profile.getBankAccountName())
+        .userId(profile.getUser() != null ? profile.getUser().getId() : null)
+        .email(profile.getUser() != null ? profile.getUser().getEmail() : null)
+        .firstName(profile.getUser() != null ? profile.getUser().getFirstName() : null)
+        .lastName(profile.getUser() != null ? profile.getUser().getLastName() : null)
         .build();
   }
 
@@ -51,6 +61,9 @@ public final class CandidateProfileMapper {
     profile.setDateOfBirth(request.getDateOfBirth());
     profile.setPhone(request.getPhone());
     profile.setAddress(request.getAddress());
+    profile.setTaxCode(request.getTaxCode());
+    profile.setCitizenId(request.getCitizenId());
+    profile.setReleaseDate(request.getReleaseDate());
     profile.setSocialLink(request.getSocialLink());
     profile.setBankAccountName(request.getBankAccountName());
   }

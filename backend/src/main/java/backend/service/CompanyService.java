@@ -9,15 +9,15 @@ import backend.DTO.company.CreateCompanyRequest;
 
 public interface CompanyService {
 
-    List<CompanyResponse> getAllCompanies(String keyword, String status);
+  List<CompanyResponse> getAllCompanies(String keyword, String status);
 
-    CompanyResponse getCompanyById(Long id);
+  CompanyResponse getCompanyById(Long id);
 
-    CompanyResponse createCompany(CreateCompanyRequest request);
+  CompanyResponse createCompany(CreateCompanyRequest request);
 
-    CompanyResponse updateCompany(Long id, CreateCompanyRequest request);
+  CompanyResponse updateCompany(Long id, CreateCompanyRequest request);
 
-    CompanyResponse uploadCompanyLogo(Long id, MultipartFile file);
+  CompanyResponse uploadCompanyLogo(Long id, MultipartFile file);
 
-    void deleteCompany(Long id);
+  void deleteCompany(Long id);
 }

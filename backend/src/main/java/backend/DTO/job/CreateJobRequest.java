@@ -24,7 +24,6 @@ public class CreateJobRequest {
 
   private String location;
   private String type;
-
   private LocalDate deadline;
 
   private Long companyId;

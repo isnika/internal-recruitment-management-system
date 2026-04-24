@@ -1,20 +1,22 @@
 package backend.config;
 
-import backend.exception.ApiError;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.List;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import backend.exception.ApiError;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
@@ -24,21 +26,18 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
   @Override
   public void commence(
-          HttpServletRequest request,
-          HttpServletResponse response,
-          AuthenticationException authException
-  ) throws IOException, ServletException {
+      HttpServletRequest request,
+      HttpServletResponse response,
+      AuthenticationException authException) throws IOException, ServletException {
 
     ApiError apiError = ApiError.builder()
-            .timestamp(LocalDateTime.now())
-            .status(HttpStatus.UNAUTHORIZED.value())
-            .error(HttpStatus.UNAUTHORIZED.getReasonPhrase())
-            .message("Bạn chưa đăng nhập hoặc token không hợp lệ")
-            .path(request.getRequestURI())
-            .details(java.util.Collections.singletonList(
-                    String.valueOf(authException.getMessage())
-            ))
-            .build();
+        .timestamp(LocalDateTime.now())
+        .status(HttpStatus.UNAUTHORIZED.value())
+        .error(HttpStatus.UNAUTHORIZED.getReasonPhrase())
+        .message("Ban chua dang nhap hoac token khong hop le")
+        .path(request.getRequestURI())
+        .details(List.of(authException.getMessage()))
+        .build();
 
     response.setStatus(HttpStatus.UNAUTHORIZED.value());
     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
