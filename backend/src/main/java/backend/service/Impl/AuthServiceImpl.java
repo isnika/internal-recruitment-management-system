@@ -3,12 +3,11 @@ package backend.service.Impl;
 import backend.DTO.auth.*;
 import backend.DTO.user.CreateUserRequest;
 import backend.Enum.UserRole;
-import backend.entity.CandidateProfile;
-import backend.entity.User;
-import backend.entity.VerificationCode;
-import backend.repository.CandidateProfileRepository;
-import backend.repository.UserRepository;
-import backend.repository.VerificationCodeRepository;
+import backend.entity.*;
+import backend.exception.BadRequestException;
+import backend.exception.ResourceNotFoundException;
+import backend.exception.UnauthorizedException;
+import backend.repository.*;
 import backend.security.AuthUser;
 import backend.security.JwtUtil;
 import backend.service.AuthService;
@@ -18,8 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import backend.entity.Company;
-import backend.repository.CompanyRepository;
+import backend.mapper.UserMapper;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -47,7 +45,7 @@ public class AuthServiceImpl implements AuthService {
 
     private void validateEmail(String email) {
         if (email == null || !email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
-            throw new RuntimeException("Email không hợp lệ");
+            throw new BadRequestException("Email không hợp lệ");
         }
     }
 
@@ -56,19 +54,18 @@ public class AuthServiceImpl implements AuthService {
                 password.length() < 8 ||
                 !password.matches(".*[A-Za-z].*") ||
                 !password.matches(".*[0-9].*")) {
-            throw new RuntimeException("Mật khẩu phải ≥ 8 ký tự, gồm chữ và số");
+            throw new BadRequestException("Mật khẩu phải ≥ 8 ký tự, gồm chữ và số");
         }
     }
 
-    // ================= SEND OTP =================
+    // ================= OTP =================
 
     @Override
     @Transactional
     public String sendVerificationCode(String email) {
-
         validateEmail(email);
 
-        String code = String.valueOf(100000 + new Random().nextInt(900000));
+        String code = generateOtp();
 
         verificationCodeRepository.deleteByEmail(email);
 
@@ -81,13 +78,12 @@ public class AuthServiceImpl implements AuthService {
                         .build()
         );
 
-        emailService.sendSimpleMail(
-                email,
-                "OTP đăng ký tài khoản",
-                "Mã OTP của bạn là: " + code
-        );
-
+        emailService.sendSimpleMail(email, "OTP đăng ký", "Mã OTP: " + code);
         return "OTP đã được gửi";
+    }
+
+    private String generateOtp() {
+        return String.valueOf(100000 + new Random().nextInt(900000));
     }
 
     // ================= REGISTER =================
@@ -99,40 +95,47 @@ public class AuthServiceImpl implements AuthService {
         validateEmail(request.getEmail());
         validatePassword(request.getPassword());
 
-        if (!request.getRole().name().equalsIgnoreCase("CANDIDATE")) {
-            throw new RuntimeException("Chỉ được đăng ký tài khoản CANDIDATE");
+        // parse role từ String
+        UserRole role;
+        try {
+            role = UserRole.valueOf(request.getRole().name().toUpperCase());
+        } catch (Exception e) {
+            throw new BadRequestException("Role không hợp lệ");
+        }
+
+        if (role != UserRole.CANDIDATE) {
+            throw new BadRequestException("Chỉ được đăng ký tài khoản CANDIDATE");
         }
 
         VerificationCode vc = verificationCodeRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy OTP"));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy OTP"));
 
         if (vc.getExpireAt().isBefore(LocalDateTime.now())) {
-            throw new RuntimeException("OTP hết hạn");
+            throw new BadRequestException("OTP hết hạn");
         }
 
         if (!vc.getCode().equals(request.getCode())) {
-            throw new RuntimeException("OTP sai");
+            throw new BadRequestException("OTP sai");
         }
 
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email đã tồn tại");
+            throw new BadRequestException("Email đã tồn tại");
         }
 
-        // ép role = CANDIDATE
-        User user = User.builder()
+        User user = UserMapper.toEntity(CreateUserRequest.builder()
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
-                .role(UserRole.CANDIDATE)
-                .status("ACTIVE")
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .build();
+                .role(request.getRole().name())
+                .build());
+
+        user.setStatus("ACTIVE");
+        user.setCreatedAt(LocalDateTime.now());
+        user.setUpdatedAt(LocalDateTime.now());
 
         userRepository.save(user);
 
-        // luôn tạo profile candidate
         candidateProfileRepository.save(
                 CandidateProfile.builder().user(user).build()
         );
@@ -141,29 +144,27 @@ public class AuthServiceImpl implements AuthService {
 
         return "Đăng ký thành công";
     }
+
     // ================= LOGIN =================
 
     @Override
-    @Transactional
     public LoginResponse login(LoginRequest request) {
 
         validateEmail(request.getEmail());
         String email = request.getEmail();
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Email không tồn tại"));
+                .orElseThrow(() -> new ResourceNotFoundException("Email không tồn tại"));
 
         // CHECK LOCK
         if (lockTimeMap.containsKey(email)) {
             if (lockTimeMap.get(email).isAfter(LocalDateTime.now())) {
-                throw new RuntimeException("Tài khoản bị khóa tạm thời");
-            } else {
-                lockTimeMap.remove(email);
-                loginAttempts.remove(email);
+                throw new BadRequestException("Tài khoản bị khóa tạm thời");
             }
+            lockTimeMap.remove(email);
+            loginAttempts.remove(email);
         }
 
-        // Sai mật khẩu
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
 
             int attempts = loginAttempts.getOrDefault(email, 0) + 1;
@@ -174,10 +175,9 @@ public class AuthServiceImpl implements AuthService {
                 loginAttempts.remove(email);
             }
 
-            throw new RuntimeException("Sai mật khẩu");
+            throw new BadRequestException("Sai mật khẩu");
         }
 
-        // Thành công
         loginAttempts.remove(email);
         lockTimeMap.remove(email);
 
@@ -192,7 +192,6 @@ public class AuthServiceImpl implements AuthService {
     // ================= LOGOUT =================
 
     @Override
-    @Transactional
     public String logout() {
         SecurityContextHolder.clearContext();
         return "Đăng xuất thành công";
@@ -207,10 +206,10 @@ public class AuthServiceImpl implements AuthService {
         validateEmail(email);
 
         if (!userRepository.existsByEmail(email)) {
-            throw new RuntimeException("Email không tồn tại");
+            throw new ResourceNotFoundException("Email không tồn tại");
         }
 
-        String code = String.valueOf(100000 + new Random().nextInt(900000));
+        String code = generateOtp();
 
         verificationCodeRepository.deleteByEmail(email);
 
@@ -223,16 +222,10 @@ public class AuthServiceImpl implements AuthService {
                         .build()
         );
 
-        emailService.sendSimpleMail(
-                email,
-                "OTP đặt lại mật khẩu",
-                "Mã OTP: " + code
-        );
+        emailService.sendSimpleMail(email, "OTP reset password", "Mã OTP: " + code);
 
         return "Đã gửi OTP";
     }
-
-    // ================= RESET PASSWORD =================
 
     @Override
     @Transactional
@@ -241,18 +234,18 @@ public class AuthServiceImpl implements AuthService {
         validatePassword(request.getNewPassword());
 
         VerificationCode vc = verificationCodeRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy OTP"));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy OTP"));
 
         if (vc.getExpireAt().isBefore(LocalDateTime.now())) {
-            throw new RuntimeException("OTP hết hạn");
+            throw new BadRequestException("OTP hết hạn");
         }
 
         if (!vc.getCode().equals(request.getCode())) {
-            throw new RuntimeException("OTP sai");
+            throw new BadRequestException("OTP sai");
         }
 
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("Email không tồn tại"));
+                .orElseThrow(() -> new ResourceNotFoundException("Email không tồn tại"));
 
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
@@ -262,47 +255,41 @@ public class AuthServiceImpl implements AuthService {
         return "Đổi mật khẩu thành công";
     }
 
-    // ================= USER MANAGEMENT =================
+    // ================= USER =================
 
     @Override
     public List<User> getAllUsers() {
-        User current = getCurrentUser();
-
-        if (current.getRole() != UserRole.ADMIN) {
-            throw new RuntimeException("Không có quyền");
+        if (getCurrentUser().getRole() != UserRole.ADMIN) {
+            throw new UnauthorizedException("Không có quyền");
         }
-
         return userRepository.findAll();
     }
 
     @Override
     public User getUserById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy user"));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy user"));
     }
 
     @Override
     @Transactional
     public String createUser(CreateUserRequest request) {
 
-        User current = getCurrentUser();
-
-        // chỉ ADMIN
-        if (current.getRole() != UserRole.ADMIN) {
-            throw new RuntimeException("Chỉ ADMIN mới được tạo user");
+        if (getCurrentUser().getRole() != UserRole.ADMIN) {
+            throw new UnauthorizedException("Chỉ ADMIN");
         }
 
         validateEmail(request.getEmail());
         validatePassword(request.getPassword());
 
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email đã tồn tại");
+            throw new BadRequestException("Email đã tồn tại");
         }
 
         UserRole role = UserRole.valueOf(request.getRole().toUpperCase());
 
         if (role == UserRole.ADMIN) {
-            throw new RuntimeException("Không được tạo ADMIN");
+            throw new BadRequestException("Không được tạo ADMIN");
         }
 
         User user = User.builder()
@@ -317,13 +304,12 @@ public class AuthServiceImpl implements AuthService {
                 .build();
 
         if (role == UserRole.RECRUITER) {
-
             if (request.getCompanyId() == null) {
-                throw new RuntimeException("Recruiter phải có company");
+                throw new BadRequestException("Recruiter phải có company");
             }
 
             Company company = companyRepository.findById(request.getCompanyId())
-                    .orElseThrow(() -> new RuntimeException("Company không tồn tại"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Company không tồn tại"));
 
             user.setCompany(company);
         }
@@ -338,7 +324,7 @@ public class AuthServiceImpl implements AuthService {
     public String updateUser(Long id, CreateUserRequest request) {
 
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy user"));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy user"));
 
         if (request.getPassword() != null) {
             validatePassword(request.getPassword());
@@ -355,7 +341,7 @@ public class AuthServiceImpl implements AuthService {
     public String deleteUser(Long id) {
 
         if (getCurrentUser().getId().equals(id)) {
-            throw new RuntimeException("Không thể tự xoá chính mình");
+            throw new BadRequestException("Không thể tự xoá");
         }
 
         userRepository.deleteById(id);
@@ -363,25 +349,26 @@ public class AuthServiceImpl implements AuthService {
         return "Xoá user thành công";
     }
 
+    @Override
+    public long countUsers() {
+        if (getCurrentUser().getRole() != UserRole.ADMIN) {
+            throw new UnauthorizedException("Không có quyền");
+        }
+        return userRepository.count();
+    }
+
     // ================= CURRENT USER =================
 
     private User getCurrentUser() {
-        AuthUser authUser = (AuthUser) SecurityContextHolder
-                .getContext()
+        Object principal = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getPrincipal();
 
-        return userRepository.findById(authUser.getId())
-                .orElseThrow(() -> new RuntimeException("User không tồn tại"));
-    }
-
-    public long countUsers() {
-        User current = getCurrentUser();
-
-        if (current.getRole() != UserRole.ADMIN) {
-            throw new RuntimeException("Chỉ ADMIN mới được xem số lượng user");
+        if (!(principal instanceof AuthUser authUser)) {
+            throw new UnauthorizedException("Chưa đăng nhập");
         }
 
-        return userRepository.count();
+        return userRepository.findById(authUser.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("User không tồn tại"));
     }
 }
