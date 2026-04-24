@@ -37,4 +37,5 @@ public class Interview {
   @ManyToOne
   @JoinColumn(name = "application_id")
   private Application application;
+
 }
