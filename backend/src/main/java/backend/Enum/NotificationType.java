@@ -1,4 +1,7 @@
 package backend.Enum;
 
-public class NotificationType {
+public enum NotificationType {
+    INTERVIEW,
+    SYSTEM,
+    ACCOUNT
 }
