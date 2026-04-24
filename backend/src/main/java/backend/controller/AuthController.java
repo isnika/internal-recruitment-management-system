@@ -1,15 +1,15 @@
 package backend.controller;
 
-import backend.DTO.auth.*;
+import backend.DTO.auth.ForgotPassword;
+import backend.DTO.auth.LoginRequest;
+import backend.DTO.auth.LoginResponse;
+import backend.DTO.auth.RegisterRequest;
+import backend.DTO.auth.VerifyRegisterRequest;
 import backend.service.AuthService;
-import backend.entity.User;
-import java.util.List;
-import org.springframework.security.access.prepost.PreAuthorize;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import backend.DTO.user.CreateUserRequest;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -73,46 +73,6 @@ public class AuthController {
 
     String result = authService.logout();
 
-    return ResponseEntity.ok(result);
-  }
-
-  @PreAuthorize("hasRole('ADMIN')")
-  @GetMapping("/admin/users")
-  public ResponseEntity<List<User>> getAllUsers() {
-    return ResponseEntity.ok(authService.getAllUsers());
-  }
-
-  // ==================== ADMIN - GET USER BY ID ====================
-  @PreAuthorize("hasRole('ADMIN')")
-  @GetMapping("/admin/users/{id}")
-  public ResponseEntity<User> getUserById(@PathVariable Long id) {
-    return ResponseEntity.ok(authService.getUserById(id));
-  }
-
-  // ==================== ADMIN - CREATE USER ====================
-  @PreAuthorize("hasRole('ADMIN')")
-  @PostMapping("/admin/users")
-  public ResponseEntity<String> createUser(@RequestBody CreateUserRequest request) {
-    String result = authService.createUser(request);
-    return ResponseEntity.status(HttpStatus.CREATED).body(result);
-  }
-
-  // ==================== ADMIN - UPDATE USER ====================
-  @PreAuthorize("hasRole('ADMIN')")
-  @PutMapping("/admin/users/{id}")
-  public ResponseEntity<String> updateUser(
-          @PathVariable Long id,
-          @RequestBody CreateUserRequest request
-  ) {
-    String result = authService.updateUser(id, request);
-    return ResponseEntity.ok(result);
-  }
-
-  // ==================== ADMIN - DELETE USER ====================
-  @PreAuthorize("hasRole('ADMIN')")
-  @DeleteMapping("/admin/users/{id}")
-  public ResponseEntity<String> deleteUser(@PathVariable Long id) {
-    String result = authService.deleteUser(id);
     return ResponseEntity.ok(result);
   }
 }

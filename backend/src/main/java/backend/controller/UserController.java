@@ -14,66 +14,48 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import backend.DTO.auth.AuthResponse;
-import backend.DTO.auth.ForgotPasswordRequest;
-import backend.DTO.auth.LoginRequest;
-import backend.DTO.user.CreatUserRequest;
+import backend.DTO.user.CreateUserRequest;
 import backend.DTO.user.UserResponse;
 import backend.service.UserService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/api/users")
 public class UserController {
 
   private final UserService userService;
 
-  @PostMapping("/auth/register")
-  public ResponseEntity<AuthResponse> register(@RequestBody CreatUserRequest request) {
-    return ResponseEntity.status(HttpStatus.CREATED).body(userService.register(request));
-  }
-
-  @PostMapping("/auth/login")
-  public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
-    return ResponseEntity.ok(userService.login(request));
-  }
-
-  @PostMapping("/auth/forgot-password")
-  public ResponseEntity<String> forgotPassword(@RequestBody ForgotPasswordRequest request) {
-    return ResponseEntity.ok(userService.forgotPassword(request));
-  }
-
-  @GetMapping("/users/me")
+  @GetMapping("/me")
   public ResponseEntity<UserResponse> getCurrentUser() {
     return ResponseEntity.ok(userService.getCurrentUser());
   }
 
-  @GetMapping("/users")
+  @GetMapping
   @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<List<UserResponse>> getAllUsers() {
     return ResponseEntity.ok(userService.getAllUsers());
   }
 
-  @GetMapping("/users/{id}")
+  @GetMapping("/{id}")
   @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
     return ResponseEntity.ok(userService.getUserById(id));
   }
 
-  @PostMapping("/users")
+  @PostMapping
   @PreAuthorize("hasRole('ADMIN')")
-  public ResponseEntity<UserResponse> createUser(@RequestBody CreatUserRequest request) {
+  public ResponseEntity<UserResponse> createUser(@RequestBody CreateUserRequest request) {
     return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(request));
   }
 
-  @PutMapping("/users/{id}")
+  @PutMapping("/{id}")
   @PreAuthorize("hasRole('ADMIN')")
-  public ResponseEntity<UserResponse> updateUser(@PathVariable Long id, @RequestBody CreatUserRequest request) {
+  public ResponseEntity<UserResponse> updateUser(@PathVariable Long id, @RequestBody CreateUserRequest request) {
     return ResponseEntity.ok(userService.updateUser(id, request));
   }
 
-  @DeleteMapping("/users/{id}")
+  @DeleteMapping("/{id}")
   @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
     userService.deleteUser(id);

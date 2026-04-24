@@ -2,33 +2,25 @@ package backend.service.Impl;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
-import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import backend.DTO.auth.AuthResponse;
-import backend.DTO.auth.ForgotPasswordRequest;
-import backend.DTO.auth.LoginRequest;
-import backend.DTO.user.CreatUserRequest;
+import backend.DTO.user.CreateUserRequest;
 import backend.DTO.user.UserResponse;
 import backend.Enum.UserRole;
+import backend.entity.Company;
 import backend.entity.User;
 import backend.exception.BadRequestException;
 import backend.exception.ResourceNotFoundException;
 import backend.exception.UnauthorizedException;
 import backend.mapper.UserMapper;
+import backend.repository.CompanyRepository;
 import backend.repository.UserRepository;
 import backend.security.AuthUser;
-import backend.security.JwtUtil;
 import backend.service.UserService;
 import lombok.RequiredArgsConstructor;
 
@@ -37,68 +29,8 @@ import lombok.RequiredArgsConstructor;
 public class UserServiceImpl implements UserService {
 
   private final UserRepository userRepository;
+  private final CompanyRepository companyRepository;
   private final PasswordEncoder passwordEncoder;
-  private final AuthenticationManager authenticationManager;
-  private final JwtUtil jwtUtil;
-  private final ObjectProvider<JavaMailSender> mailSenderProvider;
-
-  @Override
-  @Transactional
-  public AuthResponse register(CreatUserRequest request) {
-    validateCreateRequest(request);
-
-    if (userRepository.existsByEmail(request.getEmail())) {
-      throw new BadRequestException("Email da ton tai");
-    }
-
-    User user = UserMapper.toEntity(request);
-    user.setPassword(passwordEncoder.encode(request.getPassword()));
-    user.setRole(resolveRole(request.getRole()));
-    user.setStatus("ACTIVE");
-    user.setCreatedAt(LocalDateTime.now());
-    user.setUpdatedAt(LocalDateTime.now());
-
-    User savedUser = userRepository.save(user);
-    String token = jwtUtil.generateToken(AuthUser.fromUser(savedUser));
-
-    return UserMapper.toAuthResponse(savedUser, token);
-  }
-
-  @Override
-  public AuthResponse login(LoginRequest request) {
-    if (request == null || isBlank(request.getEmail()) || isBlank(request.getPassword())) {
-      throw new BadRequestException("Email va password khong duoc de trong");
-    }
-
-    Authentication authentication = authenticationManager.authenticate(
-        new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
-
-    AuthUser authUser = (AuthUser) authentication.getPrincipal();
-    User user = userRepository.findByEmail(authUser.getEmail())
-        .orElseThrow(() -> new ResourceNotFoundException("Khong tim thay user"));
-
-    String token = jwtUtil.generateToken(authUser);
-    return UserMapper.toAuthResponse(user, token);
-  }
-
-  @Override
-  @Transactional
-  public String forgotPassword(ForgotPasswordRequest request) {
-    if (request == null || isBlank(request.getEmail())) {
-      throw new BadRequestException("Email khong duoc de trong");
-    }
-
-    User user = userRepository.findByEmail(request.getEmail())
-        .orElseThrow(() -> new ResourceNotFoundException("Khong tim thay user voi email: " + request.getEmail()));
-
-    String temporaryPassword = generateTemporaryPassword();
-    user.setPassword(passwordEncoder.encode(temporaryPassword));
-    user.setUpdatedAt(LocalDateTime.now());
-    userRepository.save(user);
-
-    sendTemporaryPasswordEmail(user.getEmail(), temporaryPassword);
-    return "Mat khau tam thoi da duoc cap lai. Vui long kiem tra email.";
-  }
 
   @Override
   public List<UserResponse> getAllUsers() {
@@ -115,44 +47,41 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public UserResponse getCurrentUser() {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    if (authentication == null || !(authentication.getPrincipal() instanceof AuthUser authUser)) {
-      throw new UnauthorizedException("Ban chua dang nhap");
-    }
-
-    User user = userRepository.findById(authUser.getId())
-        .orElseThrow(() -> new ResourceNotFoundException("Khong tim thay user hien tai"));
-
-    return UserMapper.toResponse(user);
+    return UserMapper.toResponse(getCurrentUserEntity());
   }
 
   @Override
   @Transactional
-  public UserResponse createUser(CreatUserRequest request) {
+  public UserResponse createUser(CreateUserRequest request) {
     validateCreateRequest(request);
 
     if (userRepository.existsByEmail(request.getEmail())) {
       throw new BadRequestException("Email da ton tai");
     }
 
-    User user = UserMapper.toEntity(request);
-    user.setPassword(passwordEncoder.encode(request.getPassword()));
-    user.setRole(resolveRole(request.getRole()));
-    user.setStatus("ACTIVE");
-    user.setCreatedAt(LocalDateTime.now());
-    user.setUpdatedAt(LocalDateTime.now());
+    User user = User.builder()
+        .email(request.getEmail())
+        .firstName(request.getFirstName())
+        .lastName(request.getLastName())
+        .password(passwordEncoder.encode(request.getPassword()))
+        .role(resolveRole(request.getRole()))
+        .status("ACTIVE")
+        .createdAt(LocalDateTime.now())
+        .updatedAt(LocalDateTime.now())
+        .build();
 
+    applyCompany(user, request);
     return UserMapper.toResponse(userRepository.save(user));
   }
 
   @Override
   @Transactional
-  public UserResponse updateUser(Long id, CreatUserRequest request) {
-    User user = findUserById(id);
-
+  public UserResponse updateUser(Long id, CreateUserRequest request) {
     if (request == null) {
       throw new BadRequestException("Du lieu cap nhat khong hop le");
     }
+
+    User user = findUserById(id);
 
     if (!isBlank(request.getEmail())
         && !request.getEmail().equalsIgnoreCase(user.getEmail())
@@ -176,15 +105,32 @@ public class UserServiceImpl implements UserService {
       user.setRole(resolveRole(request.getRole()));
     }
 
+    applyCompany(user, request);
     user.setUpdatedAt(LocalDateTime.now());
+
     return UserMapper.toResponse(userRepository.save(user));
   }
 
   @Override
   @Transactional
   public void deleteUser(Long id) {
+    User currentUser = getCurrentUserEntity();
+    if (currentUser.getId().equals(id)) {
+      throw new BadRequestException("Khong the tu xoa chinh minh");
+    }
+
     User user = findUserById(id);
     userRepository.delete(user);
+  }
+
+  private User getCurrentUserEntity() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    if (authentication == null || !(authentication.getPrincipal() instanceof AuthUser authUser)) {
+      throw new UnauthorizedException("Ban chua dang nhap");
+    }
+
+    return userRepository.findById(authUser.getId())
+        .orElseThrow(() -> new ResourceNotFoundException("Khong tim thay user hien tai"));
   }
 
   private User findUserById(Long id) {
@@ -192,7 +138,7 @@ public class UserServiceImpl implements UserService {
         .orElseThrow(() -> new ResourceNotFoundException("Khong tim thay user voi id: " + id));
   }
 
-  private void validateCreateRequest(CreatUserRequest request) {
+  private void validateCreateRequest(CreateUserRequest request) {
     if (request == null) {
       throw new BadRequestException("Request khong hop le");
     }
@@ -212,21 +158,23 @@ public class UserServiceImpl implements UserService {
     }
   }
 
-  private String generateTemporaryPassword() {
-    return "TMP-" + UUID.randomUUID().toString().replace("-", "").substring(0, 8);
-  }
+  private void applyCompany(User user, CreateUserRequest request) {
+    if (user.getRole() == UserRole.RECRUITER) {
+      if (request.getCompanyId() == null) {
+        throw new BadRequestException("Recruiter phai co company");
+      }
 
-  private void sendTemporaryPasswordEmail(String email, String temporaryPassword) {
-    JavaMailSender mailSender = mailSenderProvider.getIfAvailable();
-    if (mailSender == null) {
+      Company company = companyRepository.findById(request.getCompanyId())
+          .orElseThrow(() -> new ResourceNotFoundException("Khong tim thay company voi id: " + request.getCompanyId()));
+      user.setCompany(company);
       return;
     }
 
-    SimpleMailMessage message = new SimpleMailMessage();
-    message.setTo(email);
-    message.setSubject("Reset mat khau");
-    message.setText("Mat khau tam thoi cua ban la: " + temporaryPassword);
-    mailSender.send(message);
+    if (request.getCompanyId() != null) {
+      throw new BadRequestException("Chi recruiter moi duoc gan company");
+    }
+
+    user.setCompany(null);
   }
 
   private boolean isBlank(String value) {
