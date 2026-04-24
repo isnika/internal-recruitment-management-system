@@ -32,7 +32,7 @@ public final class InterviewMapper {
         .id(interview.getId())
         .scheduleTime(interview.getScheduleTime())
         .location(interview.getLocation())
-        .status(interview.getStatus())
+        .status(interview.getStatus() != null ? interview.getStatus().name() : null)
         .result(interview.getResult())
         .note(interview.getNote())
         .build();
