@@ -36,7 +36,7 @@ public class InterviewController {
 
     // ================= CANDIDATE - ACCEPT =================
     @PostMapping("/{id}/accept")
-    @PreAuthorize("hasRole('CANDIDATE')")
+    @PreAuthorize("hasAnyRole('CANDIDATE','ADMIN')")
     public ResponseEntity<InterviewResponse> accept(@PathVariable Long id) {
 
         Interview interview = interviewService.acceptInterview(id);
@@ -48,7 +48,7 @@ public class InterviewController {
 
     // ================= CANDIDATE - REJECT =================
     @PostMapping("/{id}/reject")
-    @PreAuthorize("hasRole('CANDIDATE')")
+    @PreAuthorize("hasAnyRole('CANDIDATE','ADMIN')")
     public ResponseEntity<InterviewResponse> reject(@PathVariable Long id) {
 
         Interview interview = interviewService.rejectInterview(id);
@@ -69,5 +69,16 @@ public class InterviewController {
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(InterviewMapper.toResponse(interview));
+    }
+
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('CANDIDATE','RECRUITER','ADMIN')")
+    public ResponseEntity<InterviewResponse> getById(@PathVariable Long id) {
+
+        Interview interview = interviewService.getInterviewById(id);
+
+        return ResponseEntity.ok(
+                InterviewMapper.toResponse(interview)
+        );
     }
 }

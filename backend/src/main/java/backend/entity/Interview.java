@@ -44,4 +44,5 @@ public class Interview {
   @OneToOne
   @JoinColumn(name = "application_id")
   private Application application;
+
 }

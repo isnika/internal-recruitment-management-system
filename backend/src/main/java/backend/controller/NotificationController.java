@@ -18,7 +18,7 @@ public class NotificationController {
 
     private final NotificationService notificationService;
 
-    // ==================== RECRUITER GỬI THÔNG BÁO ====================
+    // ==================== GỬI THÔNG BÁO ====================
     @PostMapping("/send")
     public ResponseEntity<String> sendNotification(
             @RequestBody NotificationRequest request
@@ -26,45 +26,64 @@ public class NotificationController {
         String result = notificationService.createNotification(
                 request.getUserId(),
                 request.getContent(),
+                request.getRedirectUrl(),
+                request.getType(),
                 request.isSendEmail()
         );
 
         return ResponseEntity.ok(result);
     }
 
-    // ==================== LẤY THÔNG BÁO CỦA CHÍNH MÌNH ====================
+    // ==================== LẤY NOTIFICATION ====================
     @GetMapping
     public ResponseEntity<List<NotificationResponse>> getMyNotifications() {
 
         Long userId = getCurrentUserId();
 
         List<NotificationResponse> notifications =
-                notificationService.getNotificationsByUserId(userId);
-
+                notificationService.getNotifications(userId, 0, 10).getContent();
         return ResponseEntity.ok(notifications);
     }
 
-    // ==================== LẤY THÔNG BÁO CHƯA ĐỌC ====================
+    // ==================== UNREAD ====================
     @GetMapping("/unread")
     public ResponseEntity<List<NotificationResponse>> getUnreadNotifications() {
 
         Long userId = getCurrentUserId();
 
         List<NotificationResponse> notifications =
-                notificationService.getUnreadNotifications(userId);
+                notificationService.getUnreadNotifications(userId, 0, 10).getContent(); // 🔥 fix
 
         return ResponseEntity.ok(notifications);
     }
 
-    // ==================== ĐÁNH DẤU ĐÃ ĐỌC ====================
+    // ==================== ĐÁNH DẤU 1 ====================
     @PutMapping("/{id}/read")
     public ResponseEntity<String> markAsRead(@PathVariable Long id) {
-
-        String result = notificationService.markAsRead(id);
-
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(notificationService.markAsRead(id));
     }
 
+    // ==================== MARK ALL ====================
+    @PutMapping("/read-all")
+    public ResponseEntity<String> markAllAsRead() {
+        Long userId = getCurrentUserId();
+        return ResponseEntity.ok(notificationService.markAllAsRead(userId));
+    }
+
+    // ==================== ĐẾM UNREAD ====================
+    @GetMapping("/unread/count")
+    public ResponseEntity<Long> countUnread() {
+        Long userId = getCurrentUserId();
+        return ResponseEntity.ok(notificationService.countUnread(userId));
+    }
+
+    // ==================== XOÁ ====================
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteNotification(@PathVariable Long id) {
+        return ResponseEntity.ok(notificationService.deleteNotification(id));
+    }
+
+    // ==================== CURRENT USER ====================
     private Long getCurrentUserId() {
 
         Object principal = SecurityContextHolder
@@ -77,5 +96,13 @@ public class NotificationController {
         }
 
         throw new RuntimeException("Chưa đăng nhập");
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<NotificationResponse> getById(@PathVariable Long id) {
+
+        return ResponseEntity.ok(
+                notificationService.getById(id)
+        );
     }
 }

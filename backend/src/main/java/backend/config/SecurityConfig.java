@@ -43,9 +43,11 @@ public class SecurityConfig {
         .authorizeHttpRequests(request -> request
             .requestMatchers("/api/auth/**", "/uploads/**", "/error").permitAll() // Public APIs va file upload da luu
             .anyRequest().authenticated()) // Cac API con lai can xac thuc
-        .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Khong luu session
+        .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Khong luu
+                                                                                                      // session
         .authenticationProvider(authenticationProvider())
-        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // Chay JWT filter truoc filter login mac dinh
+        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // Chay JWT filter truoc
+                                                                                               // filter login mac dinh
 
     return httpSecurity.build();
   }

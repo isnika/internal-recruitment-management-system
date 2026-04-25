@@ -1,16 +1,35 @@
 package backend.service;
 
 import backend.DTO.notifications.NotificationResponse;
-
-import java.util.List;
+import backend.Enum.NotificationType;
+import org.springframework.data.domain.Page;
 
 public interface NotificationService {
 
-    String createNotification(Long receiverId, String content, boolean sendEmail);
+    // ===== CREATE =====
+    String createNotification(
+            Long receiverId,
+            String content,
+            String redirectUrl,
+            NotificationType type,
+            boolean sendEmail
+    );
 
-    List<NotificationResponse> getNotificationsByUserId(Long userId);
+    // ===== GET =====
+    Page<NotificationResponse> getNotifications(Long userId, int page, int size);
 
-    List<NotificationResponse> getUnreadNotifications(Long userId);
+    Page<NotificationResponse> getUnreadNotifications(Long userId, int page, int size);
 
+    NotificationResponse getById(Long id);
+
+    // ===== READ =====
     String markAsRead(Long notificationId);
+
+    String markAllAsRead(Long userId);
+
+    // ===== DELETE =====
+    String deleteNotification(Long id);
+
+    // ===== COUNT =====
+    long countUnread(Long userId);
 }
