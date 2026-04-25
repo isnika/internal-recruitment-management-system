@@ -1,5 +1,6 @@
 package backend.service;
 
+import backend.DTO.ApiResponse;
 import backend.DTO.auth.*;
 import backend.DTO.user.CreateUserRequest;
 import backend.entity.User;
@@ -8,30 +9,27 @@ import java.util.List;
 
 public interface AuthService {
 
-    // ===== AUTH =====
-    String sendVerificationCode(String email);
+    SendOtpResponse sendVerificationCode(String email);
 
-    String register(VerifyRegisterRequest request);
+    RegisterResponse register(VerifyRegisterRequest request);
 
-    LoginResponse login(LoginRequest request);
+    AuthResponse login(LoginRequest request);
 
-    String logout();
+    ForgotPasswordResponse sendForgotPasswordCode(String email);
 
-    // ===== FORGOT PASSWORD =====
-    String sendForgotPasswordCode(String email);
+    ResetPasswordResponse resetPassword(ForgotPassword.ResetPasswordRequest request);
 
-    String resetPassword(ForgotPassword.ResetPasswordRequest request);
+    ApiResponse<String> logout();
 
-    // ===== USER =====
-    List<User> getAllUsers();
+    ApiResponse<List<User>> getAllUsers();
 
-    User getUserById(Long id);
+    ApiResponse<User> getUserById(Long id);
 
-    String createUser(CreateUserRequest request);
+    ApiResponse<String> createUser(CreateUserRequest request);
 
-    String updateUser(Long id, CreateUserRequest request);
+    ApiResponse<String> updateUser(Long id, CreateUserRequest request);
 
-    String deleteUser(Long id);
+    ApiResponse<String> deleteUser(Long id);
 
-    long countUsers();
+    ApiResponse<Long> countUsers();
 }

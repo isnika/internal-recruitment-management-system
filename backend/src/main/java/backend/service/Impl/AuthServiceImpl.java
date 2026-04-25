@@ -1,5 +1,6 @@
 package backend.service.Impl;
 
+import backend.DTO.ApiResponse;
 import backend.DTO.auth.*;
 import backend.DTO.user.CreateUserRequest;
 import backend.Enum.UserRole;
@@ -18,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import backend.mapper.UserMapper;
+import backend.DTO.user.UserResponse;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -62,7 +64,8 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public String sendVerificationCode(String email) {
+    public SendOtpResponse sendVerificationCode(String email) {
+
         validateEmail(email);
 
         String code = generateOtp();
@@ -79,7 +82,12 @@ public class AuthServiceImpl implements AuthService {
         );
 
         emailService.sendSimpleMail(email, "OTP đăng ký", "Mã OTP: " + code);
-        return "OTP đã được gửi";
+
+        return SendOtpResponse.builder()
+                .status(200)
+                .message("OK")
+                .email(email)
+                .build();
     }
 
     private String generateOtp() {
@@ -90,12 +98,11 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public String register(VerifyRegisterRequest request) {
+    public RegisterResponse register(VerifyRegisterRequest request) {
 
         validateEmail(request.getEmail());
         validatePassword(request.getPassword());
 
-        // parse role từ String
         UserRole role;
         try {
             role = UserRole.valueOf(request.getRole().name().toUpperCase());
@@ -142,21 +149,35 @@ public class AuthServiceImpl implements AuthService {
 
         verificationCodeRepository.deleteByEmail(request.getEmail());
 
-        return "Đăng ký thành công";
+        UserResponse userResponse = UserResponse.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .avatarUrl(user.getAvatarUrl())
+                .role(user.getRole())
+                .status(user.getStatus())
+                .build();
+
+        return RegisterResponse.builder()
+                .status(201)
+                .message("Register successfully")
+                .user(userResponse)
+                .build();
     }
 
     // ================= LOGIN =================
 
     @Override
-    public LoginResponse login(LoginRequest request) {
+    public AuthResponse login(LoginRequest request) {
 
         validateEmail(request.getEmail());
+
         String email = request.getEmail();
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("Email không tồn tại"));
 
-        // CHECK LOCK
         if (lockTimeMap.containsKey(email)) {
             if (lockTimeMap.get(email).isAfter(LocalDateTime.now())) {
                 throw new BadRequestException("Tài khoản bị khóa tạm thời");
@@ -183,25 +204,35 @@ public class AuthServiceImpl implements AuthService {
 
         String token = jwtUtil.generateToken(AuthUser.fromUser(user));
 
-        return LoginResponse.builder()
-                .message("Đăng nhập thành công")
+        return AuthResponse.builder()
+                .status(200)
+                .message("Login successfully")
                 .token(token)
+                .userId(user.getId())
+                .email(user.getEmail())
+                .role(user.getRole().name())
                 .build();
     }
 
     // ================= LOGOUT =================
 
     @Override
-    public String logout() {
+    public ApiResponse<String> logout() {
+
         SecurityContextHolder.clearContext();
-        return "Đăng xuất thành công";
+
+        return ApiResponse.<String>builder()
+                .status(200)
+                .message("OK")
+                .data("Logout success")
+                .build();
     }
 
     // ================= FORGOT PASSWORD =================
 
     @Override
     @Transactional
-    public String sendForgotPasswordCode(String email) {
+    public ForgotPasswordResponse sendForgotPasswordCode(String email) {
 
         validateEmail(email);
 
@@ -224,12 +255,15 @@ public class AuthServiceImpl implements AuthService {
 
         emailService.sendSimpleMail(email, "OTP reset password", "Mã OTP: " + code);
 
-        return "Đã gửi OTP";
+        return ForgotPasswordResponse.builder()
+                .status(200)
+                .message("Đã gửi OTP")
+                .build();
     }
 
     @Override
     @Transactional
-    public String resetPassword(ForgotPassword.ResetPasswordRequest request) {
+    public ResetPasswordResponse resetPassword(ForgotPassword.ResetPasswordRequest request) {
 
         validatePassword(request.getNewPassword());
 
@@ -252,28 +286,44 @@ public class AuthServiceImpl implements AuthService {
 
         verificationCodeRepository.deleteByEmail(request.getEmail());
 
-        return "Đổi mật khẩu thành công";
+        return ResetPasswordResponse.builder()
+                .status(200)
+                .message("Đổi mật khẩu thành công")
+                .build();
     }
 
     // ================= USER =================
 
-    @Override
-    public List<User> getAllUsers() {
+    public ApiResponse<List<User>> getAllUsers() {
+
         if (getCurrentUser().getRole() != UserRole.ADMIN) {
             throw new UnauthorizedException("Không có quyền");
         }
-        return userRepository.findAll();
+
+        List<User> users = userRepository.findAll();
+
+        return ApiResponse.<List<User>>builder()
+                .status(200)
+                .message("Lấy danh sách user thành công")
+                .data(users)
+                .build();
     }
 
-    @Override
-    public User getUserById(Long id) {
-        return userRepository.findById(id)
+    public ApiResponse<User> getUserById(Long id) {
+
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy user"));
+
+        return ApiResponse.<User>builder()
+                .status(200)
+                .message("Lấy user thành công")
+                .data(user)
+                .build();
     }
 
     @Override
     @Transactional
-    public String createUser(CreateUserRequest request) {
+    public ApiResponse<String> createUser(CreateUserRequest request) {
 
         if (getCurrentUser().getRole() != UserRole.ADMIN) {
             throw new UnauthorizedException("Chỉ ADMIN");
@@ -304,10 +354,6 @@ public class AuthServiceImpl implements AuthService {
                 .build();
 
         if (role == UserRole.RECRUITER) {
-            if (request.getCompanyId() == null) {
-                throw new BadRequestException("Recruiter phải có company");
-            }
-
             Company company = companyRepository.findById(request.getCompanyId())
                     .orElseThrow(() -> new ResourceNotFoundException("Company không tồn tại"));
 
@@ -316,12 +362,16 @@ public class AuthServiceImpl implements AuthService {
 
         userRepository.save(user);
 
-        return "Tạo user thành công";
+        return ApiResponse.<String>builder()
+                .status(201)
+                .message("Tạo user thành công")
+                .data(null)
+                .build();
     }
 
     @Override
     @Transactional
-    public String updateUser(Long id, CreateUserRequest request) {
+    public ApiResponse<String> updateUser(Long id, CreateUserRequest request) {
 
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy user"));
@@ -333,12 +383,16 @@ public class AuthServiceImpl implements AuthService {
 
         userRepository.save(user);
 
-        return "Cập nhật user thành công";
+        return ApiResponse.<String>builder()
+                .status(200)
+                .message("Cập nhật user thành công")
+                .data(null)
+                .build();
     }
 
     @Override
     @Transactional
-    public String deleteUser(Long id) {
+    public ApiResponse<String> deleteUser(Long id) {
 
         if (getCurrentUser().getId().equals(id)) {
             throw new BadRequestException("Không thể tự xoá");
@@ -346,20 +400,33 @@ public class AuthServiceImpl implements AuthService {
 
         userRepository.deleteById(id);
 
-        return "Xoá user thành công";
+        return ApiResponse.<String>builder()
+                .status(200)
+                .message("Xoá user thành công")
+                .data(null)
+                .build();
     }
 
     @Override
-    public long countUsers() {
+    public ApiResponse<Long> countUsers() {
+
         if (getCurrentUser().getRole() != UserRole.ADMIN) {
             throw new UnauthorizedException("Không có quyền");
         }
-        return userRepository.count();
+
+        long count = userRepository.count();
+
+        return ApiResponse.<Long>builder()
+                .status(200)
+                .message("Đếm số lượng user thành công")
+                .data(count)
+                .build();
     }
 
     // ================= CURRENT USER =================
 
     private User getCurrentUser() {
+
         Object principal = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getPrincipal();

@@ -11,7 +11,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AuthResponse {
 
-  private String token; // JWT
+  private int status;
+  private String message;
+
+  private String token;
   private String type = "Bearer";
 
   private Long userId;
