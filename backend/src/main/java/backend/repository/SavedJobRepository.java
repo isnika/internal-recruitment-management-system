@@ -9,11 +9,11 @@ import backend.entity.SavedJobId;
 
 public interface SavedJobRepository extends JpaRepository<SavedJob, SavedJobId> {
 
-  List<SavedJob> findByUserId(Long userId);
+  List<SavedJob> findByUser_Id(Long userId);
 
-  List<SavedJob> findByJobId(Long jobId);
+  List<SavedJob> findByJob_Id(Long jobId);
 
-  boolean existsByUserIdAndJobId(Long userId, Long jobId);
+  boolean existsByUser_IdAndJob_Id(Long userId, Long jobId);
 
-  void deleteByUserIdAndJobId(Long userId, Long jobId);
+  void deleteByUser_IdAndJob_Id(Long userId, Long jobId);
 }
