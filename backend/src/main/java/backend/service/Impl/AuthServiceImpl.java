@@ -1,30 +1,27 @@
 package backend.service.Impl;
 
-import java.time.LocalDateTime;
-import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import backend.DTO.auth.ForgotPassword;
-import backend.DTO.auth.LoginRequest;
-import backend.DTO.auth.LoginResponse;
-import backend.DTO.auth.VerifyRegisterRequest;
+import backend.DTO.ApiResponse;
+import backend.DTO.auth.*;
+import backend.DTO.user.UserResponse;
+import backend.Enum.RegisterRole;
 import backend.Enum.UserRole;
 import backend.entity.*;
 import backend.exception.BadRequestException;
-import backend.exception.ResourceNotFoundException;
-import backend.exception.UnauthorizedException;
 import backend.repository.*;
 import backend.security.AuthUser;
 import backend.security.JwtUtil;
 import backend.service.AuthService;
 import backend.service.EmailService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
@@ -42,7 +39,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public String sendVerificationCode(String email) {
+    public SendOtpResponse sendVerificationCode(String email) {
         validateEmail(email);
 
         String code = generateVerificationCode();
@@ -55,32 +52,37 @@ public class AuthServiceImpl implements AuthService {
                 .build());
 
         emailService.sendSimpleMail(email, "OTP dang ky tai khoan", "Ma OTP cua ban la: " + code);
-        return "OTP da duoc gui";
+
+        return SendOtpResponse.builder()
+                .status(200)
+                .message("OK")
+                .email(email)
+                .build();
     }
 
     @Override
     @Transactional
-    public String register(VerifyRegisterRequest request) {
+    public RegisterResponse register(VerifyRegisterRequest request) {
         validateEmail(request.getEmail());
         validatePassword(request.getPassword());
 
-        if (request.getRole() == null || request.getRole() != backend.Enum.RegisterRole.CANDIDATE) {
-            throw new RuntimeException("Chi duoc dang ky tai khoan CANDIDATE");
+        if (request.getRole() == null || request.getRole() != RegisterRole.CANDIDATE) {
+            throw new BadRequestException("Chi duoc dang ky tai khoan CANDIDATE");
         }
 
         VerificationCode verificationCode = verificationCodeRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("Khong tim thay OTP"));
+                .orElseThrow(() -> new BadRequestException("Khong tim thay OTP"));
 
         if (verificationCode.getExpireAt().isBefore(LocalDateTime.now())) {
-            throw new RuntimeException("OTP het han");
+            throw new BadRequestException("OTP het han");
         }
 
         if (!verificationCode.getCode().equals(request.getCode())) {
-            throw new RuntimeException("OTP sai");
+            throw new BadRequestException("OTP sai");
         }
 
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email da ton tai");
+            throw new BadRequestException("Email da ton tai");
         }
 
         User user = User.builder()
@@ -98,22 +100,26 @@ public class AuthServiceImpl implements AuthService {
         candidateProfileRepository.save(CandidateProfile.builder().user(user).build());
         verificationCodeRepository.deleteByEmail(request.getEmail());
 
-        return "Dang ky thanh cong";
+        return RegisterResponse.builder()
+                .status(201)
+                .message("Register successfully")
+                .user(toUserResponse(user))
+                .build();
     }
 
     @Override
     @Transactional
-    public LoginResponse login(LoginRequest request) {
+    public AuthResponse login(LoginRequest request) {
         validateEmail(request.getEmail());
-        String email = request.getEmail();
 
+        String email = request.getEmail();
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Email khong ton tai"));
+                .orElseThrow(() -> new BadRequestException("Email khong ton tai"));
 
         LocalDateTime lockTime = lockTimeMap.get(email);
         if (lockTime != null) {
             if (lockTime.isAfter(LocalDateTime.now())) {
-                throw new RuntimeException("Tai khoan bi khoa tam thoi");
+                throw new BadRequestException("Tai khoan bi khoa tam thoi");
             }
             lockTimeMap.remove(email);
             loginAttempts.remove(email);
@@ -128,33 +134,42 @@ public class AuthServiceImpl implements AuthService {
                 loginAttempts.remove(email);
             }
 
-            throw new RuntimeException("Sai mat khau");
+            throw new BadRequestException("Sai mat khau");
         }
 
         loginAttempts.remove(email);
         lockTimeMap.remove(email);
 
         String token = jwtUtil.generateToken(AuthUser.fromUser(user));
-        return LoginResponse.builder()
-                .message("Dang nhap thanh cong")
+
+        return AuthResponse.builder()
+                .status(200)
+                .message("Login successfully")
                 .token(token)
+                .userId(user.getId())
+                .email(user.getEmail())
+                .role(user.getRole().name())
+                .build();
+    }
+
+    @Override
+    public ApiResponse<String> logout() {
+        SecurityContextHolder.clearContext();
+
+        return ApiResponse.<String>builder()
+                .status(200)
+                .message("OK")
+                .data("Logout success")
                 .build();
     }
 
     @Override
     @Transactional
-    public String logout() {
-        SecurityContextHolder.clearContext();
-        return "Dang xuat thanh cong";
-    }
-
-    @Override
-    @Transactional
-    public String sendForgotPasswordCode(String email) {
+    public ForgotPasswordResponse sendForgotPasswordCode(String email) {
         validateEmail(email);
 
         if (!userRepository.existsByEmail(email)) {
-            throw new RuntimeException("Email khong ton tai");
+            throw new BadRequestException("Email khong ton tai");
         }
 
         String code = generateVerificationCode();
@@ -167,34 +182,53 @@ public class AuthServiceImpl implements AuthService {
                 .build());
 
         emailService.sendSimpleMail(email, "OTP dat lai mat khau", "Ma OTP: " + code);
-        return "Da gui OTP";
+
+        return ForgotPasswordResponse.builder()
+                .status(200)
+                .message("Da gui OTP")
+                .build();
     }
 
     @Override
     @Transactional
-    public String resetPassword(ForgotPassword.ResetPasswordRequest request) {
+    public ResetPasswordResponse resetPassword(ForgotPassword.ResetPasswordRequest request) {
         validatePassword(request.getNewPassword());
 
         VerificationCode verificationCode = verificationCodeRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("Khong tim thay OTP"));
+                .orElseThrow(() -> new BadRequestException("Khong tim thay OTP"));
 
         if (verificationCode.getExpireAt().isBefore(LocalDateTime.now())) {
-            throw new RuntimeException("OTP het han");
+            throw new BadRequestException("OTP het han");
         }
 
         if (!verificationCode.getCode().equals(request.getCode())) {
-            throw new RuntimeException("OTP sai");
+            throw new BadRequestException("OTP sai");
         }
 
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("Email khong ton tai"));
+                .orElseThrow(() -> new BadRequestException("Email khong ton tai"));
 
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         user.setUpdatedAt(LocalDateTime.now());
         userRepository.save(user);
         verificationCodeRepository.deleteByEmail(request.getEmail());
 
-        return "Doi mat khau thanh cong";
+        return ResetPasswordResponse.builder()
+                .status(200)
+                .message("Doi mat khau thanh cong")
+                .build();
+    }
+
+    private UserResponse toUserResponse(User user) {
+        return UserResponse.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .avatarUrl(user.getAvatarUrl())
+                .role(user.getRole().name())
+                .status(user.getStatus())
+                .build();
     }
 
     private String generateVerificationCode() {
@@ -203,7 +237,7 @@ public class AuthServiceImpl implements AuthService {
 
     private void validateEmail(String email) {
         if (email == null || !email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
-            throw new RuntimeException("Email khong hop le");
+            throw new BadRequestException("Email khong hop le");
         }
     }
 
@@ -212,7 +246,7 @@ public class AuthServiceImpl implements AuthService {
                 || password.length() < 8
                 || !password.matches(".*[A-Za-z].*")
                 || !password.matches(".*[0-9].*")) {
-            throw new RuntimeException("Mat khau phai >= 8 ky tu, gom chu va so");
+            throw new BadRequestException("Mat khau phai >= 8 ky tu, gom chu va so");
         }
     }
 }

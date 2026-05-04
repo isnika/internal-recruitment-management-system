@@ -1,15 +1,13 @@
 package backend.controller;
 
-import backend.DTO.auth.ForgotPassword;
-import backend.DTO.auth.LoginRequest;
-import backend.DTO.auth.LoginResponse;
-import backend.DTO.auth.RegisterRequest;
-import backend.DTO.auth.VerifyRegisterRequest;
+import backend.DTO.ApiResponse;
+import backend.DTO.auth.*;
 import backend.service.AuthService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -18,61 +16,56 @@ public class AuthController {
 
   private final AuthService authService;
 
-  // ==================== GỬI OTP ====================
+  private <T> ApiResponse<T> wrap(T data, String message, int status) {
+    return ApiResponse.<T>builder()
+            .status(status)
+            .message(message)
+            .data(data)
+            .build();
+  }
+
   @PostMapping("/send-code")
-  public ResponseEntity<String> sendCode(@RequestBody RegisterRequest request) {
-
-    String result = authService.sendVerificationCode(request.getEmail());
-
-    return ResponseEntity.ok(result);
+  public ResponseEntity<ApiResponse<SendOtpResponse>> sendOtp(
+          @RequestBody Map<String, String> request
+  ) {
+    SendOtpResponse res = authService.sendVerificationCode(request.get("email"));
+    return ResponseEntity.ok(wrap(res, "Send OTP success", 200));
   }
 
-  // ==================== ĐĂNG KÝ ====================
   @PostMapping("/register")
-  public ResponseEntity<String> register(@RequestBody VerifyRegisterRequest request) {
-
-    String result = authService.register(request);
-
-    return ResponseEntity.status(HttpStatus.CREATED).body(result);
+  public ResponseEntity<ApiResponse<RegisterResponse>> register(
+          @RequestBody VerifyRegisterRequest request
+  ) {
+    RegisterResponse res = authService.register(request);
+    return ResponseEntity.ok(wrap(res, "Register success", 201));
   }
 
-  // ==================== ĐĂNG NHẬP ====================
   @PostMapping("/login")
-  public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
-
-    LoginResponse response = authService.login(request);
-
-    return ResponseEntity.ok(response);
+  public ResponseEntity<ApiResponse<AuthResponse>> login(
+          @RequestBody LoginRequest request
+  ) {
+    AuthResponse res = authService.login(request);
+    return ResponseEntity.ok(wrap(res, "Login success", 200));
   }
 
-  // ==================== QUÊN MẬT KHẨU ====================
   @PostMapping("/forgot-password")
-  public ResponseEntity<String> forgotPassword(
+  public ResponseEntity<ApiResponse<ForgotPasswordResponse>> forgotPassword(
           @RequestBody ForgotPassword.ForgotPasswordRequest request
   ) {
-
-    String result = authService.sendForgotPasswordCode(request.getEmail());
-
-    return ResponseEntity.ok(result);
+    ForgotPasswordResponse res = authService.sendForgotPasswordCode(request.getEmail());
+    return ResponseEntity.ok(wrap(res, "OTP sent", 200));
   }
 
-  // ==================== RESET PASSWORD ====================
   @PostMapping("/reset-password")
-  public ResponseEntity<String> resetPassword(
+  public ResponseEntity<ApiResponse<ResetPasswordResponse>> resetPassword(
           @RequestBody ForgotPassword.ResetPasswordRequest request
   ) {
-
-    String result = authService.resetPassword(request);
-
-    return ResponseEntity.ok(result);
+    ResetPasswordResponse res = authService.resetPassword(request);
+    return ResponseEntity.ok(wrap(res, "Reset password success", 200));
   }
 
-  // ==================== LOGOUT ====================
   @PostMapping("/logout")
-  public ResponseEntity<String> logout() {
-
-    String result = authService.logout();
-
-    return ResponseEntity.ok(result);
+  public ResponseEntity<ApiResponse<String>> logout() {
+    return ResponseEntity.ok(authService.logout());
   }
 }

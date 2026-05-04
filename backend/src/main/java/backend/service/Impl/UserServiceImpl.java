@@ -123,6 +123,11 @@ public class UserServiceImpl implements UserService {
     userRepository.delete(user);
   }
 
+  @Override
+  public Long countUsers() {
+    return userRepository.count();
+  }
+
   private User getCurrentUserEntity() {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     if (authentication == null || !(authentication.getPrincipal() instanceof AuthUser authUser)) {

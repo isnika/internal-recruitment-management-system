@@ -37,6 +37,12 @@ public class UserController {
     return ResponseEntity.ok(userService.getAllUsers());
   }
 
+  @GetMapping("/count")
+  @PreAuthorize("hasRole('ADMIN')")
+  public ResponseEntity<Long> countUsers() {
+    return ResponseEntity.ok(userService.countUsers());
+  }
+
   @GetMapping("/{id}")
   @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {

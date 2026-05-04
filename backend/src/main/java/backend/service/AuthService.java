@@ -1,21 +1,19 @@
 package backend.service;
 
-import backend.DTO.auth.ForgotPassword;
-import backend.DTO.auth.LoginRequest;
-import backend.DTO.auth.LoginResponse;
-import backend.DTO.auth.VerifyRegisterRequest;
+import backend.DTO.ApiResponse;
+import backend.DTO.auth.*;
 
 public interface AuthService {
 
-  String sendVerificationCode(String email);
+    SendOtpResponse sendVerificationCode(String email);
 
-  String register(VerifyRegisterRequest request);
+    RegisterResponse register(VerifyRegisterRequest request);
 
-  LoginResponse login(LoginRequest request);
+    AuthResponse login(LoginRequest request);
 
-  String logout();
+    ApiResponse<String> logout();
 
-  String sendForgotPasswordCode(String email);
+    ForgotPasswordResponse sendForgotPasswordCode(String email);
 
-  String resetPassword(ForgotPassword.ResetPasswordRequest request);
+    ResetPasswordResponse resetPassword(ForgotPassword.ResetPasswordRequest request);
 }

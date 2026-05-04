@@ -18,4 +18,6 @@ public interface UserService {
   UserResponse updateUser(Long id, CreateUserRequest request);
 
   void deleteUser(Long id);
+
+  Long countUsers();
 }
