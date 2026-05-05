@@ -1,0 +1,39 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: recruitment-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: recruitment_db1
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3307:3306"
+    volumes:
+      - recruitment-db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: recruitment-backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - ./backend/.env
+    environment:
+      DB_URL: jdbc:mysql://db:3306/recruitment_db1?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=Asia/Bangkok
+      DB_USERNAME: root
+      DB_PASSWORD: root
+      JWT_SECRET: ThisIsASecretKeyForJwtAuthenticationMustBeAtLeast32BytesLong
+    ports:
+      - "8080:8080"
+
+volumes:
+  recruitment-db-data:
