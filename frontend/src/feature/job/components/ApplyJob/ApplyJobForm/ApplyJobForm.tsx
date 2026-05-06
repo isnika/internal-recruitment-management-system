@@ -5,16 +5,24 @@ import ProfessionalInfoSection from "../ProfessionalInfoSection/ProfessionalInfo
 import { FiX } from "react-icons/fi";
 import styles from "./ApplyJobForm.module.css";
 
-interface ApplyJobFormProps {
+type Props = {
+  job: Job;
   onSubmitSuccess: () => void;
   onCancel?: () => void;
-}
+};
 
-const ApplyJobForm = ({ onSubmitSuccess, onCancel }: ApplyJobFormProps) => {
+const ApplyJobForm = ({ job, onSubmitSuccess, onCancel }: Props) => {
   const [agreed, setAgreed] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!agreed) {
+      alert("You must agree to Terms & Privacy Policy");
+      return;
+    }
+
+    // TODO: call API here
     onSubmitSuccess();
   };
 
@@ -22,32 +30,32 @@ const ApplyJobForm = ({ onSubmitSuccess, onCancel }: ApplyJobFormProps) => {
     <form className={styles.formCard} onSubmit={handleSubmit}>
       <div className={styles.formHeader}>
         <h2 className={styles.formTitle}>RECRUITMENT INFORMATION</h2>
+
         {onCancel && (
-          <button type="button" className={styles.closeBtn} onClick={onCancel}>
+          <button
+            type="button"
+            className={styles.closeBtn}
+            onClick={onCancel}
+          >
             <FiX />
           </button>
         )}
       </div>
 
       <div className={styles.formColumns}>
-        {/* Left Column: Personal */}
         <div className={styles.leftCol}>
           <PersonalInfoSection />
         </div>
 
-        {/* Right Column: Documents */}
         <div className={styles.rightCol}>
           <DocumentInfoSection />
         </div>
       </div>
 
-      {/* Separator */}
       <div className={styles.separator} />
 
-      {/* Professional Section (full width, 2 columns inside) */}
-      <ProfessionalInfoSection />
+      <ProfessionalInfoSection jobTitle={job.title} />
 
-      {/* Agreement & Submit */}
       <div className={styles.footerRow}>
         <label className={styles.agreementLabel}>
           <input

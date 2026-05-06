@@ -23,27 +23,30 @@ const handleLogin = async () => {
   try {
     const res = await loginApi(account, password);
 
-    const userRole = res.user.role; //  đổi tên
+    const userRole = res.user.role;
 
-    // check role với tab
-     const normalizedRole =
-       userRole === "admin" ? "company" : userRole;
+    const normalizedRole =
+      userRole === "admin" ? "company" : userRole;
 
-     // check role
-     if (normalizedRole !== role) {
-       alert("Sai loại tài khoản (Candidate / Company)");
-       setPassword(""); // optional
-       return;
-     }
+    if (normalizedRole !== role) {
+      alert("Sai loại tài khoản (Candidate / Company)");
+      setPassword("");
+      return;
+    }
 
-     login(res.user, res.accessToken);
+    // 🔥 FIX: lưu vào localStorage
+    localStorage.setItem("token", res.accessToken);
+    localStorage.setItem("user", JSON.stringify(res.user));
 
-     // điều hướng theo normalizedRole
-     if (normalizedRole === "candidate") {
-       navigate("/");
-     } else if (normalizedRole === "company") {
-       navigate("/layoutManagement");
-     }
+    // 🔥 update context
+    login(res.user, res.accessToken);
+
+    // 🔥 điều hướng
+    if (normalizedRole === "candidate") {
+      navigate("/");
+    } else {
+      navigate("/layoutManagement");
+    }
 
   } catch (err: any) {
     alert(err.message || "Login failed");

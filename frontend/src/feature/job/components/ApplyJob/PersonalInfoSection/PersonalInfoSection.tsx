@@ -1,17 +1,38 @@
 import styles from "./PersonalInfoSection.module.css";
+import { useAuth } from "../../../../auth/context/AuthContext";
+
 
 const PersonalInfoSection = () => {
+
+  const { user } = useAuth();
+
+  const nameParts = user?.fullName?.split(" ") || [];
+  const firstName = nameParts[0] || "";
+  const lastName = nameParts.slice(1).join(" ");
+
+  const dobParts = user?.dob?.split("-") || ["", "", ""];
+
   return (
     <div className={styles.section}>
       {/* Row: First Name + Last Name */}
       <div className={styles.row}>
         <div className={styles.fieldHalf}>
           <label className={styles.label}>First Name</label>
-          <input type="text" className={styles.input} placeholder="First Name" />
+          <input
+            type="text"
+            className={styles.input}
+            value={firstName}
+            readOnly
+          />
         </div>
         <div className={styles.fieldHalf}>
           <label className={styles.label}>Last Name</label>
-          <input type="text" className={styles.input} placeholder="Last Name" />
+          <input
+            type="text"
+            className={styles.input}
+            value={lastName}
+            readOnly
+          />
         </div>
       </div>
 
@@ -19,7 +40,12 @@ const PersonalInfoSection = () => {
       <div className={styles.row}>
         <div className={styles.fieldFull}>
           <label className={styles.label}>Gender</label>
-          <input type="text" className={styles.input} placeholder="Gender" />
+          <input
+            type="text"
+            className={styles.input}
+            value={user?.gender || ""}
+            readOnly
+          />
         </div>
       </div>
 
@@ -28,9 +54,26 @@ const PersonalInfoSection = () => {
         <div className={styles.fieldFull}>
           <label className={styles.label}>Date of Birth</label>
           <div className={styles.dateGroup}>
-            <input type="text" className={styles.inputSmall} placeholder="Day" />
-            <input type="text" className={styles.inputSmall} placeholder="Month" />
-            <input type="text" className={styles.inputSmall} placeholder="Year" />
+            <input
+              type="text"
+              className={styles.inputSmall}
+              value={dobParts[2] || ""}
+              readOnly
+            />
+
+            <input
+              type="text"
+              className={styles.inputSmall}
+              value={dobParts[1] || ""}
+              readOnly
+            />
+
+            <input
+              type="text"
+              className={styles.inputSmall}
+              value={dobParts[0] || ""}
+              readOnly
+            />
           </div>
         </div>
       </div>
@@ -39,7 +82,12 @@ const PersonalInfoSection = () => {
       <div className={styles.row}>
         <div className={styles.fieldFull}>
           <label className={styles.label}>Email</label>
-          <input type="email" className={styles.input} placeholder="Email" />
+          <input
+            type="email"
+            className={styles.input}
+            value={user?.email || ""}
+            readOnly
+          />
         </div>
       </div>
 
@@ -47,7 +95,12 @@ const PersonalInfoSection = () => {
       <div className={styles.row}>
         <div className={styles.fieldFull}>
           <label className={styles.label}>Phone number</label>
-          <input type="tel" className={styles.input} placeholder="Phone number" />
+          <input
+            type="tel"
+            className={styles.input}
+            value={user?.phone || ""}
+            readOnly
+          />
         </div>
       </div>
 
@@ -55,7 +108,12 @@ const PersonalInfoSection = () => {
       <div className={styles.row}>
         <div className={styles.fieldFull}>
           <label className={styles.label}>Address</label>
-          <input type="text" className={styles.input} placeholder="Address" />
+          <input
+            type="text"
+            className={styles.input}
+            value={user?.address || ""}
+            readOnly
+          />
         </div>
       </div>
     </div>

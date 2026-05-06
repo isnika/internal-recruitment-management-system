@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "../../../auth/context/AuthContext";
 import styles from "./PersonalProfile.module.css";
+import { updateProfile } from "../../../../service/userApi";
 
 export default function PersonalProfile() {
-  const { user } = useAuth();
-
+  const { user,setUser } = useAuth();
   const [editPersonal, setEditPersonal] = useState(false);
   const [editRecruitment, setEditRecruitment] = useState(false);
 
@@ -20,21 +20,45 @@ export default function PersonalProfile() {
 
   const days = Array.from({ length: 31 }, (_, i) => i + 1);
   const months = Array.from({ length: 12 }, (_, i) => i + 1);
-  const years = Array.from({ length: 50 }, (_, i) => 2026 - i);
+  const years = Array.from({ length: 50 }, (_, i) => 2026 - i)
 
-  if (!user) return <div>Loading...</div>;
 
-  const nameParts = user.fullName?.split(" ") || [];
-  const firstName = nameParts[0] || "";
-  const lastName = nameParts.slice(1).join(" ");
-
-  const dobParts = user.dob ? user.dob.split("-") : ["", "", ""];
+  const dobParts = user?.dob ? user.dob.split("-") : ["", "", ""];
 
   const [dob, setDob] = useState({
     year: dobParts[0],
     month: dobParts[1],
     day: dobParts[2],
   });
+
+    const [taxId, setTaxId] = useState(user.recruitment?.taxId || "");
+    const [citizenId, setCitizenId] = useState(user.recruitment?.citizenId || "");
+    const [bank, setBank] = useState(user.recruitment?.bank || "");
+    const [social, setSocial] = useState(user.recruitment?.social || "");
+
+    useEffect(() => {
+      setTaxId(user.recruitment?.taxId || "");
+      setCitizenId(user.recruitment?.citizenId || "");
+      setBank(user.recruitment?.bank || "");
+      setSocial(user.recruitment?.social || "");
+    }, [user]);
+
+    useEffect(() => {
+      const rd = user.recruitment?.releaseDate?.split("-") || ["", "", ""];
+
+      setReleaseDate({
+        year: rd[0] || "",
+        month: rd[1] || "",
+        day: rd[2] || "",
+      });
+    }, [user]);
+
+
+    if (!user) return <div>Loading...</div>;
+
+    const nameParts = user.fullName?.split(" ") || [];
+    const firstName = nameParts[0] || "";
+    const lastName = nameParts.slice(1).join(" ");
 
   return (
     <div className={styles.container}>
@@ -277,45 +301,90 @@ export default function PersonalProfile() {
         <div className={styles.column}>
           <div className={styles.formGroup}>
             <label>Personal Tax ID</label>
-            <input placeholder="Tax Number" readOnly={!editRecruitment} />
+            <input
+              value={taxId}
+              onChange={(e) => setTaxId(e.target.value)}
+              readOnly={!editRecruitment}
+            />
           </div>
 
           <div className={styles.formGroup}>
             <label>Citizen ID</label>
-            <input placeholder="Citizen ID" readOnly={!editRecruitment} />
+            <input
+              value={citizenId}
+              onChange={(e) => setCitizenId(e.target.value)}
+              readOnly={!editRecruitment}
+            />
           </div>
 
-          <div className={styles.formGroup}>
-            <label>Release Date</label>
+        <div className={styles.formGroup}>
+          <label>Release Date</label>
 
+          {!editRecruitment ? (
+            <input
+              value={
+                user.recruitment?.releaseDate
+                  ? user.recruitment.releaseDate.split("-").reverse().join("/")
+                  : ""
+              }
+              readOnly
+            />
+          ) : (
             <div className={styles.dob}>
-              <select disabled={!editRecruitment}>
+              {/* DAY */}
+              <select
+                value={releaseDate.day}
+                onChange={(e) =>
+                  setReleaseDate({ ...releaseDate, day: e.target.value })
+                }
+              >
                 <option>Day</option>
                 {days.map((d) => (
-                  <option key={d}>{d}</option>
+                  <option key={d} value={String(d).padStart(2, "0")}>
+                    {d}
+                  </option>
                 ))}
               </select>
 
-              <select disabled={!editRecruitment}>
+              {/* MONTH */}
+              <select
+                value={releaseDate.month}
+                onChange={(e) =>
+                  setReleaseDate({ ...releaseDate, month: e.target.value })
+                }
+              >
                 <option>Month</option>
                 {months.map((m) => (
-                  <option key={m}>{m}</option>
+                  <option key={m} value={String(m).padStart(2, "0")}>
+                    {m}
+                  </option>
                 ))}
               </select>
 
-              <select disabled={!editRecruitment}>
+              {/* YEAR */}
+              <select
+                value={releaseDate.year}
+                onChange={(e) =>
+                  setReleaseDate({ ...releaseDate, year: e.target.value })
+                }
+              >
                 <option>Year</option>
                 {years.map((y) => (
                   <option key={y}>{y}</option>
                 ))}
               </select>
             </div>
-          </div>
+          )}
+        </div>
 
           <div className={styles.formGroup}>
             <label>Social Network</label>
             <div className={styles.socialRow}>
-              <input placeholder="Name" readOnly={!editRecruitment} />
+              <input
+                value={social}
+                onChange={(e) => setSocial(e.target.value)}
+                readOnly={!editRecruitment}
+              />
               <input placeholder="Link" readOnly={!editRecruitment} />
               <span className={styles.add}>Add</span>
             </div>
@@ -324,7 +393,11 @@ export default function PersonalProfile() {
           <div className={styles.formGroup}>
             <label>Bank Account</label>
             <div className={styles.socialRow}>
-              <input placeholder="Bank Account Name" readOnly={!editRecruitment} />
+              <input
+                value={bank}
+                onChange={(e) => setBank(e.target.value)}
+                readOnly={!editRecruitment}
+              />
               <span className={styles.add}>Add</span>
             </div>
           </div>
@@ -338,7 +411,41 @@ export default function PersonalProfile() {
             Edit Recruitment
           </button>
         ) : (
-          <button onClick={() => setEditRecruitment(false)}>
+          <button
+            onClick={async () => {
+              try {
+                const formattedReleaseDate =
+                  releaseDate.year && releaseDate.month && releaseDate.day
+                    ? `${releaseDate.year}-${releaseDate.month.padStart(2, "0")}-${releaseDate.day.padStart(2, "0")}`
+                    : "";
+
+                const updated = await updateProfile({
+                  recruitment: {
+                    taxId,
+                    citizenId,
+                    releaseDate: formattedReleaseDate,
+                    bank,
+                    social,
+                  },
+                });
+
+                setUser({ ...updated });
+
+                // QUAN TRỌNG: reset state trước khi tắt edit
+                setReleaseDate({
+                  year: updated.recruitment?.releaseDate?.split("-")[0] || "",
+                  month: updated.recruitment?.releaseDate?.split("-")[1] || "",
+                  day: updated.recruitment?.releaseDate?.split("-")[2] || "",
+                });
+
+              } catch (err) {
+                console.error(err);
+              } finally {
+                // LUÔN CHẠY
+                setEditRecruitment(false);
+              }
+            }}
+          >
             Save Recruitment
           </button>
         )}

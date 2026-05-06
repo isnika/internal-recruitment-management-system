@@ -1,21 +1,18 @@
 import { request } from "./axiosClient";
-import { IS_MOCK } from "../config/index";
+import { IS_MOCK } from "../config";
 import { users } from "../dataMock/User";
-import type { User } from "./authApi";
+import type { User } from "../types/user";
+
 
 const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
-//  GET PROFILE
+// ================= GET PROFILE =================
 export const getMyProfile = async (): Promise<User> => {
   if (IS_MOCK) {
     await delay(300);
 
-    const token = localStorage.getItem("token");
-    if (!token) throw new Error("Not authenticated");
-
     const user = JSON.parse(localStorage.getItem("user") || "null");
-
-    if (!user) throw new Error("User not found");
+    if (!user) throw new Error("Not authenticated");
 
     return user;
   }
@@ -23,22 +20,31 @@ export const getMyProfile = async (): Promise<User> => {
   return request.get<User>("/users/me");
 };
 
-// UPDATE PROFILE
+// ================= UPDATE PROFILE =================
 export const updateProfile = async (data: Partial<User>): Promise<User> => {
   if (IS_MOCK) {
     await delay(300);
 
     const user = JSON.parse(localStorage.getItem("user") || "null");
-
     if (!user) throw new Error("User not found");
 
-    const updated = { ...user, ...data };
+    // 🔥 FIX: merge sâu recruitment
+    const updated: User = {
+      ...user,
+      ...data,
+      recruitment: {
+        ...user.recruitment,
+        ...data.recruitment,
+      },
+    };
 
+    // lưu localStorage
     localStorage.setItem("user", JSON.stringify(updated));
 
+    // sync với dataMock (optional)
     const index = users.findIndex((u) => u.id === user.id);
     if (index !== -1) {
-      users[index] = { ...users[index], ...data };
+      users[index] = updated;
     }
 
     return updated;
@@ -47,7 +53,7 @@ export const updateProfile = async (data: Partial<User>): Promise<User> => {
   return request.put<User>("/users/me", data);
 };
 
-// GET USER BY ID
+// ================= GET USER BY ID =================
 export const getUserById = async (id: number): Promise<User> => {
   if (IS_MOCK) {
     await delay(200);

@@ -1,3 +1,5 @@
+import type { User } from "../types/user";
+
 export const users: User[] = [
   {
     id: 1,
@@ -11,30 +13,47 @@ export const users: User[] = [
     dob: "1990-01-01",
     gender: "male",
   },
-  {
-    id: 2,
-    username: "user",
-    email: "user@gmail.com",
-    password: "123456",
-    phone: "0900000002",
-    fullName: "Nguyễn Trần Phương Ly",
-    role: "candidate",
-    address: "TP. Hồ Chí Minh",
-    dob: "2002-05-20",
-    gender: "female",
-  },
-  {
-    id: 3,
-    username: "user1",
-    email: "user1@gmail.com",
-    password: "123456",
-    phone: "0800000001",
-    fullName: "Nguyễn Trần Phương Tuấn",
-    role: "candidate",
-    address: "Thủ Đức, TP. Hồ Chí Minh",
-    dob: "2005-01-01",
-    gender: "male",
-  },
+   {
+      id: 2,
+      username: "user",
+      email: "user@gmail.com",
+      password: "123456",
+      phone: "0900000002",
+      fullName: "Nguyễn Trần Phương Ly",
+      role: "candidate",
+      address: "TP. Hồ Chí Minh",
+      dob: "2002-05-20",
+      gender: "female",
+
+      recruitment: {
+        taxId: "123456789",
+        citizenId: "079999999",
+        bank: "Vietcombank - 123456",
+        social: "facebook.com/ly",
+        releaseDate: "2020-05-10",
+      },
+    },
+
+    {
+      id: 3,
+      username: "user1",
+      email: "user1@gmail.com",
+      password: "123456",
+      phone: "0800000001",
+      fullName: "Nguyễn Trần Phương Tuấn",
+      role: "candidate",
+      address: "Thủ Đức, TP. Hồ Chí Minh",
+      dob: "2005-01-01",
+      gender: "male",
+
+      recruitment: {
+        taxId: "987654321",
+        citizenId: "012345678",
+        bank: "ACB - 654321",
+        social: "facebook.com/tuan",
+        releaseDate: "2022-01-10",
+      },
+    },
 
   // ===== EMPLOYER (COMPANY) =====
   {

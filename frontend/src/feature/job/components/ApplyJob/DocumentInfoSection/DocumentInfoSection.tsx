@@ -1,10 +1,19 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FiPlus } from "react-icons/fi";
 import styles from "./DocumentInfoSection.module.css";
+import { useAuth } from "../../../../auth/context/AuthContext";
 
 const DocumentInfoSection = () => {
-  const [socialNetworks, setSocialNetworks] = useState([{ name: "", link: "" }]);
-  const [bankAccounts, setBankAccounts] = useState([""]);
+
+  const { user } = useAuth();
+  const [socialNetworks, setSocialNetworks] = useState(
+    user?.recruitment?.social
+      ? [{ name: user.recruitment.social, link: "" }]
+      : [{ name: "", link: "" }]
+  );
+  const [bankAccounts, setBankAccounts] = useState(
+    user?.recruitment?.bank ? [user.recruitment.bank] : [""]
+  );
 
   const addSocialNetwork = () => {
     setSocialNetworks([...socialNetworks, { name: "", link: "" }]);
@@ -13,6 +22,20 @@ const DocumentInfoSection = () => {
   const addBankAccount = () => {
     setBankAccounts([...bankAccounts, ""]);
   };
+
+useEffect(() => {
+  if (!user) return;
+
+  setSocialNetworks(
+    user.recruitment?.social
+      ? [{ name: user.recruitment.social, link: "" }]
+      : [{ name: "", link: "" }]
+  );
+
+  setBankAccounts(
+    user.recruitment?.bank ? [user.recruitment.bank] : [""]
+  );
+}, [user]);
 
   return (
     <div className={styles.section}>
@@ -25,6 +48,7 @@ const DocumentInfoSection = () => {
           <input
             type="text"
             className={styles.input}
+            value={user?.recruitment?.taxId || ""}
             placeholder="Personal Tax Identification Number"
           />
         </div>
@@ -39,7 +63,8 @@ const DocumentInfoSection = () => {
           <input
             type="text"
             className={styles.input}
-            placeholder="Citizen ID Number/Citizen Card Number"
+            value={user?.recruitment?.citizenId || ""}
+            placeholder="Citizen ID Number"
           />
         </div>
       </div>
@@ -51,6 +76,11 @@ const DocumentInfoSection = () => {
           <input
             type="text"
             className={styles.input}
+            value={
+              user?.recruitment?.releaseDate
+                ? user.recruitment.releaseDate.split("-").reverse().join("/")
+                : ""
+            }
             placeholder="Release Date"
           />
         </div>
@@ -60,16 +90,29 @@ const DocumentInfoSection = () => {
       <div className={styles.row}>
         <div className={styles.fieldFull}>
           <label className={styles.label}>Social Network</label>
-          {socialNetworks.map((_, index) => (
+          {socialNetworks.map((item, index) => (
             <div key={index} className={styles.socialRow}>
               <input
                 type="text"
                 className={styles.inputSmall}
+                value={item.name}
+                onChange={(e) => {
+                  const newList = [...socialNetworks];
+                  newList[index].name = e.target.value;
+                  setSocialNetworks(newList);
+                }}
                 placeholder="Name"
               />
+
               <input
                 type="text"
                 className={styles.inputSmall}
+                value={item.link}
+                onChange={(e) => {
+                  const newList = [...socialNetworks];
+                  newList[index].link = e.target.value;
+                  setSocialNetworks(newList);
+                }}
                 placeholder="Link"
               />
             </div>
@@ -90,11 +133,17 @@ const DocumentInfoSection = () => {
           <label className={styles.label}>
             Bank Account Name (Currently Use)
           </label>
-          {bankAccounts.map((_, index) => (
+          {bankAccounts.map((item, index) => (
             <input
               key={index}
               type="text"
               className={styles.input}
+              value={item}
+              onChange={(e) => {
+                const newList = [...bankAccounts];
+                newList[index] = e.target.value;
+                setBankAccounts(newList);
+              }}
               placeholder="Bank Account Name"
             />
           ))}

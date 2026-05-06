@@ -110,7 +110,11 @@ const JobDetail = () => {
             {isSubmitted ? (
               <SubmitSuccessMessage />
             ) : (
-              <ApplyJobForm onSubmitSuccess={handleSubmitSuccess} onCancel={handleCancelApply} />
+              <ApplyJobForm
+                job={job}
+                onSubmitSuccess={handleSubmitSuccess}
+                onCancel={handleCancelApply}
+              />
             )}
           </div>
           <div className={styles.rightCol}></div>

@@ -1,23 +1,13 @@
 import { request } from "./axiosClient";
-import { IS_MOCK } from "../config/index";
+import { IS_MOCK } from "../config";
 import { users } from "../dataMock/User";
+import type { User } from "../types/user";
+import type { AuthResponse } from "../types/auth";
 
-export interface User {
-  id: number;
-  email: string;
-  password?: string;
-  name: string;
-}
-
-export interface AuthResponse {
-  accessToken: string;
-  refreshToken: string;
-  user: User;
-}
 
 const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
-// LOGIN
+// ================= LOGIN =================
 export const login = async (
   email: string,
   password: string
@@ -25,11 +15,22 @@ export const login = async (
   if (IS_MOCK) {
     await delay(500);
 
-    const user = users.find(
+    const found = users.find(
       (u) => u.email === email && u.password === password
     );
 
-    if (!user) throw new Error("Sai tài khoản hoặc mật khẩu");
+    if (!found) throw new Error("Sai tài khoản hoặc mật khẩu");
+
+    // đảm bảo user luôn có recruitment
+    const user: User = {
+      ...found,
+      recruitment: found.recruitment || {
+        taxId: "",
+        citizenId: "",
+        bank: "",
+        social: "",
+      },
+    };
 
     const res: AuthResponse = {
       accessToken: "mock_token_" + user.id,
@@ -37,9 +38,10 @@ export const login = async (
       user,
     };
 
+    // lưu localStorage (QUAN TRỌNG)
     localStorage.setItem("token", res.accessToken);
     localStorage.setItem("refreshToken", res.refreshToken);
-    localStorage.setItem("user", JSON.stringify(res.user));
+    localStorage.setItem("user", JSON.stringify(user));
 
     return res;
   }
@@ -56,11 +58,11 @@ export const login = async (
   return res;
 };
 
-//  REGISTER
+// ================= REGISTER =================
 export const register = async (data: {
   email: string;
   password: string;
-  name: string;
+  fullName: string;
 }): Promise<AuthResponse> => {
   if (IS_MOCK) {
     await delay(500);
@@ -70,9 +72,22 @@ export const register = async (data: {
 
     const newUser: User = {
       id: Date.now(),
+      username: data.email,
       email: data.email,
       password: data.password,
-      name: data.name,
+      fullName: data.fullName,
+      role: "candidate",
+      phone: "",
+      address: "",
+      dob: "",
+      gender: "",
+
+      recruitment: {
+        taxId: "",
+        citizenId: "",
+        bank: "",
+        social: "",
+      },
     };
 
     users.push(newUser);
@@ -85,7 +100,7 @@ export const register = async (data: {
 
     localStorage.setItem("token", res.accessToken);
     localStorage.setItem("refreshToken", res.refreshToken);
-    localStorage.setItem("user", JSON.stringify(res.user));
+    localStorage.setItem("user", JSON.stringify(newUser));
 
     return res;
   }
@@ -93,13 +108,13 @@ export const register = async (data: {
   return request.post<AuthResponse>("/auth/register", data);
 };
 
-//  LOGOUT
+// ================= LOGOUT =================
 export const logout = () => {
   localStorage.clear();
   window.location.href = "/login";
 };
 
-//  GET CURRENT USER
+// ================= GET CURRENT USER =================
 export const getCurrentUser = (): User | null => {
   const user = localStorage.getItem("user");
   return user ? JSON.parse(user) : null;
