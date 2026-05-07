@@ -26,6 +26,7 @@ export interface Job {
   };
   workingHours?: string;
   deadline?: string;
+  createdBy?: string;
 }
 
 export interface HomeMetadata {

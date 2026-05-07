@@ -1,0 +1,14 @@
+.recruitmentSection {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.infoBanner {
+  background: #bfdbfe; /* Light blue */
+  color: #1e3a8a;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+}

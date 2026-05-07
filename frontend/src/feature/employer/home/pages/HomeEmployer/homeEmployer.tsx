@@ -1,12 +1,48 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
 import styles from "./homeEmployer.module.css";
+import RecruitmentManagement from "../../../RecruitmentManagement/pages/RecruitmentManagement";
+
+const tabs = [
+  "Recruitment Information Management",
+  "Candidate Management",
+  "Interview Management"
+];
 
 const HomeEmployer = () => {
+  const [activeTab, setActiveTab] = useState(tabs[0]);
 
   return (
-      <div>
-        <a href="#top">Return to top of page</a>
+    <div className={styles.pageWrapper}>
+      <div className={styles.container}>
+        {/* Tabs */}
+        <div className={styles.tabsContainer}>
+          {tabs.map((tab) => (
+            <button
+              key={tab}
+              className={`${styles.tab} ${activeTab === tab ? styles.activeTab : ""}`}
+              onClick={() => setActiveTab(tab)}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
+
+        {/* Main Content Card */}
+        <div className={styles.mainCard}>
+          {activeTab === "Recruitment Information Management" && (
+            <RecruitmentManagement />
+          )}
+
+          {activeTab === "Candidate Management" && (
+            <div>Candidate Management Content</div>
+          )}
+
+          {activeTab === "Interview Management" && (
+            <div>Interview Management Content</div>
+          )}
+        </div>
       </div>
+    </div>
   );
 };
 
