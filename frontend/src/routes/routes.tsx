@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
 
 import MainLayoutUser from "../layout/layoutUser/MainLayoutUser/MainLayoutUser";
@@ -20,27 +20,26 @@ import Settings from "../feature/userProfile/components/Settings/Settings";
 
 import SearchPage from "../feature/Search/pages/SearchPage/SearchPage";
 
-/*admin */
+/* management */
 import HomeEmployer from "../feature/employer/home/pages/HomeEmployer/homeEmployer";
 import ManagementProfile from "../feature/managementProfile/pages/managementProfile/ManagementProfile";
 import PersonalManagement from "../feature/employer/home/components/PersonalManagement/PersonalManagement";
 
-import { useAuth } from "../feature/auth/context/AuthContext";
+import RecruitmentPage from "../feature/employer/RecruitmentManagement/pages/recruitmentManagement";
+import CandidatesPage from "../feature/employer/CandidateManagement/pages/candidatesManagement";
+import InterviewPage from "../feature/employer/InterviewManagement/pages/interviewManagement";
 
 export default function AppRoutes() {
-
-
   return (
     <Routes>
 
-      {/* auth layout */}
+      {/* AUTH */}
       <Route element={<AuthLayout />}>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-
       </Route>
 
-      {/* layout User home normal */}
+      {/* USER */}
       <Route path="/" element={<MainLayoutUser />}>
         <Route index element={<Home />} />
         <Route path="jobs/:id" element={<JobDetail />} />
@@ -55,21 +54,36 @@ export default function AppRoutes() {
         </Route>
       </Route>
 
-       {/* management */}
-        <Route
-          path="/layoutManagement"
-          element={
-            <ProtectedRoute allowRoles={["company", "admin"]}>
-              <MainLayoutManagement />
-            </ProtectedRoute>
-          }
-        >
-          <Route index element={<HomeEmployer />} />
+      {/* MANAGEMENT */}
+      <Route
+        path="/layoutManagement"
+        element={
+          <ProtectedRoute allowRoles={["company", "admin"]}>
+            <MainLayoutManagement />
+          </ProtectedRoute>
+        }
+      >
 
-          <Route path="managementProfile" element={<ManagementProfile />}>
-            <Route index element={<PersonalManagement />} />
-          </Route>
+        {/* redirect default */}
+        <Route index element={<Navigate to="employer" replace />} />
+
+        {/* EMPLOYER DASHBOARD */}
+        <Route path="employer" element={<HomeEmployer />}>
+
+          {/* auto redirect vào recruitment */}
+          <Route index element={<Navigate to="recruitmentManagement" replace />} />
+
+          <Route path="recruitmentManagement" element={<RecruitmentPage />} />
+          <Route path="candidatesManagement" element={<CandidatesPage />} />
+          <Route path="interviewManagement" element={<InterviewPage />} />
         </Route>
+
+        {/* PROFILE MANAGEMENT */}
+        <Route path="managementProfile" element={<ManagementProfile />}>
+          <Route index element={<PersonalManagement />} />
+        </Route>
+
+      </Route>
 
     </Routes>
   );
