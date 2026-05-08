@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import styles from "./homeEmployer.module.css";
 import RecruitmentManagement from "../../../RecruitmentManagement/pages/RecruitmentManagement";
+import CandidateManagement from "../../../CandidateManagement/pages/candidatesManagement"
+
+
 
 const tabs = [
   "Recruitment Information Management",
@@ -34,7 +37,7 @@ const HomeEmployer = () => {
           )}
 
           {activeTab === "Candidate Management" && (
-            <div>Candidate Management Content</div>
+            <CandidateManagement/>
           )}
 
           {activeTab === "Interview Management" && (

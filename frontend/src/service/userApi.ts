@@ -66,3 +66,13 @@ export const getUserById = async (id: number): Promise<User> => {
 
   return request.get<User>(`/users/${id}`);
 };
+
+export const getAllUsers = async (): Promise<User[]> => {
+  if (IS_MOCK) {
+    await delay(300);
+
+    return users;
+  }
+
+  return request.get<User[]>("/users");
+};

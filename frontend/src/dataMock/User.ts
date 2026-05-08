@@ -55,9 +55,72 @@ export const users: User[] = [
       },
     },
 
+    {
+      id: 4,
+      username: "user1",
+      email: "user1@gmail.com",
+      password: "123456",
+      phone: "0800000001",
+      fullName: "Nguyễn Trần Phương Tuấn",
+      role: "candidate",
+      address: "Thủ Đức, TP. Hồ Chí Minh",
+      dob: "2005-01-01",
+      gender: "male",
+
+      recruitment: {
+        taxId: "987654321",
+        citizenId: "012345678",
+        bank: "ACB - 654321",
+        social: "facebook.com/tuan",
+        releaseDate: "2022-01-10",
+      },
+    },
+
+    {
+      id: 5,
+      username: "user1",
+      email: "user1@gmail.com",
+      password: "123456",
+      phone: "0800000001",
+      fullName: "Nguyễn Trần Phương Tuấn",
+      role: "candidate",
+      address: "Thủ Đức, TP. Hồ Chí Minh",
+      dob: "2005-01-01",
+      gender: "male",
+
+      recruitment: {
+        taxId: "987654321",
+        citizenId: "012345678",
+        bank: "ACB - 654321",
+        social: "facebook.com/tuan",
+        releaseDate: "2022-01-10",
+      },
+    },
+
+    {
+      id: 6,
+      username: "user1",
+      email: "user1@gmail.com",
+      password: "123456",
+      phone: "0800000001",
+      fullName: "Nguyễn Trần Phương Tuấn",
+      role: "candidate",
+      address: "Thủ Đức, TP. Hồ Chí Minh",
+      dob: "2005-01-01",
+      gender: "male",
+
+      recruitment: {
+        taxId: "987654321",
+        citizenId: "012345678",
+        bank: "ACB - 654321",
+        social: "facebook.com/tuan",
+        releaseDate: "2022-01-10",
+      },
+    },
+
   // ===== EMPLOYER (COMPANY) =====
   {
-    id: 4,
+    id: 7,
     username: "company1",
     email: "company1@gmail.com",
     password: "123456",
@@ -69,7 +132,7 @@ export const users: User[] = [
     gender: "other",
   },
   {
-    id: 5,
+    id: 8,
     username: "company2",
     email: "company2@gmail.com",
     password: "123456",
@@ -83,7 +146,7 @@ export const users: User[] = [
 
   // ===== ADMIN =====
   {
-    id: 6,
+    id: 9,
     username: "admin2",
     email: "admin2@gmail.com",
     password: "123456",
@@ -95,7 +158,7 @@ export const users: User[] = [
     gender: "male",
   },
   {
-    id: 7,
+    id: 10,
     username: "admin3",
     email: "admin3@gmail.com",
     password: "123456",
