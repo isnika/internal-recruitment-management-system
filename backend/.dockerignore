@@ -1,0 +1,7 @@
+target
+.m2
+.git
+.gitignore
+.env
+*.log
+src/main/java/backend/Dockerfile
