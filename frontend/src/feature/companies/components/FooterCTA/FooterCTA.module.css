@@ -1,0 +1,108 @@
+/* ================= FOOTER CTA ================= */
+.footerCta {
+  position: relative;
+  width: 100%;
+  margin: 100px auto 50px;
+  padding: 90px 20px;
+
+  text-align: center;
+  color: #ffffff;
+
+  border-radius: 24px;
+  overflow: hidden;
+
+  /* gradient nền công nghệ */
+  background: radial-gradient(
+      circle at top,
+      rgba(59, 130, 246, 0.25),
+      transparent 60%
+    ),
+    linear-gradient(135deg, #0f172a, #111827);
+}
+
+/* glow overlay */
+.footerCta::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  background: radial-gradient(
+    circle at center,
+    rgba(59, 130, 246, 0.15),
+    transparent 70%
+  );
+
+  animation: pulseGlow 6s ease-in-out infinite;
+}
+
+/* text layer */
+.footerCta h2 {
+  font-size: clamp(24px, 3vw, 36px);
+  margin-bottom: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.footerCta p {
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.75);
+  margin-bottom: 25px;
+}
+
+/* button */
+.footerCta button {
+  position: relative;
+  padding: 14px 32px;
+  border-radius: 999px;
+
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  background: rgba(59, 130, 246, 0.15);
+  color: #ffffff;
+
+  cursor: pointer;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+
+  transition: all 0.3s ease;
+
+  backdrop-filter: blur(10px);
+}
+
+/* hover effect */
+.footerCta button:hover {
+  transform: translateY(-3px) scale(1.05);
+
+  background: rgba(59, 130, 246, 0.35);
+  box-shadow:
+    0 10px 30px rgba(59, 130, 246, 0.25),
+    0 0 0 1px rgba(59, 130, 246, 0.4);
+}
+
+/* subtle animation */
+@keyframes pulseGlow {
+  0% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0.4;
+  }
+}
+
+/* floating particles effect (optional feel tech) */
+.footerCta::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  background-image: radial-gradient(
+      rgba(255, 255, 255, 0.06) 1px,
+      transparent 1px
+    );
+  background-size: 40px 40px;
+
+  opacity: 0.2;
+  pointer-events: none;
+}

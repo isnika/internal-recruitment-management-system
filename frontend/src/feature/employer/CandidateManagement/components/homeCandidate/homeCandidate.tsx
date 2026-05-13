@@ -1,47 +1,58 @@
 import styles from "./homeCandidate.module.css";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import CandidateTable from "../CandidateAccountTable/candidateTable";
-import UserTable from "../UserAccountTable/userTable";
+import UserAccountTable from "../UserAccountTable/userAccountTable";
 
 import CandidateFilterBar from "../CandidateFilterBar/CandidateFilterBar";
 
 import { users } from "../../../../../dataMock/User";
 
 const HomeCandidate = () => {
-  const [showUserTable, setShowUserTable] =
-    useState(false);
-
-  const [showCandidateTable, setShowCandidateTable] =
-    useState(false);
+  // active table
+  const [activeTable, setActiveTable] = useState<
+    "user" | "candidate" | null
+  >(null);
 
   // statistics
-  const totalUsers = users.length;
+  const totalUsers = useMemo(() => {
+    return users.length;
+  }, []);
 
-  const totalCandidates = users.filter(
-    (user) => user.role === "candidate"
-  ).length;
+  const totalCandidates = useMemo(() => {
+    return users.filter(
+      (user) => user.role === "candidate"
+    ).length;
+  }, []);
 
-  // mở User -> tắt Candidate
+  // handlers
   const handleShowUser = () => {
-    setShowUserTable(!showUserTable);
-    setShowCandidateTable(false);
+    setActiveTable((prev) =>
+      prev === "user" ? null : "user"
+    );
   };
 
-  // mở Candidate -> tắt User
   const handleShowCandidate = () => {
-    setShowCandidateTable(!showCandidateTable);
-    setShowUserTable(false);
+    setActiveTable((prev) =>
+      prev === "candidate"
+        ? null
+        : "candidate"
+    );
   };
 
   return (
-    <>
-      {/* Statistic Cards */}
+    <div className={styles.container}>
+      {/* ================= STATISTIC CARDS ================= */}
       <div className={styles.cardWrapper}>
-
         {/* USER ACCOUNT */}
         <div className={styles.card}>
-          <h3>User Account</h3>
+          <div className={styles.cardTop}>
+            <h3>User Account</h3>
+
+            <span className={styles.badge}>
+              Users
+            </span>
+          </div>
 
           <h1>{totalUsers}</h1>
 
@@ -49,13 +60,21 @@ const HomeCandidate = () => {
             className={styles.detailBtn}
             onClick={handleShowUser}
           >
-            View Details
+            {activeTable === "user"
+              ? "Hide Details"
+              : "View Details"}
           </button>
         </div>
 
         {/* CANDIDATE ACCOUNT */}
         <div className={styles.card}>
-          <h3>Candidate Account</h3>
+          <div className={styles.cardTop}>
+            <h3>Candidate Account</h3>
+
+            <span className={styles.badge}>
+              Candidates
+            </span>
+          </div>
 
           <h1>{totalCandidates}</h1>
 
@@ -63,29 +82,38 @@ const HomeCandidate = () => {
             className={styles.detailBtn}
             onClick={handleShowCandidate}
           >
-            View Details
+            {activeTable === "candidate"
+              ? "Hide Details"
+              : "View Details"}
           </button>
         </div>
       </div>
 
-      {/* USER TABLE */}
-      {showUserTable && (
+      {/* ================= TABLE SECTION ================= */}
+      {activeTable && (
         <div className={styles.tableSection}>
+          <div className={styles.tableHeader}>
+            <h2>
+              {activeTable === "user"
+                ? "User Account List"
+                : "Candidate Account List"}
+            </h2>
+          </div>
+
           <CandidateFilterBar />
 
-          <UserTable />
+          {/* USER TABLE */}
+          {activeTable === "user" && (
+            <UserAccountTable />
+          )}
+
+          {/* CANDIDATE TABLE */}
+          {activeTable === "candidate" && (
+            <CandidateTable />
+          )}
         </div>
       )}
-
-      {/* CANDIDATE TABLE */}
-      {showCandidateTable && (
-        <div className={styles.tableSection}>
-          <CandidateFilterBar />
-
-          <CandidateTable />
-        </div>
-      )}
-    </>
+    </div>
   );
 };
 

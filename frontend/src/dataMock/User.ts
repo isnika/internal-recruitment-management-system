@@ -24,6 +24,7 @@ export const users: User[] = [
       address: "TP. Hồ Chí Minh",
       dob: "2002-05-20",
       gender: "female",
+      status: "Active",
 
       recruitment: {
         taxId: "123456789",
@@ -45,6 +46,7 @@ export const users: User[] = [
       address: "Thủ Đức, TP. Hồ Chí Minh",
       dob: "2005-01-01",
       gender: "male",
+      status: "Active",
 
       recruitment: {
         taxId: "987654321",
@@ -66,6 +68,7 @@ export const users: User[] = [
       address: "Thủ Đức, TP. Hồ Chí Minh",
       dob: "2005-01-01",
       gender: "male",
+      status: "Inactive",
 
       recruitment: {
         taxId: "987654321",
@@ -87,6 +90,7 @@ export const users: User[] = [
       address: "Thủ Đức, TP. Hồ Chí Minh",
       dob: "2005-01-01",
       gender: "male",
+      status: "Inactive",
 
       recruitment: {
         taxId: "987654321",
@@ -108,6 +112,7 @@ export const users: User[] = [
       address: "Thủ Đức, TP. Hồ Chí Minh",
       dob: "2005-01-01",
       gender: "male",
+      status: "Inactive",
 
       recruitment: {
         taxId: "987654321",
@@ -156,6 +161,7 @@ export const users: User[] = [
     address: "Đà Nẵng",
     dob: "1988-03-10",
     gender: "male",
+    status: "Active",
   },
   {
     id: 10,

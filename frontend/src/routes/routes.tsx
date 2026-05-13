@@ -8,6 +8,7 @@ import MainLayoutManagement from "../layout/layoutManagement/MainLayoutManagemen
 import Home from "../feature/home/pages/Home/Home";
 import Login from "../feature/auth/pages/Login/Login";
 import Register from "../feature/auth/pages/Register/Register";
+import Companies from"../feature/companies/pages/companiesPage";
 
 import JobDetail from "../feature/job/pages/JobDetail/JobDetail";
 
@@ -44,7 +45,7 @@ export default function AppRoutes() {
         <Route index element={<Home />} />
         <Route path="jobs/:id" element={<JobDetail />} />
         <Route path="search" element={<SearchPage />} />
-
+        <Route path="companies" element={<Companies/>} />
         <Route path="profile" element={<Profile />}>
           <Route index element={<PersonalProfile />} />
           <Route path="cv" element={<ManageCV />} />

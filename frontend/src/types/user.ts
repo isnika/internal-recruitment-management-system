@@ -17,6 +17,7 @@ export interface User {
   address: string;
   dob: string;
   gender: string;
+  status: string;
 
   recruitment?: Recruitment;
 }
