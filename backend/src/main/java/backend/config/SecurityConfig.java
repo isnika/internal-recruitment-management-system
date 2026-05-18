@@ -41,7 +41,14 @@ public class SecurityConfig {
             .accessDeniedHandler(customAccessDeniedHandler) // Da login nhung khong du quyen
             .authenticationEntryPoint(customAuthenticationEntryPoint)) // Chua login hoac token khong hop le
         .authorizeHttpRequests(request -> request
-            .requestMatchers("/api/auth/**", "/uploads/**", "/error").permitAll() // Public APIs va file upload da luu
+            .requestMatchers(
+                "/api/auth/**",
+                "/uploads/**",
+                "/error",
+                "/swagger-ui.html",
+                "/swagger-ui/**",
+                "/v3/api-docs/**")
+            .permitAll() // Public APIs, static uploads, va Swagger docs
             .anyRequest().authenticated()) // Cac API con lai can xac thuc
         .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Khong luu
                                                                                                       // session
