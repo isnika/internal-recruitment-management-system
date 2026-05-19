@@ -38,6 +38,7 @@ export const jobs: Job[] = [
     workingHours: "Mon - Fri (9:00 AM - 6:00 PM)",
     deadline: "2026-05-10",
     createdBy: "company1",
+    status: "approved",
   },
   {
     id: "job_004",
@@ -75,6 +76,7 @@ export const jobs: Job[] = [
     workingHours: "Mon - Fri (8:30 AM - 5:30 PM)",
     deadline: "2026-05-05",
     createdBy: "company2",
+    status: "rejected",
   },
   {
     id: "job_005",
@@ -112,6 +114,7 @@ export const jobs: Job[] = [
     workingHours: "Mon - Fri (8:30 AM - 5:30 PM)",
     deadline: "2026-05-15",
     createdBy: "company1",
+    status: "pending",
   },
   {
     id: "job_006",
@@ -148,6 +151,7 @@ export const jobs: Job[] = [
     workingHours: "Mon - Fri (8:00 AM - 5:00 PM)",
     deadline: "2026-05-08",
     createdBy: "company2",
+    status: "approved",
   },
   {
     id: "job_007",
@@ -185,6 +189,7 @@ export const jobs: Job[] = [
     workingHours: "Mon - Fri (9:00 AM - 6:00 PM)",
     deadline: "2026-05-12",
     createdBy: "company1",
+    status: "pending",
   },
   {
     id: "job_008",
@@ -221,6 +226,7 @@ export const jobs: Job[] = [
     workingHours: "Mon - Fri (8:00 AM - 5:00 PM)",
     deadline: "2026-05-20",
     createdBy: "company2",
+    status: "rejected",
   },
   {
     id: "job_009",
@@ -257,6 +263,7 @@ export const jobs: Job[] = [
     workingHours: "Mon - Sat (8:30 AM - 5:30 PM)",
     deadline: "2026-05-18",
     createdBy: "company1",
+    status: "pending",
   },
   {
     id: "job_010",
@@ -293,6 +300,7 @@ export const jobs: Job[] = [
     workingHours: "Mon - Fri (8:30 AM - 5:30 PM)",
     deadline: "2026-05-22",
     createdBy: "company2",
+    status: "approved",
   },
   {
     id: "job_011",
@@ -329,6 +337,7 @@ export const jobs: Job[] = [
     workingHours: "Mon - Fri (8:00 AM - 5:00 PM)",
     deadline: "2026-05-25",
     createdBy: "company1",
+    status: "rejected",
   },
   {
     id: "job_012",
@@ -365,5 +374,6 @@ export const jobs: Job[] = [
     workingHours: "Flexible",
     deadline: "2026-05-30",
     createdBy: "company2",
+    status: "pending",
   },
 ];

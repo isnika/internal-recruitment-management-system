@@ -27,6 +27,7 @@ export interface Job {
   workingHours?: string;
   deadline?: string;
   createdBy?: string;
+  status?: "pending" | "approved" | "rejected";
 }
 
 export interface HomeMetadata {

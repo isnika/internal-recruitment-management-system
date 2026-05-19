@@ -11,8 +11,8 @@ const HeaderUser = () => {
   const location = useLocation(); //
   const { user, logout } = useAuth();
 
-  const isEmployer = location.pathname.startsWith("/layoutManagement");
-  const isAdmin = location.pathname.startsWith("/admin");
+  const isAdmin = location.pathname.startsWith("/layoutManagement/admin");
+  const isEmployer = location.pathname.startsWith("/layoutManagement") && !isAdmin;
 
   const handleLogout = () => {
     logout();
@@ -58,7 +58,7 @@ const HeaderUser = () => {
                 alert("Bạn không có quyền truy cập trang Admin");
                 return;
               }
-              navigate("/admin");
+              navigate("/layoutManagement/admin");
             }}
           >
             Admin

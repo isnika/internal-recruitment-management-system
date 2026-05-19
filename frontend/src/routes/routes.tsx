@@ -30,6 +30,9 @@ import RecruitmentPage from "../feature/employer/RecruitmentManagement/pages/rec
 import CandidatesPage from "../feature/employer/CandidateManagement/pages/candidatesManagement";
 import InterviewPage from "../feature/employer/InterviewManagement/pages/interviewManagement";
 
+/* admin */
+import HomeAdmin from "../feature/admin/home/pages/HomeAdmin/homeAdmin";
+
 export default function AppRoutes() {
   return (
     <Routes>
@@ -78,6 +81,9 @@ export default function AppRoutes() {
           <Route path="candidatesManagement" element={<CandidatesPage />} />
           <Route path="interviewManagement" element={<InterviewPage />} />
         </Route>
+
+        {/* ADMIN PANEL */}
+        <Route path="admin" element={<HomeAdmin />} />
 
         {/* PROFILE MANAGEMENT */}
         <Route path="managementProfile" element={<ManagementProfile />}>
