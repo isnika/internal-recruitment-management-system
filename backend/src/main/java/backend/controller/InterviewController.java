@@ -2,10 +2,12 @@ package backend.controller;
 
 import backend.DTO.ApiResponse;
 import backend.DTO.interview.CreateInterviewRequest;
+import backend.DTO.interview.UpdateInterviewResultRequest;
 import backend.entity.Interview;
 import backend.service.InterviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -74,6 +76,19 @@ public class InterviewController {
                 wrap(interviewService.createInterview(request),
                         "Create interview success",
                         201)
+        );
+    }
+
+    @PatchMapping("/{id}/result")
+    @PreAuthorize("hasAnyRole('RECRUITER', 'ADMIN')")
+    public ResponseEntity<ApiResponse<Interview>> updateInterviewResult(
+            @PathVariable Long id,
+            @RequestBody UpdateInterviewResultRequest request
+    ) {
+        return ResponseEntity.ok(
+                wrap(interviewService.updateInterviewResult(id, request),
+                        "Update interview result success",
+                        200)
         );
     }
 }

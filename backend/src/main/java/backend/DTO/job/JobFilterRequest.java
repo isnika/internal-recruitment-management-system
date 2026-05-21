@@ -18,4 +18,6 @@ public class JobFilterRequest {
   private List<Long> skillIds;
   private String location;
   private Long categoryId;
+  private String jobType;
+  private String status;
 }

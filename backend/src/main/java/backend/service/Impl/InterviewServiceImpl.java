@@ -1,6 +1,7 @@
 package backend.service.Impl;
 
 import backend.DTO.interview.CreateInterviewRequest;
+import backend.DTO.interview.UpdateInterviewResultRequest;
 import backend.Enum.InterviewStatus;
 import backend.Enum.NotificationType;
 import backend.Enum.UserRole;
@@ -64,6 +65,7 @@ public class InterviewServiceImpl implements InterviewService {
 
         return interviewRepository.findByApplication_User_Id(user.getId());
     }
+
     @Transactional
     @Override
     public Interview acceptInterview(Long id) {
@@ -120,6 +122,7 @@ public class InterviewServiceImpl implements InterviewService {
 
         return saved;
     }
+
     @Transactional
     @Override
     public Interview rejectInterview(Long id) {
@@ -176,6 +179,7 @@ public class InterviewServiceImpl implements InterviewService {
 
         return saved;
     }
+
     @Override
     public Interview getInterviewById(Long id) {
 
@@ -243,6 +247,55 @@ public class InterviewServiceImpl implements InterviewService {
         notificationService.createNotification(
                 application.getUser().getId(),
                 "Bạn có lịch phỏng vấn mới",
+                "/api/interviews/" + saved.getId(),
+                NotificationType.INTERVIEW,
+                true
+        );
+
+        return saved;
+    }
+
+    @Transactional
+    @Override
+    public Interview updateInterviewResult(Long id, UpdateInterviewResultRequest request) {
+
+        User user = getCurrentUser();
+        checkRole(user, UserRole.RECRUITER, UserRole.ADMIN);
+
+        Interview interview = interviewRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy interview"));
+
+        // RECRUITER chỉ cập nhật được interview thuộc công ty của mình
+        if (user.getRole() == UserRole.RECRUITER) {
+            if (!interview.getApplication().getJob().getCompany().getId()
+                    .equals(user.getCompany().getId())) {
+                throw new BadRequestException("Không có quyền cập nhật interview này");
+            }
+        }
+
+        if (request.getResult() != null) {
+            interview.setResult(request.getResult());
+        }
+        if (request.getNote() != null) {
+            interview.setNote(request.getNote());
+        }
+
+        // Đổi status sang SCHEDULED để đánh dấu đã có kết quả
+        interview.setStatus(InterviewStatus.SCHEDULED);
+
+        Interview saved = interviewRepository.save(interview);
+
+        // Thông báo cho ứng viên biết kết quả
+        String candidateMsg = switch (saved.getResult().toUpperCase()) {
+            case "PASSED"  -> "Chúc mừng! Bạn đã PASSED buổi phỏng vấn";
+            case "FAILED"  -> "Rất tiếc, bạn chưa vượt qua buổi phỏng vấn lần này";
+            case "ON_HOLD" -> "Kết quả phỏng vấn của bạn đang được xem xét (ON_HOLD)";
+            default        -> "Kết quả phỏng vấn của bạn đã được cập nhật: " + saved.getResult();
+        };
+
+        notificationService.createNotification(
+                saved.getApplication().getUser().getId(),
+                candidateMsg,
                 "/api/interviews/" + saved.getId(),
                 NotificationType.INTERVIEW,
                 true
