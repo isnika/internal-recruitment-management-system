@@ -3,19 +3,20 @@ import styles from "./JobList.module.css";
 import JobCard from "../../../job/components/JobCard/JobCard";
 
 type Props = {
-  jobs: any[];
+  jobs?: any[];
   isLoading: boolean;
-  jobListRef: React.RefObject<HTMLDivElement | null>;
-  handleBookmark: (id: string) => void;
+  jobListRef?: React.RefObject<HTMLDivElement | null>;
+  handleBookmark?: (id: string) => void;
 };
 
 const JobList = ({
-  jobs,
+  jobs = [], // Gán giá trị mặc định là mảng rỗng để tránh lỗi .length của undefined
   isLoading,
   jobListRef,
   handleBookmark,
 }: Props) => {
   return (
+
     <section ref={jobListRef} className={styles.jobList}>
       {isLoading ? (
         <div className={styles.loadingInfo}>Loading jobs...</div>
@@ -24,9 +25,9 @@ const JobList = ({
       ) : (
         jobs.map(job => (
           <JobCard
-            key={job.id}
+            key={job.id || job._id}
             job={job}
-            onBookmark={handleBookmark}
+            onBookmark={handleBookmark || (() => {})}
           />
         ))
       )}

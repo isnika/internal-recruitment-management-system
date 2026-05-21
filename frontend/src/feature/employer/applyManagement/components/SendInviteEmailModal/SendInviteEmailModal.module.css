@@ -1,6 +1,8 @@
+/* ===== OVERLAY ===== */
 .overlay {
   position: fixed;
   inset: 0;
+
   background: rgba(0, 0, 0, 0.55);
 
   display: flex;
@@ -10,9 +12,11 @@
   z-index: 9999;
 }
 
+/* ===== MODAL ===== */
 .modal {
   width: 750px;
   min-height: 600px;
+
   background: #ffffff;
   border-radius: 12px;
 
@@ -28,13 +32,14 @@
     transform: translateY(10px);
     opacity: 0;
   }
+
   to {
     transform: translateY(0);
     opacity: 1;
   }
 }
 
-/* TITLE */
+/* ===== TITLE ===== */
 .modal h2 {
   font-size: 18px;
   font-weight: 600;
@@ -43,7 +48,7 @@
   margin-bottom: 10px;
 }
 
-/* SUB TEXT */
+/* ===== SUB TEXT ===== */
 .sub {
   font-size: 13px;
   color: #64748b;
@@ -51,14 +56,15 @@
   margin-bottom: 14px;
 }
 
-/* FORM */
+/* ===== FORM ===== */
 .form {
   display: flex;
   flex-direction: column;
   gap: 14px;
 }
 
-label {
+/* ===== LABEL (SAFE SCOPED) ===== */
+.form label {
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -67,10 +73,14 @@ label {
   color: #334155;
 }
 
-/* INPUT + TEXTAREA */
-input,
-textarea {
+/* ===== INPUT TEXT ONLY (FIX IMPORTANT) ===== */
+.form input[type="text"],
+.form input[type="email"],
+.form input[type="password"],
+.form input[type="number"],
+.form textarea {
   width: 100%;
+
   padding: 10px 12px;
 
   border: 1px solid #e2e8f0;
@@ -80,23 +90,46 @@ textarea {
   color: #0f172a;
 
   outline: none;
+
   transition: 0.2s ease;
+
   background: #fff;
+
+  box-sizing: border-box;
 }
 
-input:focus,
-textarea:focus {
+/* ===== CHECKBOX / RADIO SAFE RESET ===== */
+.form input[type="checkbox"],
+.form input[type="radio"] {
+  width: auto;
+  height: auto;
+
+  padding: 0;
+  margin: 0;
+
+  border: none;
+  box-shadow: none;
+
+  accent-color: #16a34a;
+}
+
+/* ===== FOCUS ===== */
+.form input[type="text"]:focus,
+.form input[type="email"]:focus,
+.form input[type="password"]:focus,
+.form input[type="number"]:focus,
+.form textarea:focus {
   border-color: #6366f1;
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
 }
 
-/* TEXTAREA */
-textarea {
+/* ===== TEXTAREA ===== */
+.form textarea {
   min-height: 300px;
   resize: none;
 }
 
-/* ACTIONS */
+/* ===== ACTIONS ===== */
 .actions {
   display: flex;
   justify-content: flex-end;
@@ -105,7 +138,7 @@ textarea {
   margin-top: 18px;
 }
 
-/* BUTTONS */
+/* ===== BUTTONS ===== */
 .cancel {
   padding: 8px 14px;
 
@@ -116,6 +149,7 @@ textarea {
   color: #0f172a;
 
   font-size: 13px;
+
   cursor: pointer;
 
   transition: 0.2s;

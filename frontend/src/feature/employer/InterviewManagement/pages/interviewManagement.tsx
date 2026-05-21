@@ -33,8 +33,23 @@ export default function InterviewManagement() {
     return mockData.filter((i) => i.status === statusFilter);
   }, [statusFilter]);
 
+  /* TOTAL CARD */
+  const totalInterviews = mockData.length;
+
   return (
     <div className={styles.wrapper}>
+      <h1 className={styles.title}>Interview Management</h1>
+
+      {/* STATS CARD */}
+      <div className={styles.statsGrid}>
+        <div className={styles.statsCard}>
+          <span className={styles.statsLabel}>Total Interviews</span>
+          <strong className={styles.statsValue}>
+            {totalInterviews}
+          </strong>
+        </div>
+      </div>
+
       <InterviewHeader
         statusFilter={statusFilter}
         setStatusFilter={setStatusFilter}

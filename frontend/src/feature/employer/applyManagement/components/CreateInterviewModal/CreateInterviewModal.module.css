@@ -1,7 +1,8 @@
-/* OVERLAY */
+/* ===== OVERLAY ===== */
 .overlay {
   position: fixed;
   inset: 0;
+
   background: rgba(15, 23, 42, 0.6);
 
   display: flex;
@@ -9,10 +10,11 @@
   justify-content: center;
 
   padding: 20px;
+
   z-index: 9999;
 }
 
-/* MODAL */
+/* ===== MODAL ===== */
 .modal {
   width: 100%;
   max-width: 680px;
@@ -29,9 +31,10 @@
   overflow: hidden;
 }
 
-/* HEADER */
+/* ===== HEADER ===== */
 .header {
   flex-shrink: 0;
+
   padding: 16px 20px;
   border-bottom: 1px solid #eef2f7;
 }
@@ -41,11 +44,12 @@
   margin: 0;
 }
 
-/* BODY (🔥 SCROLL FIX CHÍNH) */
+/* ===== BODY ===== */
 .body {
   flex: 1;
-  min-height: 0;        /* VERY IMPORTANT */
-  overflow-y: auto;     /* SCROLL HERE */
+  min-height: 0;
+
+  overflow-y: auto;
 
   padding: 16px 20px;
 
@@ -54,7 +58,7 @@
   gap: 18px;
 }
 
-/* SECTION */
+/* ===== SECTION ===== */
 .section h3 {
   font-size: 12px;
   color: #64748b;
@@ -62,12 +66,14 @@
   margin-bottom: 8px;
 }
 
-/* READONLY */
+/* ===== READONLY ===== */
 .readonly {
   background: #f8fafc;
+
   border: 1px solid #e2e8f0;
-  padding: 10px;
   border-radius: 10px;
+
+  padding: 10px;
 }
 
 .readonly p {
@@ -75,46 +81,84 @@
   font-size: 12px;
 }
 
-/* FORM */
+/* ===== FORM ===== */
 .form {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
 }
 
+/* ===== LABEL (SCOPED ONLY) ===== */
 .form label {
   display: flex;
   flex-direction: column;
-  font-size: 12px;
   gap: 5px;
+
+  font-size: 12px;
+  color: #334155;
 }
 
-/* INPUT */
-input,
-select,
-textarea {
+/* ===== INPUT TEXT-BASED ONLY (IMPORTANT FIX) ===== */
+.form input[type="text"],
+.form input[type="email"],
+.form input[type="password"],
+.form input[type="number"],
+.form select,
+.form textarea {
+  width: 100%;
+
   padding: 10px;
+
   border: 1px solid #e2e8f0;
   border-radius: 10px;
+
   font-size: 13px;
+
+  outline: none;
+
+  transition: 0.2s ease;
+
+  box-sizing: border-box;
+
+  background: #fff;
 }
 
-input:focus,
-select:focus,
-textarea:focus {
+/* ===== CHECKBOX / RADIO SAFE RESET ===== */
+.form input[type="checkbox"],
+.form input[type="radio"] {
+  width: auto;
+  height: auto;
+
+  padding: 0;
+  margin: 0;
+
+  border: none;
+  box-shadow: none;
+
+  accent-color: #6366f1;
+}
+
+/* ===== FOCUS ===== */
+.form input[type="text"]:focus,
+.form input[type="email"]:focus,
+.form input[type="password"]:focus,
+.form input[type="number"]:focus,
+.form select:focus,
+.form textarea:focus {
   border-color: #6366f1;
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
 }
 
-/* TEXTAREA */
-textarea {
+/* ===== TEXTAREA ===== */
+.form textarea {
   min-height: 80px;
   resize: none;
 }
 
-/* FOOTER */
+/* ===== FOOTER ===== */
 .actions {
   flex-shrink: 0;
+
   padding: 14px 20px;
   border-top: 1px solid #eef2f7;
 
@@ -123,18 +167,28 @@ textarea {
   gap: 10px;
 }
 
-/* BUTTON */
+/* ===== BUTTONS ===== */
 .cancel,
 .save {
   padding: 9px 14px;
-  border-radius: 10px;
-  font-size: 12px;
+
   border: none;
+  border-radius: 10px;
+
+  font-size: 12px;
+
   cursor: pointer;
+
+  transition: 0.2s ease;
 }
 
 .cancel {
   background: #e2e8f0;
+  color: #0f172a;
+}
+
+.cancel:hover {
+  background: #cbd5e1;
 }
 
 .save {
@@ -142,9 +196,40 @@ textarea {
   color: white;
 }
 
-/* MOBILE */
+.save:hover {
+  opacity: 0.95;
+  transform: translateY(-1px);
+}
+
+/* ===== SCROLLBAR ===== */
+.body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.body::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 999px;
+}
+
+.body::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* ===== MOBILE ===== */
 @media (max-width: 640px) {
+  .modal {
+    max-height: 95vh;
+  }
+
   .form {
     grid-template-columns: 1fr;
+  }
+
+  .body {
+    padding: 14px;
+  }
+
+  .actions {
+    padding: 14px;
   }
 }

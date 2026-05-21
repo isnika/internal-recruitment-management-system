@@ -1,0 +1,72 @@
+/* ── Base Layout ── */
+.wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ── BODY LAYOUT ── */
+.bodyLayout {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+}
+
+/* SIDEBAR */
+.filterSidebar {
+  width: 260px;
+  flex-shrink: 0;
+}
+
+/* MAIN CONTENT */
+.jobsColumn {
+  flex: 1;
+  min-width: 0; /* chống overflow */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Khi bật sidebar */
+.bodyLayoutWithSidebar .jobsColumn {
+  border-left: 1px solid #e2e8f0;
+  padding-left: 20px;
+}
+
+/* ── BACK TO TOP ── */
+.backToTop {
+  text-align: center;
+  padding: 12px 0;
+}
+
+.backToTop a {
+  color: #0f172a;
+  font-size: 12px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.backToTop a:hover {
+  text-decoration: underline;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .bodyLayout {
+    flex-direction: column;
+  }
+
+  .filterSidebar {
+    width: 100%;
+  }
+
+  .bodyLayoutWithSidebar .jobsColumn {
+    border-left: none;
+    padding-left: 0;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 16px;
+  }
+}
+

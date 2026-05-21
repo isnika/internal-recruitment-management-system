@@ -1,0 +1,70 @@
+.ctaSection {
+  padding: 40px 24px 100px 24px;
+}
+
+.ctaCard {
+  position: relative;
+  background-image: url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200');
+  background-size: cover;
+  background-position: center;
+  border-radius: 28px;
+  padding: 88px 40px;
+  text-align: center;
+  overflow: hidden;
+  box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.2);
+}
+
+.ctaOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.92), rgba(37, 99, 235, 0.80));
+  z-index: 1;
+}
+
+.ctaContent {
+  position: relative;
+  z-index: 2;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.ctaContent h2 {
+  color: #ffffff;
+  font-size: 38px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0 0 16px 0;
+}
+
+.ctaContent p {
+  color: #bfdbfe;
+  font-size: 17px;
+  line-height: 1.6;
+  margin: 0 0 36px 0;
+}
+
+.ctaBtn {
+  background: #ffffff;
+  color: #2563eb;
+  border: none;
+  padding: 14px 36px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ctaBtn:hover {
+  background: #f8fafc;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 20px -5px rgba(0, 0, 0, 0.3);
+}
+
+@media (max-width: 768px) {
+  .ctaContent h2 { font-size: 30px; }
+  .ctaCard { padding: 60px 20px; }
+}

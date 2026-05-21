@@ -1,21 +1,24 @@
+/*       
+   LAYOUT CHUNG
+          */
 .footer {
   background: rgba(6, 16, 37, 1);
   color: white;
   padding: 50px 0;
 }
 
-
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
-
   display: flex;
   justify-content: space-between;
   gap: 60px;
 }
 
-/* LEFT */
+/*       
+   CỘT TRÁI (LOGO & CONTACT)
+          */
 .left {
   width: 650px;
 }
@@ -33,7 +36,7 @@
 .logoItalic {
   font-style: italic;
   font-size: 26px;
-  font-weight:normal;
+  font-weight: normal;
 }
 
 .desc {
@@ -43,25 +46,43 @@
   line-height: 1.6;
 }
 
-/* CONTACT */
 .contact h4 {
   margin: 20px 0 10px;
 }
 
-.contact p {
+.contactItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0;
   font-size: 14px;
   color: #ccc;
-  margin: 5px 0;
 }
 
-/* RIGHT GRID */
+.contactItem a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.contactItem a:hover {
+  color: rgba(80, 128, 190, 1);
+}
+
+/* Icons Contact */
+.iconMail { color: white; }
+.iconPhone { color: rgba(80, 128, 190, 1); }
+.iconMap { color: red; }
+
+/*       
+   CỘT PHẢI (MENU LINKS)
+          */
 .right {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 40px;
 }
 
-/* LINKS */
 .links {
   display: flex;
   flex-direction: column;
@@ -84,29 +105,37 @@
   color: white;
 }
 
-/* socical*/
+/*       
+   MẠNG XÃ HỘI & BẢN QUYỀN
+          */
 .social {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
   margin-top: 40px;
-  text-align: center;
-  font-size: 22px;
+  padding-top: 16px;
+  border-top: 1px solid #333;
 }
 
-.social span {
-  margin: 0 10px;
-  cursor: pointer;
-  transition: 0.2s;
+.socialLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
 }
 
-.social span:hover {
-  transform: scale(1.2);
+.socialLink:hover {
+  transform: translateY(-3px);
 }
 
+/* Icons Mạng xã hội */
+.fbIcon { color: #1877F2; }
+.ytIcon { color: red; }
+.twIcon { color: #1DA1F2; }
 
 .bottom {
   margin-top: 20px;
-  padding-top: 15px;
   text-align: center;
   font-size: 12px;
   color: #aaa;
-  border-top: 1px solid #333;
 }

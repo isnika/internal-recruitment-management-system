@@ -1,18 +1,15 @@
 import styles from "./FooterUser.module.css";
 
 import { AiTwotoneMail } from "react-icons/ai";
-import { FaPhone } from "react-icons/fa";
-import { FaMapMarkerAlt } from "react-icons/fa";
-import { FaFacebook } from "react-icons/fa";
+import { FaPhone, FaMapMarkerAlt, FaFacebook, FaTwitter } from "react-icons/fa";
 import { FaYoutube } from "react-icons/fa6";
-import { FaTwitter } from "react-icons/fa";
 
 const FooterUser = () => {
   return (
     <footer className={styles.footer}>
       <div className={styles.container}>
 
-        {/* LEFT */}
+        {/* LEFT SECTION */}
         <div className={styles.left}>
           <div className={styles.logo}>
             <span>H</span>
@@ -27,26 +24,23 @@ const FooterUser = () => {
 
           <div className={styles.contact}>
             <h4>Contact</h4>
-            <p style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <AiTwotoneMail color="white" />
-              nhrkkq@gmail.com
+            <p className={styles.contactItem}>
+              <AiTwotoneMail className={styles.iconMail} />
+              <a href="mailto:nhrkkq@gmail.com"> nhrkkq@gmail.com</a>
             </p>
-            <p style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <FaPhone color="#1877F2"  />
-              0 123 456 789
+            <p className={styles.contactItem}>
+              <FaPhone className={styles.iconPhone} />
+              <a href="tel:0123456789"> 0 123 456 789</a>
             </p>
-
-            <p style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <FaMapMarkerAlt color="red" />
-              97 Man Thien Street, Hiep Phu Ward, Thu Duc City, Ho Chi Minh City, Vietnam
+            <p className={styles.contactItem}>
+              <FaMapMarkerAlt className={styles.iconMap} />
+              <span> 97 Man Thien Street, Hiep Phu Ward, Thu Duc City, Ho Chi Minh City, Vietnam</span>
             </p>
-
           </div>
         </div>
 
         {/* RIGHT GRID */}
         <div className={styles.right}>
-
           <div className={styles.links}>
             <h4>Careers</h4>
             <a href="#">Job Openings</a>
@@ -80,16 +74,21 @@ const FooterUser = () => {
             <a href="#">Top HR</a>
             <a href="#">ViecLam24H</a>
           </div>
-
         </div>
 
       </div>
 
-      {/* SOCIAL */}
+      {/* SOCIAL SECTION */}
       <div className={styles.social}>
-        <span><FaFacebook color= "#1877F2" size={25} /></span>
-        <span><FaYoutube color= "red" size={25} /></span>
-        <span><FaTwitter color= "#1DA1F2" size={25} /> </span>
+        <a href="https://facebook.com" target="_blank" rel="noreferrer" className={styles.socialLink}>
+          <FaFacebook size={24} className={styles.fbIcon} />
+        </a>
+        <a href="https://youtube.com" target="_blank" rel="noreferrer" className={styles.socialLink}>
+          <FaYoutube size={24} className={styles.ytIcon} />
+        </a>
+        <a href="https://twitter.com" target="_blank" rel="noreferrer" className={styles.socialLink}>
+          <FaTwitter size={24} className={styles.twIcon} />
+        </a>
       </div>
 
       {/* BOTTOM */}

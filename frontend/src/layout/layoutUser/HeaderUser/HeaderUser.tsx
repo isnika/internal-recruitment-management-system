@@ -55,7 +55,7 @@ const HeaderUser = () => {
         <nav className={styles.nav}>
           <a onClick={() => navigate("/")}>Home</a>
 
-          <a className={styles.hideOnSmall} onClick={() => navigate("/jobs")}>
+          <a className={styles.hideOnSmall} onClick={() => navigate("/jobPage")}>
             Job
           </a>
 

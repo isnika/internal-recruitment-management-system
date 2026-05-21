@@ -29,6 +29,19 @@ export default function ApplyManagement() {
         Applications / Candidates
       </h2>
 
+      {/* STATS */}
+      <div className={styles.statsGrid}>
+        <div className={styles.statsCard}>
+          <span className={styles.statsLabel}>
+            Total Applications
+          </span>
+
+          <h3 className={styles.statsValue}>
+            {filteredData.length}
+          </h3>
+        </div>
+      </div>
+
       <Filters
         jobFilter={jobFilter}
         setJobFilter={setJobFilter}

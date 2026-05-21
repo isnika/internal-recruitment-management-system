@@ -1,56 +1,94 @@
-/* ── HERO ── */
+/* ── HERO BANNER SECTION ── */
 .heroSection {
   background-color: #061025;
   border-radius: 16px;
-  padding: 20px 24px;
+  /* Tăng padding dọc lên 80px để tạo khoảng trống an toàn cho phần Stats gối lên */
+  padding: 80px 24px 100px 24px;
   text-align: center;
-  color: white;
+  color: #ffffff;
+  width: 100%;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .heroContent {
-  max-width: 930px;
+  max-width: 800px;
   margin: 0 auto;
 }
 
+/* ── TYPOGRAPHY ── */
 .heroTitle {
-  font-size: 25px;
-  font-weight: 400;
-  margin-bottom: 12px;
-  line-height: 1.4;
+  font-size: 38px;
+  font-weight: 700;
+  margin: 0 0 16px 0;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+}
+
+.logoWhite {
+  color: #ffffff;
+}
+
+.logoBlue {
+  color: #5880c8;
 }
 
 .heroSubtitle {
-  font-size: 20px;
+  font-size: 16px; /* Hạ size subtitle xuống một chút để phân cấp thông tin rõ ràng */
   color: #94a3b8;
-  margin-bottom: 20px;
+  max-width: 640px;
+  margin: 0 auto 32px auto;
   line-height: 1.6;
 }
 
+/* ── BUTTON ── */
 .primaryButton {
   background-color: #5880c8;
-  color: white;
+  color: #ffffff;
   border: none;
-  border-radius: 20px;
-  padding: 10px 24px;
-  font-size: 14px;
+  border-radius: 24px;
+  padding: 12px 32px;
+  font-size: 15px;
+  font-weight: 600;
   cursor: pointer;
+  box-shadow: 0 4px 12px rgba(88, 128, 200, 0.2);
+  transition: all 0.2s ease-in-out;
 }
 
-/* ── RESPONSIVE ── */
+.primaryButton:hover {
+  background-color: #466cae;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(88, 128, 200, 0.3);
+}
+
+.primaryButton:active {
+  transform: translateY(0);
+}
+
+/* RESPONSIVE ── */
 @media (max-width: 768px) {
-  .bodyLayout {
-    flex-direction: column;
+  .heroSection {
+    padding: 48px 16px 64px 16px;
+    border-radius: 12px;
   }
 
-  .filterSidebar {
+  .heroTitle {
+    font-size: 26px;
+  }
+
+  .heroSubtitle {
+    font-size: 14px;
+    margin-bottom: 24px;
+  }
+
+  .primaryButton {
     width: 100%;
-  }
-
-  .bodyLayoutWithSidebar .jobsColumn {
-    border-left: none;
-    padding-left: 0;
-    border-top: 1px solid #e2e8f0;
-    padding-top: 16px;
+    padding: 12px 24px;
   }
 }
-

@@ -1,118 +1,66 @@
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import styles from "./Home.module.css";
 
-import FilterSidebar from "../../components/FilterSidebar/FilterSidebar";
-
-import { useNavigate } from "react-router-dom";
 import { getCurrentUser } from "../../../../service/authApi";
-
-import { useHomeMetadata } from "../../../../hooks/useHomeMetadata";
 import { useJobs } from "../../../../hooks/useJobs";
 
 import HeroBanner from "../../components/HeroBanner/HeroBanner";
-import CategoryTabs from "../../components/CategoryTabs/CategoryTabs";
-import JobHeader from "../../components/JobHeader/JobHeader";
-import JobList from "../../components/JobList/JobList";
-import Pagination from "../../components/Pagination/Pagination";
+import StatsSection from "../../components/StatsSection/StatsSection";
+import FeaturedSection from "../../components/FeaturedSection/FeaturedSection";
+import DepartmentSection from "../../components/DepartmentSection/DepartmentSection";
+import TestimonialSection from "../../components/TestimonialSection/TestimonialSection";
+import CTASection from "../../components/CTASection/CTASection";
 
 const Home = () => {
   const navigate = useNavigate();
-  const jobListRef = useRef<HTMLDivElement | null>(null);
+  const jobListRef = useRef(null);
+  const { jobs, isLoading } = useJobs("View All", false);
 
-  const [activeCategory, setActiveCategory] = useState("View All");
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
-
-  const { metadata, isMetaLoading } = useHomeMetadata();
-
-  const {
-    jobs,
-    totalJobs,
-    totalPages,
-    currentPage,
-    setCurrentPage,
-    isLoading,
-    filters,
-    handleBookmark,
-    handleToggleFilter,
-    handleClearGroup,
-    handleClearAll,
-    activeCount,
-    JOBS_PER_PAGE,
-  } = useJobs(activeCategory, !!metadata);
-
+  /* ===================== HANDLERS ===================== */
   const handleApplyNow = () => {
     const user = getCurrentUser();
     if (!user) return navigate("/login");
-
     jobListRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const startIndex = (currentPage - 1) * JOBS_PER_PAGE;
+  const handleNavigateToJobs = () => {
+    navigate("/jobPage");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
-  if (isMetaLoading) {
-    return <div className={styles.loadingInfo}>Loading filters...</div>;
-  }
+  const handleSelectDepartment = (query) => {
+    navigate(`/jobPage?departments=${query}`);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <div className={styles.wrapper}>
+      {/* Hero Banner giữ nguyên vì nhận hàm cuộn */}
+      <HeroBanner onApply={handleApplyNow} />
 
-      <HeroBanner
-        isFilterOpen={isFilterOpen}
-        onApply={handleApplyNow}
-      />
+      {/* Khối thống kê số liệu */}
+      <StatsSection />
 
-      {/* BODY */}
-      <div className={styles.bodyLayout}>
-        {isFilterOpen && (
-          <aside className={styles.filterSidebar}>
-            <FilterSidebar
-              filters={filters}
-              metadata={metadata}
-              onToggle={handleToggleFilter}
-              onClearGroup={handleClearGroup}
-              onClearAll={handleClearAll}
-            />
-          </aside>
-        )}
-
-        <main className={styles.jobsColumn}>
-          <CategoryTabs
-            categories={metadata?.categories}
-            activeCategory={activeCategory}
-            setActiveCategory={setActiveCategory}
-            setCurrentPage={setCurrentPage}
-          />
-
-          <JobHeader
-            startIndex={startIndex}
-            jobsPerPage={JOBS_PER_PAGE}
-            totalJobs={totalJobs}
-            isFilterOpen={isFilterOpen}
-            activeCount={activeCount}
-            setIsFilterOpen={setIsFilterOpen}
-          />
-
-          <JobList
-            jobs={jobs}
-            isLoading={isLoading}
-            jobListRef={jobListRef}
-            handleBookmark={handleBookmark}
-          />
-
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            setCurrentPage={setCurrentPage}
-          />
-        </main>
+      {/* Danh sách công việc nổi bật - bọc ref ngoài container để scroll trúng đích */}
+      <div ref={jobListRef}>
+        <FeaturedSection
+          jobs={jobs}
+          isLoading={isLoading}
+          onViewAll={handleNavigateToJobs}
+        />
       </div>
 
-      <div className={styles.backToTop}>
-        <a href="#top">Return to top of page</a>
-      </div>
+      {/* Danh mục phòng ban */}
+      <DepartmentSection onSelectCategory={handleSelectDepartment} />
+
+      {/* Đánh giá từ nhân viên */}
+      <TestimonialSection />
+
+      {/* Khối kêu gọi hành động cuối trang */}
+      <CTASection onExplore={handleNavigateToJobs} />
     </div>
   );
 };
 
 export default Home;
-
