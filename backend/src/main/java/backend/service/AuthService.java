@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface AuthService {
 
-    // ── Cu (giu nguyen) ───────────────────────────────────────────
+
     SendOtpResponse       sendVerificationCode(String email);
     RegisterResponse      register(VerifyRegisterRequest request);
     AuthResponse          login(LoginRequest request);
@@ -17,7 +17,6 @@ public interface AuthService {
     ForgotPasswordResponse sendForgotPasswordCode(String email);
     ResetPasswordResponse  resetPassword(ForgotPassword.ResetPasswordRequest request);
 
-    // ── Moi ───────────────────────────────────────────────────────
     AuthResponse  loginWithGoogle(GoogleLoginRequest request);
     UserResponse  updateProfile(UpdateProfileRequest request);
     UserResponse  uploadAvatar(MultipartFile file);
