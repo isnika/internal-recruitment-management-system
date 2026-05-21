@@ -4,11 +4,7 @@ import backend.DTO.report.ReportDTO;
 import backend.entity.Application;
 import backend.entity.Job;
 import backend.entity.User;
-import backend.repository.ApplicationRepository;
-import backend.repository.InterviewRepository;
-import backend.repository.JobRepository;
-import backend.repository.ReportRepository;
-import backend.repository.UserRepository;
+import backend.repository.*;
 import backend.service.ReportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -124,7 +120,7 @@ public class ReportServiceImpl implements ReportService {
     public ReportDTO.CandidateAnalyticsResponse getCandidateAnalytics() {
         long total = reportRepository.countDistinctCandidates();
 
-        // byStatus: dem ung vien theo status application
+
         List<Object[]> statusRaw = reportRepository.countByStatus();
         Map<String, Long> byStatus = new LinkedHashMap<>();
         for (Object[] r : statusRaw) {
@@ -140,7 +136,7 @@ public class ReportServiceImpl implements ReportService {
                         a -> a.getJob().getExperienceLevel().getName(),
                         Collectors.counting()));
 
-        // topSkills: ky nang pho bien trong cac job da co application
+
         Map<String, Long> skillCount = new LinkedHashMap<>();
         all.forEach(a -> {
             if (a.getJob() != null && a.getJob().getSkills() != null) {
@@ -154,7 +150,7 @@ public class ReportServiceImpl implements ReportService {
                 .map(e -> new ReportDTO.SkillCount(e.getKey(), e.getValue()))
                 .collect(Collectors.toList());
 
-        // bySource: source hien tai dua theo email domain (co the mo rong sau)
+
         Map<String, Long> bySource = all.stream()
                 .filter(a -> a.getUser() != null && a.getUser().getEmail() != null)
                 .collect(Collectors.groupingBy(a -> {
@@ -196,7 +192,7 @@ public class ReportServiceImpl implements ReportService {
     }
 
     // ─────────────────────────────────────────────────────────────
-    // 6. DEPARTMENT REPORT (dua theo category cua job)
+    // 6. DEPARTMENT REPORT
     // ─────────────────────────────────────────────────────────────
     @Override
     public List<ReportDTO.DepartmentReportResponse> getDepartmentReport() {
@@ -236,7 +232,7 @@ public class ReportServiceImpl implements ReportService {
     }
 
     // ─────────────────────────────────────────────────────────────
-    // 7. RECRUITER PERFORMANCE (dua theo company recruiter)
+    // 7. RECRUITER PERFORMANCE
     // ─────────────────────────────────────────────────────────────
     @Override
     public List<ReportDTO.RecruiterPerformanceResponse> getRecruiterPerformance() {
@@ -290,7 +286,7 @@ public class ReportServiceImpl implements ReportService {
     }
 
     // ─────────────────────────────────────────────────────────────
-    // 8. TIME SERIES (applications / hires / interviews)
+    // 8. TIME SERIES
     // ─────────────────────────────────────────────────────────────
     @Override
     public ReportDTO.TimeSeriesReportResponse getTimeSeries(String period,
@@ -317,12 +313,12 @@ public class ReportServiceImpl implements ReportService {
         Map<String, Long> appMap   = toMap(apps);
         Map<String, Long> hireMap  = toMap(hires);
 
-        // Interview count: dua tren tat ca label chung
+
         Set<String> labels = new TreeSet<>();
         labels.addAll(appMap.keySet());
         labels.addAll(hireMap.keySet());
 
-        // Interview: dem tat ca application co interview trong khoang thoi gian
+
         long totalInterviews = interviewRepository.findAll().stream()
                 .filter(i -> i.getScheduleTime() != null
                         && !i.getScheduleTime().isBefore(fromDt)
