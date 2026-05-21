@@ -1,4 +1,4 @@
-package report;
+package backend.DTO.report;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
