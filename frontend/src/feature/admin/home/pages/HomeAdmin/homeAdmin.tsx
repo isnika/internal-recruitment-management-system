@@ -1,38 +1,51 @@
 import React, { useState } from "react";
 import styles from "./homeAdmin.module.css";
+
 import UserManagement from "../../../UserAccountManagement/pages/UserManagement";
 import StatisticalReport from "../../../StatisticalReport/pages/StatisticalReport";
 
-const tabs = [
-  "User Management",
-  "Statistical Reports"
+const menus = [
+  { key: "users", label: "User Management" },
+  { key: "reports", label: "Statistical Reports" },
 ];
 
 const HomeAdmin = () => {
-  const [activeTab, setActiveTab] = useState(tabs[0]);
+  const [activeMenu, setActiveMenu] = useState("users");
+
+  const renderContent = () => {
+    switch (activeMenu) {
+      case "users":
+        return <UserManagement />;
+      case "reports":
+        return <StatisticalReport />;
+      default:
+        return null;
+    }
+  };
 
   return (
-    <div className={styles.pageWrapper}>
-      <div className={styles.container}>
-        {/* Tabs */}
-        <div className={styles.tabsContainer}>
-          {tabs.map((tab) => (
+    <div className={styles.layout}>
+      {/* Sidebar */}
+      <div className={styles.sidebar}>
+        <div className={styles.logo}>ADMIN</div>
+
+        <nav className={styles.menu}>
+          {menus.map((item) => (
             <button
-              key={tab}
-              className={`${styles.tab} ${activeTab === tab ? styles.activeTab : ""}`}
-              onClick={() => setActiveTab(tab)}
+              key={item.key}
+              className={`${styles.menuItem} ${
+                activeMenu === item.key ? styles.active : ""
+              }`}
+              onClick={() => setActiveMenu(item.key)}
             >
-              {tab}
+              {item.label}
             </button>
           ))}
-        </div>
-
-        {/* Main Content Card */}
-        <div className={styles.mainCard}>
-          {activeTab === "User Management" && <UserManagement />}
-          {activeTab === "Statistical Reports" && <StatisticalReport />}
-        </div>
+        </nav>
       </div>
+
+      {/* Content */}
+      <div className={styles.content}>{renderContent()}</div>
     </div>
   );
 };

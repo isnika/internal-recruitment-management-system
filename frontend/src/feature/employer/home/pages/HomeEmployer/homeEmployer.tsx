@@ -1,50 +1,54 @@
 import React, { useState } from "react";
 import styles from "./homeEmployer.module.css";
+
 import RecruitmentManagement from "../../../RecruitmentManagement/pages/RecruitmentManagement";
-import CandidateManagement from "../../../CandidateManagement/pages/candidatesManagement"
+import CandidateManagement from "../../../CandidateManagement/pages/candidatesManagement";
 
-
-
-const tabs = [
-  "Recruitment Information Management",
-  "Candidate Management",
-  "Interview Management"
+const menus = [
+  { key: "recruitment", label: "Recruitment Management" },
+  { key: "candidate", label: "Candidate Management" },
+  { key: "interview", label: "Interview Management" },
 ];
 
 const HomeEmployer = () => {
-  const [activeTab, setActiveTab] = useState(tabs[0]);
+  const [activeMenu, setActiveMenu] = useState("recruitment");
+
+  const renderContent = () => {
+    switch (activeMenu) {
+      case "recruitment":
+        return <RecruitmentManagement />;
+      case "candidate":
+        return <CandidateManagement />;
+      case "interview":
+        return <div>Interview Management Content</div>;
+      default:
+        return null;
+    }
+  };
 
   return (
-    <div className={styles.pageWrapper}>
-      <div className={styles.container}>
-        {/* Tabs */}
-        <div className={styles.tabsContainer}>
-          {tabs.map((tab) => (
+    <div className={styles.layout}>
+      {/* Sidebar */}
+      <div className={styles.sidebar}>
+        <div className={styles.logo}>EMPLOYER</div>
+
+        <nav className={styles.menu}>
+          {menus.map((item) => (
             <button
-              key={tab}
-              className={`${styles.tab} ${activeTab === tab ? styles.activeTab : ""}`}
-              onClick={() => setActiveTab(tab)}
+              key={item.key}
+              className={`${styles.menuItem} ${
+                activeMenu === item.key ? styles.active : ""
+              }`}
+              onClick={() => setActiveMenu(item.key)}
             >
-              {tab}
+              {item.label}
             </button>
           ))}
-        </div>
-
-        {/* Main Content Card */}
-        <div className={styles.mainCard}>
-          {activeTab === "Recruitment Information Management" && (
-            <RecruitmentManagement />
-          )}
-
-          {activeTab === "Candidate Management" && (
-            <CandidateManagement/>
-          )}
-
-          {activeTab === "Interview Management" && (
-            <div>Interview Management Content</div>
-          )}
-        </div>
+        </nav>
       </div>
+
+      {/* Main content */}
+      <div className={styles.content}>{renderContent()}</div>
     </div>
   );
 };

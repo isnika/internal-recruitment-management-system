@@ -24,7 +24,6 @@ import SearchPage from "../feature/Search/pages/SearchPage/SearchPage";
 /* management */
 import HomeEmployer from "../feature/employer/home/pages/HomeEmployer/homeEmployer";
 import ManagementProfile from "../feature/managementProfile/pages/managementProfile/ManagementProfile";
-import PersonalManagement from "../feature/employer/home/components/PersonalManagement/PersonalManagement";
 
 import RecruitmentPage from "../feature/employer/RecruitmentManagement/pages/recruitmentManagement";
 import CandidatesPage from "../feature/employer/CandidateManagement/pages/candidatesManagement";
@@ -86,9 +85,7 @@ export default function AppRoutes() {
         <Route path="admin" element={<HomeAdmin />} />
 
         {/* PROFILE MANAGEMENT */}
-        <Route path="managementProfile" element={<ManagementProfile />}>
-          <Route index element={<PersonalManagement />} />
-        </Route>
+
 
       </Route>
 
