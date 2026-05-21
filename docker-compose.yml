@@ -18,9 +18,7 @@ services:
       retries: 10
 
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    image: recruitment-backend
     container_name: recruitment-backend
     restart: unless-stopped
     depends_on:
