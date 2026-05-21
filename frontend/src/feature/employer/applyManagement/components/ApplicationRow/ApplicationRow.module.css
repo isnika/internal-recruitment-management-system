@@ -1,0 +1,145 @@
+.row td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #eef2f7;
+
+  font-size: 14px;
+  color: #1f2937;
+
+  vertical-align: middle;
+  background: #fff;
+}
+
+.row:hover td {
+  background: #f8fbff;
+}
+
+/* ===== TEXT CELLS ===== */
+.id {
+  font-weight: 600;
+  color: #64748b;
+}
+
+.candidateName {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.jobTitle {
+  color: #475569;
+}
+
+/* ===== STATUS ===== */
+.status {
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+/* fix naming consistent (lowercase mapping from JS) */
+.pending {
+  color: #f59e0b;
+}
+
+.reviewing {
+  color: #3b82f6;
+}
+
+.passed {
+  color: #22c55e;
+}
+
+.failed {
+  color: #ef4444;
+}
+
+/* ===== ACTION CELL ===== */
+.actionCell {
+  text-align: right;
+}
+
+/* dropdown wrapper nếu bạn dùng ⋯ */
+.dropdownWrapper {
+  position: relative;
+  display: inline-block;
+  z-index: 1;
+}
+
+.moreBtn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+
+  font-size: 20px;
+  padding: 4px 8px;
+
+  color: #475569;
+  border-radius: 8px;
+
+  transition: 0.2s;
+}
+
+.moreBtn:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+/* dropdown menu */
+.dropdownMenu {
+  position: absolute;
+  right: 0;
+  top: 100%; /* FIX: thay vì 30px */
+
+  min-width: 180px;
+
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+
+  overflow: hidden;
+
+  z-index: 9999; /* tăng mạnh */
+}
+
+.dropdownMenu button {
+  width: 100%;
+  padding: 10px 12px;
+
+  text-align: left;
+  border: none;
+  background: #fff;
+
+  font-size: 13px;
+  color: #1f2937;
+
+  cursor: pointer;
+  transition: 0.15s;
+}
+
+.dropdownMenu button:hover {
+  background: #f8fbff;
+}
+
+/* ===== STATUS SELECT ===== */
+.statusSelect {
+  width: 140px;
+
+  padding: 8px 10px;
+
+  border: 1px solid #dbe3ee;
+  border-radius: 10px;
+
+  background: #f8fafc;
+  color: #1e293b;
+
+  font-size: 13px;
+
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.statusSelect:focus {
+  outline: none;
+  border-color: #6366f1;
+  background: #fff;
+}

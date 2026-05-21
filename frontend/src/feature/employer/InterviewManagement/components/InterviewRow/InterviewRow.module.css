@@ -1,0 +1,100 @@
+/* ===== Table row ===== */
+tr {
+  transition: background 0.2s ease;
+}
+
+tr:hover {
+  background: #f8fafc; /* dịu hơn */
+}
+
+/* ===== Cells ===== */
+td {
+  padding: 12px 14px;
+  font-size: 14px;
+  color: #0f172a; /* đậm nhẹ hơn, dễ đọc */
+  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+  vertical-align: middle;
+}
+
+/* ===== Status badge ===== */
+.status {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+/* Scheduled (blue soft) */
+.scheduled {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+/* Done (green soft) */
+.done {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+/* Cancelled (red soft) */
+.cancelled {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+/* ===== Actions column ===== */
+.actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* ===== Buttons ===== */
+.actions button {
+  padding: 6px 10px;
+  font-size: 13px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.actions button:hover {
+  background: #e2e8f0;
+}
+
+/* View */
+.actions button:nth-child(1) {
+  background: white;
+  color: #1d4ed8;
+  border: 1px solid #1d4ed8;
+}
+
+/* Reschedule */
+.actions button:nth-child(2) {
+  background: #fffbeb;
+  color: #b45309;
+}
+
+/* Update */
+.actions button:nth-child(3) {
+  background: #f5f3ff;
+  color: #6d28d9;
+}
+
+.actions button:nth-child(1):hover {
+  background: #dbeafe;
+}
+
+.actions button:nth-child(2):hover {
+  background: #fef3c7;
+}
+
+.actions button:nth-child(3):hover {
+  background: #ede9fe;
+}

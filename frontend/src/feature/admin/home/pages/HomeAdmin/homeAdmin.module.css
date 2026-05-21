@@ -1,12 +1,30 @@
+
+/* ===== GLOBAL FIX ===== */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow-x: hidden; /* chặn scroll ngang */
+}
+
+/* ===== LAYOUT ===== */
 .layout {
   display: flex;
   min-height: 100vh;
+  width: 100%;
   background: #f8fafc;
+  overflow: hidden; /* chống vỡ layout */
 }
 
-/* SIDEBAR */
+/* ===== SIDEBAR ===== */
 .sidebar {
   width: 260px;
+  flex-shrink: 0; /* FIX cứng sidebar */
   background: white;
   border-right: 1px solid #e2e8f0;
   padding: 20px;
@@ -21,7 +39,7 @@
   color: #111827;
 }
 
-/* MENU */
+/* ===== MENU ===== */
 .menu {
   display: flex;
   flex-direction: column;
@@ -46,13 +64,15 @@
 }
 
 .active {
-  background: rgba(80, 128, 190, 1);
+  background: #6366f1;
   color: white;
   font-weight: 600;
 }
 
-/* CONTENT */
+/* ===== CONTENT (QUAN TRỌNG NHẤT) ===== */
 .content {
   flex: 1;
+  min-width: 0; /* 🔥 FIX LAYOUT PHÌNH */
   padding: 24px;
+  overflow-x: auto; /* table không phá layout */
 }

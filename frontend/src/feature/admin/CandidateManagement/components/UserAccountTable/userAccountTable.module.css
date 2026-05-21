@@ -1,0 +1,22 @@
+.wrapper {
+  width: 100%;
+  overflow: hidden;
+
+  /* QUAN TRỌNG: giữ layout không nhảy */
+  max-height: 1000px;
+  transition: all 0.25s ease;
+}
+
+/* ẩn nhưng KHÔNG phá layout */
+.hide {
+  opacity: 0;
+  transform: translateY(10px);
+  max-height: 0;
+  pointer-events: none;
+}
+
+/* hiện */
+.show {
+  opacity: 1;
+  transform: translateY(0);
+}

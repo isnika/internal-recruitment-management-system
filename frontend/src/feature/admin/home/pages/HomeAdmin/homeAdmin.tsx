@@ -3,9 +3,11 @@ import styles from "./homeAdmin.module.css";
 
 import UserManagement from "../../../UserAccountManagement/pages/UserManagement";
 import StatisticalReport from "../../../StatisticalReport/pages/StatisticalReport";
+import CandidateManagement from "../../../CandidateManagement/pages/candidatesManagement";
 
 const menus = [
-  { key: "users", label: "User Management" },
+  { key: "users", label: "Company Account Management" },
+  { key: "candidate", label: "Candidate Management" },
   { key: "reports", label: "Statistical Reports" },
 ];
 
@@ -16,17 +18,19 @@ const HomeAdmin = () => {
     switch (activeMenu) {
       case "users":
         return <UserManagement />;
+      case "candidate":
+        return <CandidateManagement />;
       case "reports":
         return <StatisticalReport />;
       default:
-        return null;
+        return <div>Select menu</div>;
     }
   };
 
   return (
     <div className={styles.layout}>
       {/* Sidebar */}
-      <div className={styles.sidebar}>
+      <aside className={styles.sidebar}>
         <div className={styles.logo}>ADMIN</div>
 
         <nav className={styles.menu}>
@@ -42,10 +46,10 @@ const HomeAdmin = () => {
             </button>
           ))}
         </nav>
-      </div>
+      </aside>
 
       {/* Content */}
-      <div className={styles.content}>{renderContent()}</div>
+      <main className={styles.content}>{renderContent()}</main>
     </div>
   );
 };

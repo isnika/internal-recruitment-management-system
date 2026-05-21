@@ -22,33 +22,33 @@
 }
 
 /* MENU */
-.menu {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
 .menuItem {
-  text-align: left;
+  display: block;
   padding: 12px 14px;
   border-radius: 8px;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  font-size: 14px;
+  text-decoration: none;
   color: #64748b;
-  transition: all 0.2s;
+  border: 1px solid #e2e8f0;
+  background: white;
+  transition: 0.2s;
 }
 
 .menuItem:hover {
-  background: #f1f5f9;
-  color: #0f172a;
+  transform: translateX(4px);
+  border-color: #c7d2fe;
 }
 
 .active {
   background: rgba(80, 128, 190, 1);
   color: white;
-  font-weight: 600;
+  border-color: #6366f1;
+}
+
+/* sidebar spacing đẹp hơn */
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 /* MAIN CONTENT */

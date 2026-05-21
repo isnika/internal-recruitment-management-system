@@ -23,12 +23,11 @@ import SearchPage from "../feature/Search/pages/SearchPage/SearchPage";
 
 /* management */
 import HomeEmployer from "../feature/employer/home/pages/HomeEmployer/homeEmployer";
-import ManagementProfile from "../feature/managementProfile/pages/managementProfile/ManagementProfile";
 
 import RecruitmentPage from "../feature/employer/RecruitmentManagement/pages/recruitmentManagement";
-import CandidatesPage from "../feature/employer/CandidateManagement/pages/candidatesManagement";
+import CandidatesPage from "../feature/admin/CandidateManagement/pages/candidatesManagement";
 import InterviewPage from "../feature/employer/InterviewManagement/pages/interviewManagement";
-
+import ApplyManagement from "../feature/employer/applyManagement/pages/ApplyManagement";
 /* admin */
 import HomeAdmin from "../feature/admin/home/pages/HomeAdmin/homeAdmin";
 
@@ -73,12 +72,16 @@ export default function AppRoutes() {
         {/* EMPLOYER DASHBOARD */}
         <Route path="employer" element={<HomeEmployer />}>
 
-          {/* auto redirect vào recruitment */}
           <Route index element={<Navigate to="recruitmentManagement" replace />} />
-
+          <Route path="dashboard" element={<div>Dashboard</div>} />
           <Route path="recruitmentManagement" element={<RecruitmentPage />} />
+          <Route path="applyManagement" element={<ApplyManagement />} />
           <Route path="candidatesManagement" element={<CandidatesPage />} />
           <Route path="interviewManagement" element={<InterviewPage />} />
+          <Route path="cv" element={<div>CV Review</div>} />
+          <Route path="company" element={<div>Company Profile</div>} />
+          <Route path="settings" element={<div>Settings</div>} />
+
         </Route>
 
         {/* ADMIN PANEL */}
