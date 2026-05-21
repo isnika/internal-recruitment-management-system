@@ -7,16 +7,22 @@ import backend.DTO.user.UpdateRecruitmentInfoRequest;
 import backend.DTO.user.UserResponse;
 import backend.Enum.RegisterRole;
 import backend.Enum.UserRole;
-import backend.entity.*;
+import backend.config.GoogleTokenVerifier;
+import backend.entity.CandidateProfile;
+import backend.entity.Company;
+import backend.entity.User;
+import backend.entity.VerificationCode;
 import backend.exception.BadRequestException;
 import backend.mapper.UserMapper;
-import backend.repository.*;
+import backend.repository.CandidateProfileRepository;
+import backend.repository.CompanyRepository;
+import backend.repository.UserRepository;
+import backend.repository.VerificationCodeRepository;
 import backend.security.AuthUser;
 import backend.security.JwtUtil;
 import backend.service.AuthService;
 import backend.service.EmailService;
 import backend.service.FileStorageService;
-import backend.config.GoogleTokenVerifier;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -144,7 +150,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     // ══════════════════════════════════════════════════════════════
-    // LOGIN WITH GOOGLE  ← MOI
+    // LOGIN WITH GOOGLE
     // ══════════════════════════════════════════════════════════════
     @Override
     @Transactional
@@ -207,7 +213,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     // ══════════════════════════════════════════════════════════════
-    // PATCH: UPDATE PROFILE  ← MOI
+    // PATCH: UPDATE PROFILE
     // ══════════════════════════════════════════════════════════════
     @Override
     @Transactional
@@ -227,9 +233,7 @@ public class AuthServiceImpl implements AuthService {
         return toUserResponse(userRepository.save(user));
     }
 
-    // ══════════════════════════════════════════════════════════════
-    // PATCH: UPLOAD AVATAR  ← MOI
-    // ══════════════════════════════════════════════════════════════
+
     @Override
     @Transactional
     public UserResponse uploadAvatar(MultipartFile file) {
@@ -256,9 +260,7 @@ public class AuthServiceImpl implements AuthService {
         return toUserResponse(userRepository.save(user));
     }
 
-    // ══════════════════════════════════════════════════════════════
-    // PATCH: UPDATE RECRUITMENT INFO  ← MOI
-    // ══════════════════════════════════════════════════════════════
+
     @Override
     @Transactional
     public UserResponse updateRecruitmentInfo(UpdateRecruitmentInfoRequest request) {
@@ -278,9 +280,6 @@ public class AuthServiceImpl implements AuthService {
         return toUserResponse(userRepository.save(user));
     }
 
-    // ══════════════════════════════════════════════════════════════
-    // LOGOUT / FORGOT / RESET PASSWORD (giu nguyen cu)
-    // ══════════════════════════════════════════════════════════════
     @Override
     public ApiResponse<String> logout() {
         SecurityContextHolder.clearContext();
