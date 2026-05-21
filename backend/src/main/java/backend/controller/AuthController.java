@@ -26,7 +26,7 @@ public class AuthController {
                 .status(status).message(message).data(data).build();
     }
 
-    // ── CU (giu nguyen) ──────────────────────────────────────────
+
     @PostMapping("/send-code")
     public ResponseEntity<ApiResponse<SendOtpResponse>> sendOtp(
             @RequestBody Map<String, String> req) {
@@ -64,11 +64,7 @@ public class AuthController {
         return ResponseEntity.ok(authService.logout());
     }
 
-    // ════════════════════════════════════════════════════════════
-    // MOI: LOGIN WITH GOOGLE
-    // POST /api/auth/google
-    // Body: { "idToken": "..." }
-    // ════════════════════════════════════════════════════════════
+
     @PostMapping("/google")
     public ResponseEntity<ApiResponse<AuthResponse>> loginWithGoogle(
             @RequestBody GoogleLoginRequest request) {
@@ -76,10 +72,7 @@ public class AuthController {
         return ResponseEntity.ok(wrap(res, "Login with Google success", 200));
     }
 
-    // ════════════════════════════════════════════════════════════
-    // MOI: PATCH /api/auth/me/profile
-    // Cap nhat firstName, lastName, avatarUrl (URL thu cong)
-    // ════════════════════════════════════════════════════════════
+
     @PatchMapping("/me/profile")
     public ResponseEntity<ApiResponse<UserResponse>> updateProfile(
             @RequestBody UpdateProfileRequest request) {
@@ -87,10 +80,7 @@ public class AuthController {
         return ResponseEntity.ok(wrap(res, "Profile updated", 200));
     }
 
-    // ════════════════════════════════════════════════════════════
-    // MOI: PATCH /api/auth/me/avatar
-    // Upload file anh len Cloudinary, cap nhat avatarUrl
-    // ════════════════════════════════════════════════════════════
+
     @PatchMapping(value = "/me/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<UserResponse>> uploadAvatar(
             @RequestPart("file") MultipartFile file) {
@@ -98,10 +88,7 @@ public class AuthController {
         return ResponseEntity.ok(wrap(res, "Avatar updated", 200));
     }
 
-    // ════════════════════════════════════════════════════════════
-    // MOI: PATCH /api/auth/me/recruitment-info
-    // Recruiter/Admin cap nhat: companyId, department, jobTitle
-    // ════════════════════════════════════════════════════════════
+
     @PatchMapping("/me/recruitment-info")
     public ResponseEntity<ApiResponse<UserResponse>> updateRecruitmentInfo(
             @RequestBody UpdateRecruitmentInfoRequest request) {
