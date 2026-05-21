@@ -1,9 +1,10 @@
+/* ========== ROOT SCALE ========== */
 .container {
   padding: clamp(16px, 2vw, 32px);
   font-family: Arial, sans-serif;
 }
 
-/* ========== CARDS ========== */
+/* ========== CARD WRAPPER ========== */
 .cardWrapper {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -11,14 +12,15 @@
   margin-bottom: 24px;
 }
 
+/* ========== CARD ========== */
 .card {
-  background: #fff;
+  background: #ffffff;
   border-radius: 14px;
   padding: 20px;
   text-align: center;
-  border: 1px solid #f0f0f0;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  transition: 0.25s ease;
+  transition: all 0.25s ease;
+  border: 1px solid #f0f0f0;
 }
 
 .card:hover {
@@ -34,13 +36,13 @@
 }
 
 .card h3 {
-  font-size: 15px;
+  font-size: clamp(14px, 1.2vw, 16px);
   color: #333;
   margin: 0;
 }
 
 .card h1 {
-  font-size: 28px;
+  font-size: clamp(24px, 2vw, 32px);
   color: #e53935;
   margin: 10px 0;
 }
@@ -58,12 +60,13 @@
 /* button */
 .detailBtn {
   margin-top: 8px;
-  background: none;
+  background: transparent;
   border: none;
   color: #1e4fff;
   font-size: 14px;
   cursor: pointer;
   text-decoration: underline;
+  transition: 0.2s;
 }
 
 .detailBtn:hover {
@@ -80,22 +83,22 @@
 }
 
 .tableHeader h2 {
-  font-size: 18px;
+  font-size: clamp(16px, 1.5vw, 20px);
   margin-bottom: 12px;
   color: #222;
 }
 
-/* table */
+/* ========== TABLE ========== */
 .table {
   width: 100%;
   border-collapse: collapse;
-  border-radius: 10px;
   overflow: hidden;
+  border-radius: 10px;
 }
 
 .table th {
   background: #1e90ff;
-  color: #fff;
+  color: white;
   padding: 12px;
   text-align: left;
   font-size: 14px;
@@ -111,7 +114,7 @@
   background: #f6f9ff;
 }
 
-/* responsive */
+/* ========== RESPONSIVE ========== */
 @media (max-width: 768px) {
   .cardWrapper {
     grid-template-columns: 1fr;

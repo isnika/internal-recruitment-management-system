@@ -1,22 +1,9 @@
-.wrapper {
+.container {
   width: 100%;
-  overflow: hidden;
-
-  /* QUAN TRỌNG: giữ layout không nhảy */
-  max-height: 1000px;
-  transition: all 0.25s ease;
+  overflow-x: auto;
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
-/* ẩn nhưng KHÔNG phá layout */
-.hide {
-  opacity: 0;
-  transform: translateY(10px);
-  max-height: 0;
-  pointer-events: none;
-}
-
-/* hiện */
-.show {
-  opacity: 1;
-  transform: translateY(0);
-}

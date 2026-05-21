@@ -1,33 +1,49 @@
-import { useEffect, useState, useCallback } from "react";
-import { FiEye, FiEdit2, FiTrash2 } from "react-icons/fi";
+import { useEffect, useState } from "react";
+
+import {
+  FiEye,
+  FiEdit2,
+  FiTrash2,
+} from "react-icons/fi";
 
 import styles from "./UserTable.module.css";
+
 import type { User } from "../../../../../../../../types/user";
+
 import { getAllUsers } from "../../../../../../../service/userApi";
+
 import UserModal from "../UserModal/UserModal";
 
 type ModalMode = "view" | "edit";
-
-const STATUS_CLASS: Record<string, string> = {
-  active: "active",
-  inactive: "inactive",
-};
 
 export default function UserTable() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [modalMode, setModalMode] = useState<ModalMode>("view");
+  const [selectedUser, setSelectedUser] =
+    useState<User | null>(null);
+
+  const [modalMode, setModalMode] =
+    useState<ModalMode>("view");
 
   // FETCH USERS
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         const allUsers = await getAllUsers();
-        setUsers(allUsers.filter((u) => u.role === "candidate"));
-      } catch (err) {
-        console.error("Failed to fetch users:", err);
+
+        const candidateUsers =
+          allUsers.filter(
+            (user) =>
+              user.role === "candidate"
+          );
+
+        setUsers(candidateUsers);
+      } catch (error) {
+        console.error(
+          "Failed to fetch users:",
+          error
+        );
       } finally {
         setLoading(false);
       }
@@ -36,25 +52,57 @@ export default function UserTable() {
     fetchUsers();
   }, []);
 
-  const formatDate = useCallback((date?: string) => {
+  // FORMAT DATE
+  const formatDate = (date?: string) => {
     if (!date) return "N/A";
-    return new Date(date).toLocaleDateString("vi-VN");
-  }, []);
 
-  const openModal = (user: User, mode: ModalMode) => {
+    return new Date(date).toLocaleDateString(
+      "vi-VN"
+    );
+  };
+
+  // OPEN MODAL
+  const openModal = (
+    user: User,
+    mode: ModalMode
+  ) => {
     setSelectedUser(user);
     setModalMode(mode);
   };
 
-  const handleDelete = (id: number | string) => {
-    const ok = window.confirm("Are you sure you want to delete this user?");
-    if (!ok) return;
+  // DELETE USER
+  const handleDelete = (
+    id: number | string
+  ) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this user?"
+    );
 
-    setUsers((prev) => prev.filter((u) => u.id !== id));
+    if (!confirmDelete) return;
+
+    setUsers((prevUsers) =>
+      prevUsers.filter(
+        (user) => user.id !== id
+      )
+    );
+  };
+
+  // STATUS STYLE
+  const getStatusClass = (
+    status?: string
+  ) => {
+    return status?.toLowerCase() ===
+      "active"
+      ? styles.active
+      : styles.inactive;
   };
 
   if (loading) {
-    return <div className={styles.loading}>Loading users...</div>;
+    return (
+      <div className={styles.loading}>
+        Loading users...
+      </div>
+    );
   }
 
   return (
@@ -64,14 +112,18 @@ export default function UserTable() {
           <thead>
             <tr>
               <th>
-                <input type="checkbox" className={styles.checkbox} />
+                <input
+                  type="checkbox"
+                  className={styles.checkbox}
+                />
               </th>
+
               <th>#</th>
               <th>ID</th>
               <th>Full Name</th>
               <th>Date of Birth</th>
               <th>Gender</th>
-              <th>Phone</th>
+              <th>Phone Number</th>
               <th>Email</th>
               <th>Status</th>
               <th>Actions</th>
@@ -79,52 +131,100 @@ export default function UserTable() {
           </thead>
 
           <tbody>
-            {users.length ? (
+            {users.length > 0 ? (
               users.map((user, index) => (
                 <tr key={user.id}>
                   <td>
-                    <input type="checkbox" className={styles.checkbox} />
+                    <input
+                      type="checkbox"
+                      className={
+                        styles.checkbox
+                      }
+                    />
                   </td>
 
                   <td>{index + 1}</td>
+
                   <td>{user.id}</td>
-                  <td>{user.fullName ?? "N/A"}</td>
-                  <td>{formatDate(user.dob)}</td>
-                  <td>{user.gender ?? "N/A"}</td>
-                  <td>{user.phone ?? "N/A"}</td>
-                  <td>{user.email ?? "N/A"}</td>
+
+                  <td>
+                    {user.fullName ||
+                      "N/A"}
+                  </td>
+
+                  <td>
+                    {formatDate(
+                      user.dob
+                    )}
+                  </td>
+
+                  <td>
+                    {user.gender || "N/A"}
+                  </td>
+
+                  <td>
+                    {user.phone || "N/A"}
+                  </td>
+
+                  <td>
+                    {user.email || "N/A"}
+                  </td>
 
                   <td>
                     <span
-                      className={`${styles.status} ${
-                        user.status?.toLowerCase() === "active"
-                          ? styles.active
-                          : styles.inactive
-                      }`}
+                      className={`${styles.status} ${getStatusClass(
+                        user.status
+                      )}`}
                     >
-                      {user.status ?? "Unknown"}
+                      {user.status ||
+                        "Unknown"}
                     </span>
                   </td>
 
                   <td>
-                    <div className={styles.actionIcons}>
+                    <div
+                      className={
+                        styles.actionIcons
+                      }
+                    >
+                      {/* VIEW */}
                       <button
-                        className={styles.actionBtn}
-                        onClick={() => openModal(user, "view")}
+                        className={
+                          styles.actionBtn
+                        }
+                        onClick={() =>
+                          openModal(
+                            user,
+                            "view"
+                          )
+                        }
                       >
                         <FiEye />
                       </button>
 
+                      {/* EDIT */}
                       <button
-                        className={styles.actionBtn}
-                        onClick={() => openModal(user, "edit")}
+                        className={
+                          styles.actionBtn
+                        }
+                        onClick={() =>
+                          openModal(
+                            user,
+                            "edit"
+                          )
+                        }
                       >
                         <FiEdit2 />
                       </button>
 
+                      {/* DELETE */}
                       <button
                         className={`${styles.actionBtn} ${styles.deleteBtn}`}
-                        onClick={() => handleDelete(user.id)}
+                        onClick={() =>
+                          handleDelete(
+                            user.id
+                          )
+                        }
                       >
                         <FiTrash2 />
                       </button>
@@ -134,7 +234,10 @@ export default function UserTable() {
               ))
             ) : (
               <tr>
-                <td colSpan={10} className={styles.empty}>
+                <td
+                  colSpan={10}
+                  className={styles.empty}
+                >
                   No users found
                 </td>
               </tr>
@@ -143,11 +246,14 @@ export default function UserTable() {
         </table>
       </div>
 
+      {/* MODAL */}
       {selectedUser && (
         <UserModal
           user={selectedUser}
           mode={modalMode}
-          onClose={() => setSelectedUser(null)}
+          onClose={() =>
+            setSelectedUser(null)
+          }
         />
       )}
     </>

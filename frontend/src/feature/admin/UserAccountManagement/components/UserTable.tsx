@@ -1,6 +1,6 @@
 import React from "react";
 import type { User } from "../../../../types/user";
-import { FiShield, FiLock, FiUnlock } from "react-icons/fi";
+import { FiShield, FiLock, FiUnlock, FiKey, FiTrash2 } from "react-icons/fi";
 import styles from "../pages/UserManagement.module.css";
 
 interface UserTableProps {
@@ -12,6 +12,8 @@ interface UserTableProps {
   onStartEditRole: (user: User) => void;
   onSaveRole: (id: number) => void;
   onToggleStatus: (id: number) => void;
+  onResetPassword: (id: number) => void;
+  onDeleteUser: (id: number) => void;
 }
 
 const UserTable: React.FC<UserTableProps> = ({
@@ -23,12 +25,15 @@ const UserTable: React.FC<UserTableProps> = ({
   onStartEditRole,
   onSaveRole,
   onToggleStatus,
+  onResetPassword,
+  onDeleteUser,
 }) => {
   const getRoleBadge = (role: string) => {
     const map: Record<string, string> = {
       admin: styles.roleAdmin,
       candidate: styles.roleCandidate,
       company: styles.roleCompany,
+      hr: styles.roleHr,
     };
     return map[role] || styles.roleCandidate;
   };
@@ -38,6 +43,7 @@ const UserTable: React.FC<UserTableProps> = ({
       admin: "Admin",
       candidate: "Candidate",
       company: "Employer",
+      hr: "HR",
     };
     return map[role] || role;
   };
@@ -89,7 +95,9 @@ const UserTable: React.FC<UserTableProps> = ({
                           onChange={(e) => setEditRole(e.target.value)}
                           className={styles.roleSelect}
                         >
+                          <option value="candidate">Candidate</option>
                           <option value="company">Employer</option>
+                          <option value="hr">HR</option>
                           <option value="admin">Admin</option>
                         </select>
                         <button
@@ -122,6 +130,7 @@ const UserTable: React.FC<UserTableProps> = ({
                         className={styles.actionBtn}
                         title="Change Role"
                         onClick={() => onStartEditRole(user)}
+                        aria-label={`Change role for ${user.fullName}`}
                       >
                         <FiShield />
                       </button>
@@ -129,16 +138,41 @@ const UserTable: React.FC<UserTableProps> = ({
                         className={styles.actionBtn}
                         title={
                           (user.status || "Active") === "Active"
-                            ? "Lock Account"
+                            ? "Block Account"
                             : "Unlock Account"
                         }
                         onClick={() => onToggleStatus(user.id)}
+                        style={{
+                          color: (user.status || "Active") === "Active" ? "#64748b" : "#ef4444",
+                        }}
+                        aria-label={
+                          (user.status || "Active") === "Active"
+                            ? `Block ${user.fullName}`
+                            : `Unlock ${user.fullName}`
+                        }
                       >
                         {(user.status || "Active") === "Active" ? (
-                          <FiLock />
-                        ) : (
                           <FiUnlock />
+                        ) : (
+                          <FiLock />
                         )}
+                      </button>
+                      <button
+                        className={styles.actionBtn}
+                        title="Reset Password"
+                        onClick={() => onResetPassword(user.id)}
+                        aria-label={`Reset password for ${user.fullName}`}
+                      >
+                        <FiKey />
+                      </button>
+                      <button
+                        className={styles.actionBtn}
+                        title="Delete User"
+                        onClick={() => onDeleteUser(user.id)}
+                        style={{ color: "#ef4444" }}
+                        aria-label={`Delete ${user.fullName}`}
+                      >
+                        <FiTrash2 />
                       </button>
                     </div>
                   </td>

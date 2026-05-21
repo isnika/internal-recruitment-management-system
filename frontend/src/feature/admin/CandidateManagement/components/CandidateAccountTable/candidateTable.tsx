@@ -1,20 +1,12 @@
 import styles from "./candidateTable.module.css";
 
-type Status = "Pending" | "Interview" | "Hired";
-
 type User = {
   id: number;
   name: string;
   email: string;
   phone: string;
   role: string;
-  status: Status;
-};
-
-const STATUS_CLASS: Record<Status, string> = {
-  Pending: styles.pending,
-  Interview: styles.interview,
-  Hired: styles.hired,
+  status: string;
 };
 
 export default function CandidateTable() {
@@ -71,7 +63,13 @@ export default function CandidateTable() {
               <td>{user.role}</td>
               <td>
                 <span
-                  className={`${styles.status} ${STATUS_CLASS[user.status]}`}
+                  className={`${styles.status} ${
+                    user.status === "Hired"
+                      ? styles.hired
+                      : user.status === "Interview"
+                      ? styles.interview
+                      : styles.pending
+                  }`}
                 >
                   {user.status}
                 </span>

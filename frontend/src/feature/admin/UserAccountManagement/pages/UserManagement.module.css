@@ -161,6 +161,7 @@
 .table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: auto;
 }
 
 .table th {
@@ -171,6 +172,7 @@
   color: #475569;
   background: #fff;
   border-bottom: 1.5px solid #e2e8f0;
+  white-space: nowrap;
 }
 
 .table td {
@@ -179,6 +181,9 @@
   color: #334155;
   border-bottom: 1px solid #e2e8f0;
   vertical-align: middle;
+  word-wrap: break-word;
+  word-break: break-word;
+  min-height: 70px;
 }
 
 .table tbody tr:hover {
@@ -224,12 +229,14 @@
 /* ROLE BADGES */
 .roleBadge {
   padding: 4px 14px;
-  border-radius: 9999px; /* Unified capsule pill shape */
+  border-radius: 9999px;
   font-size: 0.8rem;
   font-weight: 600;
   display: inline-block;
   text-align: center;
   border: 1.5px solid transparent;
+  white-space: nowrap;
+  line-height: 1.5;
 }
 
 .roleAdmin {
@@ -248,6 +255,12 @@
   background: #f0fdfa;
   color: #0d9488;
   border-color: #99f6e4;
+}
+
+.roleHr {
+  background: #f5f3ff;
+  color: #7c3aed;
+  border-color: #ddd6fe;
 }
 
 /* STATUS BADGES */
@@ -278,6 +291,8 @@
   display: flex;
   align-items: center;
   gap: 6px;
+  min-width: 150px;
+  height: 32px;
 }
 
 .roleSelect {
@@ -286,6 +301,10 @@
   border-radius: 6px;
   font-size: 0.8rem;
   outline: none;
+  flex: 1;
+  min-width: 0;
+  height: 32px;
+  line-height: 1.5;
 }
 
 .roleSelect:focus {
@@ -302,6 +321,10 @@
   font-weight: 600;
   cursor: pointer;
   transition: background 0.15s;
+  height: 32px;
+  line-height: 1;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .btnSave:hover {

@@ -1,59 +1,86 @@
 import styles from "./homeCandidate.module.css";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import CandidateTable from "../CandidateAccountTable/candidateTable";
 import UserAccountTable from "../UserAccountTable/userAccountTable";
+
 import CandidateFilterBar from "../CandidateFilterBar/CandidateFilterBar";
 
 import { users } from "../../../../../dataMock/User";
 
-type ActiveTable = "user" | "candidate" | null;
-
 const HomeCandidate = () => {
-  const [activeTable, setActiveTable] = useState<ActiveTable>(null);
+  // active table
+  const [activeTable, setActiveTable] = useState<
+    "user" | "candidate" | null
+  >(null);
 
-  const totalUsers = users.length;
-  const totalCandidates = users.filter(
-    (u) => u.role === "candidate"
-  ).length;
+  // statistics
+  const totalUsers = useMemo(() => {
+    return users.length;
+  }, []);
 
-  const toggleTable = (type: Exclude<ActiveTable, null>) => {
-    setActiveTable((prev) => (prev === type ? null : type));
+  const totalCandidates = useMemo(() => {
+    return users.filter(
+      (user) => user.role === "candidate"
+    ).length;
+  }, []);
+
+  // handlers
+  const handleShowUser = () => {
+    setActiveTable((prev) =>
+      prev === "user" ? null : "user"
+    );
+  };
+
+  const handleShowCandidate = () => {
+    setActiveTable((prev) =>
+      prev === "candidate"
+        ? null
+        : "candidate"
+    );
   };
 
   return (
     <div className={styles.container}>
-      {/* ================= CARDS ================= */}
+      {/* ================= STATISTIC CARDS ================= */}
       <div className={styles.cardWrapper}>
-        {/* USER */}
+        {/* USER ACCOUNT */}
         <div className={styles.card}>
           <div className={styles.cardTop}>
             <h3>User Account</h3>
-            <span className={styles.badge}>Users</span>
+
+            <span className={styles.badge}>
+              Users
+            </span>
           </div>
 
           <h1>{totalUsers}</h1>
 
           <button
             className={styles.detailBtn}
-            onClick={() => toggleTable("user")}
+            onClick={handleShowUser}
           >
-            {activeTable === "user" ? "Hide Details" : "View Details"}
+            {activeTable === "user"
+              ? "Hide Details"
+              : "View Details"}
           </button>
         </div>
 
-        {/* CANDIDATE */}
+        {/* CANDIDATE ACCOUNT */}
         <div className={styles.card}>
           <div className={styles.cardTop}>
             <h3>Candidate Account</h3>
-            <span className={styles.badge}>Candidates</span>
+
+            <span className={styles.badge}>
+              Candidates
+            </span>
           </div>
 
           <h1>{totalCandidates}</h1>
 
           <button
             className={styles.detailBtn}
-            onClick={() => toggleTable("candidate")}
+            onClick={handleShowCandidate}
           >
             {activeTable === "candidate"
               ? "Hide Details"
@@ -62,7 +89,7 @@ const HomeCandidate = () => {
         </div>
       </div>
 
-      {/* ================= TABLE ================= */}
+      {/* ================= TABLE SECTION ================= */}
       {activeTable && (
         <div className={styles.tableSection}>
           <div className={styles.tableHeader}>
@@ -75,9 +102,13 @@ const HomeCandidate = () => {
 
           <CandidateFilterBar />
 
-          {activeTable === "user" ? (
+          {/* USER TABLE */}
+          {activeTable === "user" && (
             <UserAccountTable />
-          ) : (
+          )}
+
+          {/* CANDIDATE TABLE */}
+          {activeTable === "candidate" && (
             <CandidateTable />
           )}
         </div>

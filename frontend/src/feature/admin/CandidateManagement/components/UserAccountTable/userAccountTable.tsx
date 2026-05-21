@@ -1,17 +1,8 @@
 import UserTable from "./components/UserTable/UserTable";
-import styles from "./UserAccountTable.module.css";
 
-type Props = {
-  visible: boolean;
-};
-
-export default function UserAccountTable({ visible }: Props) {
+export default function UserAccountTable() {
   return (
-    <div
-      className={`${styles.wrapper} ${
-        visible ? styles.show : styles.hide
-      }`}
-    >
+    <div>
       <UserTable />
     </div>
   );

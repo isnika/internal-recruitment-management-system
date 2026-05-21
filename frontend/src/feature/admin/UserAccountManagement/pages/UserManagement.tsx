@@ -1,14 +1,24 @@
-import { useState } from "react";
-import { users as mockUsers } from "../../../../dataMock/User";
+import React, { useState, useMemo, useCallback } from "react";
 import type { User } from "../../../../types/user";
 import styles from "./UserManagement.module.css";
 import UserFilters from "../components/UserFilters";
 import UserTable from "../components/UserTable";
 
-const UserManagement = () => {
-  const [userList, setUserList] = useState<User[]>(() =>
-    mockUsers.filter((u) => u.role === "admin" || u.role === "company")
-  );
+interface UserManagementProps {
+  usersList: User[];
+  onToggleStatus: (id: number) => void;
+  onResetPassword: (id: number) => void;
+  onDeleteUser: (id: number) => void;
+  onSaveRole: (id: number, newRole: string) => void;
+}
+
+const UserManagement: React.FC<UserManagementProps> = ({
+  usersList,
+  onToggleStatus,
+  onResetPassword,
+  onDeleteUser,
+  onSaveRole,
+}) => {
   const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState<string>("all");
@@ -16,48 +26,38 @@ const UserManagement = () => {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editRole, setEditRole] = useState<string>("");
 
-  const handleSearch = () => {
+  const handleSearch = useCallback(() => {
     setSearch(searchInput);
-  };
+  }, [searchInput]);
 
-  const filtered = userList.filter((u) => {
-    const matchSearch =
-      u.fullName.toLowerCase().includes(search.toLowerCase()) ||
-      u.email.toLowerCase().includes(search.toLowerCase());
-    const matchRole = roleFilter === "all" || u.role === roleFilter;
-    const matchStatus =
-      statusFilter === "all" || (u.status || "Active") === statusFilter;
-    return matchSearch && matchRole && matchStatus;
-  });
+  const filtered = useMemo(() => {
+    return usersList.filter((u) => {
+      const matchSearch =
+        u.fullName.toLowerCase().includes(search.toLowerCase()) ||
+        u.email.toLowerCase().includes(search.toLowerCase());
+      const matchRole = roleFilter === "all" || u.role === roleFilter;
+      const matchStatus =
+        statusFilter === "all" || (u.status || "Active") === statusFilter;
+      return matchSearch && matchRole && matchStatus;
+    });
+  }, [usersList, search, roleFilter, statusFilter]);
 
-  const handleToggleStatus = (id: number) => {
-    setUserList((prev) =>
-      prev.map((u) =>
-        u.id === id
-          ? { ...u, status: u.status === "Active" ? "Inactive" : "Active" }
-          : u
-      )
-    );
-  };
-
-  const handleStartEditRole = (user: User) => {
+  const handleStartEditRole = useCallback((user: User) => {
     setEditingId(user.id);
     setEditRole(user.role);
-  };
+  }, []);
 
-  const handleSaveRole = (id: number) => {
-    setUserList((prev) =>
-      prev.map((u) => (u.id === id ? { ...u, role: editRole } : u))
-    );
+  const handleSaveRole = useCallback((id: number) => {
+    onSaveRole(id, editRole);
     setEditingId(null);
-  };
+  }, [editRole, onSaveRole]);
 
   return (
     <div className={styles.page}>
       <div className={styles.pageHeader}>
         <h1 className={styles.pageTitle}>User Account Management</h1>
         <p className={styles.pageSub}>
-          Manage {userList.length} accounts · Roles · Lock/Unlock
+          Manage {usersList.length} accounts · Roles · Lock/Unlock
         </p>
       </div>
 
@@ -75,13 +75,15 @@ const UserManagement = () => {
       {/* TABLE */}
       <UserTable
         filteredUsers={filtered}
-        totalCount={userList.length}
+        totalCount={usersList.length}
         editingId={editingId}
         editRole={editRole}
         setEditRole={setEditRole}
         onStartEditRole={handleStartEditRole}
         onSaveRole={handleSaveRole}
-        onToggleStatus={handleToggleStatus}
+        onToggleStatus={onToggleStatus}
+        onResetPassword={onResetPassword}
+        onDeleteUser={onDeleteUser}
       />
     </div>
   );

@@ -1,0 +1,206 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.header {
+  margin-bottom: 8px;
+}
+
+.title {
+  font-size: 26px;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 6px;
+}
+
+.subtitle {
+  font-size: 15px;
+  color: #64748b;
+}
+
+/* Grid of Role Cards */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 20px;
+}
+
+.card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+  transition: box-shadow 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: 0 8px 15px -3px rgba(0, 0, 0, 0.06);
+}
+
+/* Card Header */
+.cardHeader {
+  padding: 20px 24px;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f8fafc;
+}
+
+.roleInfo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.roleIcon {
+  font-size: 22px;
+  color: rgba(80, 128, 190, 1);
+  flex-shrink: 0;
+}
+
+.roleName {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 4px;
+}
+
+.roleTag {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 10px;
+  border-radius: 9999px;
+}
+
+.tagAdmin {
+  background: #f0f9ff;
+  color: #0369a1;
+  border: 1px solid #bae6fd;
+}
+
+.tagEmployer {
+  background: #f0fdfa;
+  color: #0d9488;
+  border: 1px solid #99f6e4;
+}
+
+.tagHr {
+  background: #f5f3ff;
+  color: #7c3aed;
+  border: 1px solid #ddd6fe;
+}
+
+.tagCandidate {
+  background: #f0fdf4;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+}
+
+/* Save Button */
+.saveBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  border-radius: 10px;
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  background: rgba(80, 128, 190, 0.1);
+  color: rgba(80, 128, 190, 1);
+  transition: all 0.2s ease;
+}
+
+.saveBtn:hover {
+  background: rgba(80, 128, 190, 0.2);
+}
+
+.saveBtnSuccess {
+  background: #f0fdf4;
+  color: #16a34a;
+}
+
+/* Permission List */
+.permissionList {
+  padding: 8px 0;
+}
+
+.permissionRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 24px;
+  border-bottom: 1px solid #f1f5f9;
+  transition: background 0.15s;
+}
+
+.permissionRow:last-child {
+  border-bottom: none;
+}
+
+.permissionRow:hover {
+  background: #f8fafc;
+}
+
+.permLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.permName {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1e293b;
+}
+
+.permKey {
+  font-size: 11px;
+  color: #94a3b8;
+  font-family: monospace;
+}
+
+/* Toggle Switch */
+.toggle {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  border-radius: 9999px;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.2s ease;
+  padding: 0;
+}
+
+.toggleOn {
+  background: rgba(80, 128, 190, 1);
+}
+
+.toggleOff {
+  background: #cbd5e1;
+}
+
+.toggleThumb {
+  position: absolute;
+  top: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  transition: left 0.2s ease;
+}
+
+.toggleOn .toggleThumb {
+  left: 23px;
+}
+
+.toggleOff .toggleThumb {
+  left: 3px;
+}
