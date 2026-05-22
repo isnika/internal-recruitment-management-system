@@ -82,7 +82,7 @@
   background: white;
   border: 1px solid #e2e8f0;
   border-radius: 16px;
-  overflow: hidden;
+  overflow-x: auto;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
 }
 
@@ -109,8 +109,7 @@
   color: #334155;
   border-bottom: 1px solid #e2e8f0;
   vertical-align: middle;
-  word-wrap: break-word;
-  word-break: break-word;
+  white-space: nowrap;
 }
 
 .table tbody tr:hover {
@@ -149,6 +148,7 @@
   display: flex;
   align-items: center;
   gap: 4px;
+  white-space: nowrap;
 }
 
 .verifiedIcon {
@@ -162,6 +162,7 @@
   border-radius: 6px;
   font-size: 12px;
   font-weight: 500;
+  white-space: nowrap;
 }
 
 /* Status Badges */
@@ -171,6 +172,7 @@
   font-size: 12px;
   font-weight: 600;
   display: inline-block;
+  white-space: nowrap;
 }
 
 .pending {
@@ -211,6 +213,7 @@
   align-items: center;
   gap: 6px;
   transition: all 0.15s ease;
+  white-space: nowrap;
 }
 
 .actionBtnGreen {

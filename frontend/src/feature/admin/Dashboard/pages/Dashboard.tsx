@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { FiUsers, FiBriefcase, FiFileText } from "react-icons/fi";
 import styles from "./Dashboard.module.css";
 import type { User } from "../../../../types/user";
@@ -15,6 +15,13 @@ const Dashboard: React.FC<DashboardProps> = ({ users, jobs, applications }) => {
   const totalUsers = users.length;
   const totalJobs = jobs.length;
   const totalApplications = applications.length;
+
+  const [animate, setAnimate] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setAnimate(true), 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Simple growth chart calculation (derived values)
   const maxCount = totalApplications;
@@ -75,13 +82,16 @@ const Dashboard: React.FC<DashboardProps> = ({ users, jobs, applications }) => {
       <div className={styles.chartWrapper}>
         <h3 className={styles.chartTitle}>Monthly Applications Growth</h3>
         <div className={styles.chart}>
-          {growthData.map((item) => (
+          {growthData.map((item, index) => (
             <div key={item.month} className={styles.chartBarRow}>
               <span className={styles.monthLabel}>{item.month}</span>
               <div className={styles.barTrack}>
                 <div
                   className={styles.barFill}
-                  style={{ width: item.percent }}
+                  style={{ 
+                    width: animate ? item.percent : "0%",
+                    transitionDelay: `${index * 0.1}s`
+                  }}
                 ></div>
               </div>
               <span className={styles.barCount}>{item.count} applications</span>

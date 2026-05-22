@@ -140,9 +140,10 @@
 
 .barFill {
   height: 100%;
-  background: linear-gradient(90deg, rgba(80, 128, 190, 0.8), rgba(80, 128, 190, 1));
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8);
   border-radius: 6px;
-  transition: width 0.8s ease-in-out;
+  width: 0;
+  transition: width 1.2s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .barCount {

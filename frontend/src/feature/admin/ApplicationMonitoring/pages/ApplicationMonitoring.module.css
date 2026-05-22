@@ -89,7 +89,7 @@
 .table {
   width: 100%;
   border-collapse: collapse;
-  table-layout: fixed;
+  table-layout: auto;
 }
 
 .table th {
@@ -109,8 +109,8 @@
   color: #334155;
   border-bottom: 1px solid #e2e8f0;
   vertical-align: middle;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  word-wrap: break-word;
+  word-break: break-word;
 }
 
 .table tbody tr:hover {
@@ -120,17 +120,11 @@
 .candidateName {
   font-weight: 600;
   color: #0f172a;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .jobTitle {
   font-weight: 500;
   color: #334155;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .cvLink {
@@ -141,9 +135,6 @@
   align-items: center;
   gap: 6px;
   transition: opacity 0.15s;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   max-width: 100%;
 }
 
@@ -233,6 +224,7 @@
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
 }
 
 .modalHeader {
@@ -241,6 +233,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  box-sizing: border-box;
 }
 
 .modalHeaderTitle h2 {
@@ -279,6 +272,8 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .auditInfoGrid {
@@ -295,6 +290,7 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
+  box-sizing: border-box;
 }
 
 .auditLabel {
@@ -328,6 +324,7 @@
   color: #334155;
   resize: none;
   font-family: inherit;
+  box-sizing: border-box;
 }
 
 .textarea:focus {
@@ -343,6 +340,8 @@
   background: #f8fafc;
   border-bottom-left-radius: 16px;
   border-bottom-right-radius: 16px;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .confirmBtn {

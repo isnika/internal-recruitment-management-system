@@ -2,9 +2,8 @@ import React from "react";
 import { FiUsers, FiBriefcase, FiFileText, FiDownload, FiTrendingUp, FiAward } from "react-icons/fi";
 import styles from "./StatisticalReport.module.css";
 import StatCard from "../components/StatCard";
-import RoleDistributionChart from "../components/RoleDistributionChart";
-import JobCategoriesChart from "../components/JobCategoriesChart";
-import GrowthChart from "../components/GrowthChart";
+import MonthlyBreakdownTable from "../components/MonthlyBreakdownTable";
+import TopCompaniesList from "../components/TopCompaniesList";
 import type { User } from "../../../../types/user";
 import type { Job } from "../../../../types/job";
 import type { ApplicationMock } from "../../../../dataMock/adminMock";
@@ -111,84 +110,11 @@ const StatisticalReport: React.FC<StatisticalReportProps> = ({ users, jobs, appl
       </div>
 
       {/* MONTHLY BREAKDOWN TABLE */}
-      <div className={styles.monthlyCard}>
-        <h3 className={styles.sectionTitle}>Monthly Breakdown</h3>
-        <div className={styles.monthlyTableWrapper}>
-          <table className={styles.monthlyTable}>
-            <thead>
-              <tr>
-                <th>Month</th>
-                <th>New Jobs</th>
-                <th>Active Candidates</th>
-                <th>Applications</th>
-                <th>Job Trend</th>
-              </tr>
-            </thead>
-            <tbody>
-              {monthlyData.map((row, i) => {
-                const prev = monthlyData[i - 1];
-                const trend = prev ? row.jobs - prev.jobs : 0;
-                return (
-                  <tr key={row.month}>
-                    <td className={styles.monthCol}>{row.month}</td>
-                    <td>{row.jobs}</td>
-                    <td>{row.candidates}</td>
-                    <td>{row.applications}</td>
-                    <td>
-                      {i === 0 ? (
-                        <span className={styles.trendNeutral}>—</span>
-                      ) : trend >= 0 ? (
-                        <span className={styles.trendUp}>▲ +{trend}</span>
-                      ) : (
-                        <span className={styles.trendDown}>▼ {trend}</span>
-                      )}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <MonthlyBreakdownTable data={monthlyData} />
 
-      {/* TOP COMPANIES + CHARTS */}
+      {/* TOP COMPANIES */}
       <div className={styles.bottomGrid}>
-        {/* Top Companies */}
-        <div className={styles.topCompaniesCard}>
-          <h3 className={styles.sectionTitle}>
-            <FiAward className={styles.sectionIcon} /> Top Companies by Jobs Posted
-          </h3>
-          <div className={styles.companyList}>
-            {topCompanies.map(([name, count], i) => {
-              const maxCount = topCompanies[0][1];
-              const barWidth = `${(count / maxCount) * 100}%`;
-              return (
-                <div key={name} className={styles.companyRow}>
-                  <div className={styles.companyRank}>#{i + 1}</div>
-                  <div className={styles.companyInfo}>
-                    <span className={styles.companyName}>{name}</span>
-                    <div className={styles.companyBarTrack}>
-                      <div
-                        className={styles.companyBarFill}
-                        style={{ width: barWidth }}
-                      />
-                    </div>
-                  </div>
-                  <span className={styles.companyCount}>{count} jobs</span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Role Distribution */}
-        <RoleDistributionChart totalUsers={totalUsers} users={users} />
-      </div>
-
-      {/* CHARTS GRID */}
-      <div className={styles.chartsGrid}>
-        <JobCategoriesChart />
-        <GrowthChart applications={applications} />
+        <TopCompaniesList companies={topCompanies as [string, number][]} />
       </div>
     </div>
   );
