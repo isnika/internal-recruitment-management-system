@@ -252,7 +252,8 @@
 
 /* ── 5. CTA SECTION ── */
 .ctaSection {
-  padding: 40px 24px 100px 24px;
+  /* Sửa 100px thành 40px */
+  padding: 40px 24px 40px 24px;
 }
 
 .ctaCard {
@@ -338,8 +339,3 @@
   .ctaCard { padding: 60px 20px; }
 }
 
-.jobGrid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-}

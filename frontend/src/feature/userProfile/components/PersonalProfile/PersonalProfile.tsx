@@ -1,34 +1,46 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useAuth } from "../../../auth/context/AuthContext";
-import styles from "./PersonalProfile.module.css";
-import { updateProfile } from "../../../../service/userApi";
+import { getMyProfile, updateProfile, uploadAvatar } from "../../../../service/userApi";
 import PersonalSection from "./PersonalSection";
 import RecruitmentSection from "./RecruitmentSection";
+import styles from "./PersonalProfile.module.css";
 
-export default function PersonalProfile(): React.ReactElement {
+export default function PersonalProfile() {
   const { user, setUser } = useAuth();
 
-  if (!user) return <div className={styles.loading}>Loading...</div>;
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const data = await getMyProfile();
+        setUser(data);
+      } catch (err) {
+        console.error("Failed to load profile:", err);
+      }
+    };
 
-  // Hàm cập nhật dữ liệu chung cho cả 2 section con
-  const handleUpdateProfile = async (payload: any) => {
-    try {
-      const updatedUser = await updateProfile(payload);
-      setUser({ ...updatedUser });
-    } catch (err) {
-      console.error("Cập nhật hồ sơ thất bại:", err);
-    }
-  };
+    fetchProfile();
+  }, [setUser]);
+
+  if (!user) {
+    return <div className={styles.loadingState}>Loading profile data...</div>;
+  }
 
   return (
     <div className={styles.container}>
-      {/* KHỐI 1: THÔNG TIN CÁ NHÂN */}
-      <PersonalSection user={user} onSave={handleUpdateProfile} />
+      <main className={styles.profileWrapper}>
+        <PersonalSection
+          user={user}
+          onSave={updateProfile}
+          onAvatarSave={uploadAvatar}
+        />
 
-      <hr className={styles.sectionDivider} />
+        <hr className={styles.sectionDivider} />
 
-      {/* KHỐI 2: THÔNG TIN TUYỂN DỤNG */}
-      <RecruitmentSection user={user} onSave={handleUpdateProfile} />
+        <RecruitmentSection
+          user={user}
+          onSave={updateProfile}
+        />
+      </main>
     </div>
   );
 }

@@ -4,7 +4,7 @@ import { jobs } from "../dataMock/Job";
 import { metadataMock } from "../dataMock/metadata";
 import type { Job, HomeMetadata, JobFilters, FetchJobsResponse } from "../types/job";
 
-// ================= METADATA =================
+//      METADATA     
 export const fetchMetadataApi = async (): Promise<HomeMetadata> => {
   if (IS_MOCK) {
     return Promise.resolve(metadataMock);
@@ -13,7 +13,7 @@ export const fetchMetadataApi = async (): Promise<HomeMetadata> => {
   return request.get<HomeMetadata>("/metadata");
 };
 
-// ================= SALARY =================
+//      SALARY     
 const checkSalaryInRange = (
   range: string,
   salary: { min: number }

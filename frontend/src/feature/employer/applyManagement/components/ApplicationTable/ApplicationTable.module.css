@@ -1,27 +1,85 @@
-.table {
+/* ── CONTAINER WRAPPER ── */
+.tableWorkspace {
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  overflow-x: auto;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.01);
+}
+
+/* ── TABLE ARCHITECTURE ── */
+.customTable {
   width: 100%;
   border-collapse: collapse;
-  background: white;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-   overflow: visible;
-}
-
-.table th {
-  background: #f1f3f5;
   text-align: left;
-  padding: 12px;
-  font-size: 13px;
-  color: #555;
-}
-
-.table td {
-  padding: 12px;
-  border-top: 1px solid #eee;
+  font-family: system-ui, -apple-system, sans-serif;
   font-size: 14px;
 }
 
-.table tr:hover {
-  background: #fafafa;
+/* ── HEADER CELLS ── */
+.customTable th {
+  background-color: #f8fafc;
+  color: #475569;
+  font-weight: 600;
+  padding: 14px 16px;
+  border-bottom: 1px solid #e2e8f0;
+  white-space: nowrap;
+}
+
+/* ── COLUMN WIDTH CONTROL ── */
+.thId {
+  width: 90px;
+}
+
+.thCandidate {
+  min-width: 220px;
+}
+
+.thJob {
+  min-width: 200px;
+}
+
+.thDate {
+  width: 130px;
+}
+
+.thStatus {
+  width: 140px;
+}
+
+.thStage {
+  width: 160px;
+}
+
+.thActions {
+  width: 150px;
+  text-align: right;
+}
+
+/* ── EMPTY DATA STATE ── */
+.emptyStateNotify {
+  padding: 4rem 2rem;
+  text-align: center;
+  color: #64748b;
+  background-color: #ffffff;
+}
+
+.emptyStateContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* ── RESPONSIVE ANIMATION LINK ── */
+.customTable tbody tr {
+  transition: background-color 0.15s ease;
+}
+
+.customTable tbody tr:hover {
+  background-color: #f1f5f9;
 }

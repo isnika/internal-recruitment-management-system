@@ -1,235 +1,294 @@
-/* ===== OVERLAY ===== */
+/* ── UNDERLAY OVERLAY MASK ── */
 .overlay {
   position: fixed;
   inset: 0;
-
-  background: rgba(15, 23, 42, 0.6);
-
+  background-color: rgba(15, 23, 42, 0.6); /* Modern slate mask overlay */
+  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
-
-  padding: 20px;
-
-  z-index: 9999;
+  z-index: 1000;
+  padding: 1.5rem;
 }
 
-/* ===== MODAL ===== */
-.modal {
+/* ── MODAL STRUCTURE CARD ── */
+.modalCard {
+  background-color: #ffffff;
   width: 100%;
-  max-width: 680px;
-  max-height: 92vh;
-
-  background: #fff;
-  border-radius: 16px;
-
+  max-width: 640px;
+  max-height: calc(100vh - 3rem);
+  border-radius: 14px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   display: flex;
   flex-direction: column;
-
-  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.25);
-
   overflow: hidden;
+  animation: modalScaleUp 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* ===== HEADER ===== */
-.header {
-  flex-shrink: 0;
-
-  padding: 16px 20px;
-  border-bottom: 1px solid #eef2f7;
+@keyframes modalScaleUp {
+  from { transform: scale(0.96); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }
 
-.header h2 {
-  font-size: 16px;
+/* ── MODAL HEADER DECORATION ── */
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.modalTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 4px 0;
+}
+
+.modalSubtitle {
+  font-size: 13px;
+  color: #64748b;
   margin: 0;
 }
 
-/* ===== BODY ===== */
-.body {
-  flex: 1;
-  min-height: 0;
-
-  overflow-y: auto;
-
-  padding: 16px 20px;
-
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
+.closeIconButton {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  display: inline-flex;
+  transition: all 0.15s;
 }
 
-/* ===== SECTION ===== */
-.section h3 {
-  font-size: 12px;
-  color: #64748b;
-  text-transform: uppercase;
-  margin-bottom: 8px;
-}
-
-/* ===== READONLY ===== */
-.readonly {
-  background: #f8fafc;
-
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-
-  padding: 10px;
-}
-
-.readonly p {
-  margin: 4px 0;
-  font-size: 12px;
-}
-
-/* ===== FORM ===== */
-.form {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-/* ===== LABEL (SCOPED ONLY) ===== */
-.form label {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-
-  font-size: 12px;
+.closeIconButton:hover {
+  background-color: #f1f5f9;
   color: #334155;
 }
 
-/* ===== INPUT TEXT-BASED ONLY (IMPORTANT FIX) ===== */
-.form input[type="text"],
-.form input[type="email"],
-.form input[type="password"],
-.form input[type="number"],
-.form select,
-.form textarea {
-  width: 100%;
+/* ── INTERNAL VIEW SCROLL AREA ── */
+.modalForm {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
 
-  padding: 10px;
+.scrollableBody {
+  padding: 24px;
+  overflow-y: auto;
+  max-height: 520px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
 
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-
+/* ── ERROR TEXT MESSAGES BANNER ── */
+.errorBanner {
+  background-color: #fef2f2;
+  border-left: 4px solid #ef4444;
+  color: #991b1b;
+  padding: 12px 16px;
+  border-radius: 6px;
   font-size: 13px;
-
-  outline: none;
-
-  transition: 0.2s ease;
-
-  box-sizing: border-box;
-
-  background: #fff;
+  font-weight: 500;
 }
 
-/* ===== CHECKBOX / RADIO SAFE RESET ===== */
-.form input[type="checkbox"],
-.form input[type="radio"] {
-  width: auto;
-  height: auto;
+/* ── PROFILE CANDIDATE CARD SNAPSHOT ── */
+.formSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
 
-  padding: 0;
+.sectionHeading {
+  font-size: 14px;
+  font-weight: 700;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
   margin: 0;
-
-  border: none;
-  box-shadow: none;
-
-  accent-color: #6366f1;
+  border-bottom: 1px dashed #e2e8f0;
+  padding-bottom: 6px;
 }
 
-/* ===== FOCUS ===== */
-.form input[type="text"]:focus,
-.form input[type="email"]:focus,
-.form input[type="password"]:focus,
-.form input[type="number"]:focus,
-.form select:focus,
-.form textarea:focus {
+.profileMetaGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  background-color: #f8fafc;
+  padding: 14px;
+  border-radius: 8px;
+  border: 1px solid #f1f5f9;
+}
+
+.metaField {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.metaField:last-child {
+  grid-column: span 2;
+}
+
+.metaLabel {
+  font-size: 11px;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+}
+
+.metaValue {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+/* ── INPUT FIELDS GRID CORE LAYOUT ── */
+.inputsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px 14px;
+}
+
+.fullWidthRow {
+  grid-column: span 2;
+}
+
+.formControl {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fieldLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.required {
+  color: #ef4444;
+}
+
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.fieldIcon {
+  position: absolute;
+  left: 12px;
+  color: #94a3b8;
+  font-size: 14px;
+  pointer-events: none;
+}
+
+/* ── TEXT INPUTS & SELECT BASICS ── */
+.textInput,
+.selectInput {
+  width: 100%;
+  padding: 8px 12px 8px 36px;
+  font-size: 13px;
+  color: #1e293b;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  outline: none;
+  background-color: #ffffff;
+  transition: all 0.15s ease;
+}
+
+.selectInput {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 14px;
+  padding-right: 32px;
+}
+
+.textInput:focus,
+.selectInput:focus {
   border-color: #6366f1;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
 
-/* ===== TEXTAREA ===== */
-.form textarea {
-  min-height: 80px;
-  resize: none;
+/* ── ADMINISTRATIVE REMARKS TEXTAREA ── */
+.textareaWrapper {
+  position: relative;
 }
 
-/* ===== FOOTER ===== */
-.actions {
-  flex-shrink: 0;
+.textareaIcon {
+  position: absolute;
+  left: 12px;
+  top: 10px;
+  color: #94a3b8;
+  font-size: 14px;
+  pointer-events: none;
+}
 
-  padding: 14px 20px;
-  border-top: 1px solid #eef2f7;
+.textareaInput {
+  width: 100%;
+  padding: 8px 12px 8px 36px;
+  font-size: 13px;
+  color: #1e293b;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  outline: none;
+  font-family: inherit;
+  resize: vertical;
+  transition: all 0.15s ease;
+}
 
+.textareaInput:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+/* ── MODAL CONTROL STACK FOOTER ACTIONS ── */
+.modalFooterActions {
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
+  gap: 12px;
+  padding: 16px 24px;
+  border-top: 1px solid #e2e8f0;
+  background-color: #f8fafc;
 }
 
-/* ===== BUTTONS ===== */
-.cancel,
-.save {
-  padding: 9px 14px;
-
-  border: none;
-  border-radius: 10px;
-
-  font-size: 12px;
-
+.cancelButton {
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 6px;
   cursor: pointer;
-
-  transition: 0.2s ease;
+  transition: all 0.15s;
 }
 
-.cancel {
-  background: #e2e8f0;
-  color: #0f172a;
+.cancelButton:hover {
+  background-color: #f1f5f9;
+  color: #1e293b;
 }
 
-.cancel:hover {
-  background: #cbd5e1;
+.confirmSaveButton {
+  background-color: #6366f1;
+  border: 1px solid transparent;
+  color: #ffffff;
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: all 0.15s;
 }
 
-.save {
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
-  color: white;
-}
-
-.save:hover {
-  opacity: 0.95;
-  transform: translateY(-1px);
-}
-
-/* ===== SCROLLBAR ===== */
-.body::-webkit-scrollbar {
-  width: 6px;
-}
-
-.body::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 999px;
-}
-
-.body::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
-}
-
-/* ===== MOBILE ===== */
-@media (max-width: 640px) {
-  .modal {
-    max-height: 95vh;
-  }
-
-  .form {
-    grid-template-columns: 1fr;
-  }
-
-  .body {
-    padding: 14px;
-  }
-
-  .actions {
-    padding: 14px;
-  }
+.confirmSaveButton:hover {
+  background-color: #4f46e5;
 }

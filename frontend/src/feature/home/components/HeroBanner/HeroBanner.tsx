@@ -1,13 +1,19 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import styles from "./HeroBanner.module.css";
 
 type Props = {
-  isFilterOpen?: boolean; // Để dấu ? phòng hờ nếu có lúc không truyền
-  onApply: () => void;
+  isFilterOpen?: boolean;
 };
 
-const HeroBanner = ({ isFilterOpen, onApply }: Props) => {
+const HeroBanner = ({ isFilterOpen }: Props) => {
+  const navigate = useNavigate();
+
   if (isFilterOpen) return null;
+
+  const handleGoToJobs = () => {
+    navigate("/jobPage"); // j
+  };
 
   return (
     <section className={styles.heroSection}>
@@ -28,9 +34,9 @@ const HeroBanner = ({ isFilterOpen, onApply }: Props) => {
           <button
             type="button"
             className={styles.primaryButton}
-            onClick={onApply}
+            onClick={handleGoToJobs}
           >
-            Apply Job Now
+            Explore Jobs
           </button>
         </div>
       </div>

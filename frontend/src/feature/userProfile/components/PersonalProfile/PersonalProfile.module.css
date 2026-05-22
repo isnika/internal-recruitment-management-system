@@ -1,4 +1,4 @@
-/*  
+/*
    CONTAINER
   */
 .container {
@@ -12,7 +12,7 @@
   margin: 20px 0;
 }
 
-/*  
+/*
    LAYOUT
   */
 .gridTwo {
@@ -35,7 +35,7 @@
   gap: 12px;
 }
 
-/*  
+/*
    HEADER ACTIONS
   */
 .headerActions {
@@ -79,7 +79,7 @@
   transform: translateY(-1px);
 }
 
-/*  
+/*
    AVATAR
   */
 .avatarBox {
@@ -127,7 +127,7 @@
   border-radius: 10px;
 }
 
-/*  
+/*
    FORM
   */
 .formBox {
@@ -147,7 +147,7 @@
   color: #555;
 }
 
-/*  
+/*
    INPUT
   */
 input {
@@ -168,7 +168,7 @@ input:focus {
   border-color: #4a90e2;
 }
 
-/*  
+/*
    DATE OF BIRTH
   */
 .dob {
@@ -181,7 +181,7 @@ input:focus {
   min-width: 0;
 }
 
-/*  
+/*
    SOCIAL
   */
 .socialRow {
@@ -200,7 +200,7 @@ input:focus {
   cursor: pointer;
 }
 
-/*  
+/*
    RESPONSIVE
   */
 @media (max-width: 768px) {

@@ -3,22 +3,26 @@
   padding-bottom: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  width: 100%;
 }
 
 /* top bar */
 .topBar {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding: 0 20px;
-  height: 70px;
+  min-height: 70px;
+  flex-wrap: wrap;
+  gap: 15px;
 }
 
 /* logo */
 .logo {
-  flex:1;
-  font-size: 30px;
+  font-size: 26px;
   display: flex;
   align-items: center;
+  white-space: nowrap;
 }
 
 .logoBlue {
@@ -38,22 +42,10 @@
 
 /* menu center */
 .nav {
-  flex: 1;
   display: flex;
   justify-content: center;
-  gap: 30px;
-}
-
-/* mặc định:  hiện hết */
-.hideOnSmall {
-  display: inline;
-}
-
-/* khi màn nhỏ hoặc zoom to */
-@media (max-width: 900px) {
-  .hideOnSmall {
-    display: none; /* ẩn  */
-  }
+  gap: 20px;
+  flex-wrap: wrap;
 }
 
 .nav a {
@@ -61,19 +53,30 @@
   color: #555;
   font-weight: 500;
   transition: 0.2s;
+  white-space: nowrap;
+  padding-bottom: 4px;
+  cursor: pointer;
 }
 
 .nav a:hover {
-  color: #4a6fa5 ;
-
+  color: #4a6fa5;
 }
+
+
+.nav a.active {
+  color: #4a6fa5;
+  font-weight: 700;
+  border-bottom: 2px solid #4a6fa5; 
+}
+
+
 
 /* action*/
 .actions {
-  flex:1;
   display: flex;
   gap: 12px;
   justify-content: flex-end;
+  align-items: center;
 }
 
 .signIn {
@@ -84,6 +87,8 @@
   cursor: pointer;
   font-weight: 500;
   color: #4a6fa5;
+  white-space: nowrap;
+  transition: all 0.2s;
 }
 
 .signUp {
@@ -96,29 +101,34 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
   transform: translateY(-1px);
 }
+
 /* container center content */
 .container {
+  width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  align-items: center;
+  padding: 0 15px; 
+  box-sizing: border-box; 
 }
 
 /* search */
 .searchSection {
-  margin-top: 10px;
+  margin-top: 15px;
   text-align: center;
+  padding: 0 10px;
 }
 
 .searchBox {
   display: flex;
   align-items: center;
-
   background: white;
   border-radius: 10px;
-  padding: 5px 5px;
-  width: 650px;
+  padding: 5px;
+  width: 100%; 
+  max-width: 650px; 
   margin: auto;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
 }
 
 .searchBox input {
@@ -127,6 +137,7 @@
   padding: 10px;
   flex: 1;
   background: transparent;
+  min-width: 0;
 }
 
 .searchBox input:first-child {
@@ -140,25 +151,73 @@
   padding: 8px 18px;
   border-radius: 10px;
   cursor: pointer;
+  white-space: nowrap;
 }
 
 /* trending*/
 .trending {
-  margin-top: 10px;
+  margin-top: 12px;
   font-size: 14px;
   color: #666;
+  padding: 0 10px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
 }
 
 .tags {
   background: #e5e7eb;
-  margin: 2px;
   padding: 4px 8px;
   border-radius: 12px;
   font-size: 11px;
+  transition: 0.2s;
+  display: inline-block;
 }
 
 .tags:hover {
   color: #4a6fa5;
   background: white;
   cursor: pointer;
+}
+
+
+/* 1. Cho màn hình máy tính bảng / màn hình tầm trung (Dưới 900px) */
+@media (max-width: 900px) {
+  .hideOnSmall {
+    display: none; /* Ẩn các menu có class này như bạn cấu hình */
+  }
+}
+
+/* 2. Cho màn hình điện thoại di động (Dưới 600px) */
+@media (max-width: 600px) {
+  .topBar {
+    flex-direction: column;
+    padding: 15px 10px;
+    text-align: center;
+  }
+
+  .actions {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .searchBox {
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .searchBox input {
+    width: 100%;
+    border-right: none !important;
+    border-bottom: 1px solid #eee;
+    padding: 8px 0;
+  }
+
+  .searchBox button {
+    width: 100%;
+    padding: 12px;
+  }
 }

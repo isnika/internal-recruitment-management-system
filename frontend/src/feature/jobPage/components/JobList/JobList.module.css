@@ -1,27 +1,36 @@
-/* ── JOB LIST ── */
+/*     JOB LIST WRAPPER     */
 .jobList {
+  width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
+  padding: 12px 0;
+}
+/*     LOADING / EMPTY STATE     */
+.loadingInfo {
   width: 100%;
+  padding: 40px 20px;
+
+  text-align: center;
+  font-size: 14px;
+  color: #6b7280;
+
+  background: #f9fafb;
+  border: 1px dashed #d1d5db;
+  border-radius: 12px;
 }
 
 
-/* ── RESPONSIVE ── */
+
+/*     RESPONSIVE     */
 @media (max-width: 768px) {
-  .bodyLayout {
-    flex-direction: column;
+  .jobList {
+    gap: 12px;
+    padding: 8px 0;
   }
 
-  .filterSidebar {
-    width: 100%;
-  }
-
-  .bodyLayoutWithSidebar .jobsColumn {
-    border-left: none;
-    padding-left: 0;
-    border-top: 1px solid #e2e8f0;
-    padding-top: 16px;
+  .loadingInfo {
+    padding: 28px 16px;
+    font-size: 13px;
   }
 }
-

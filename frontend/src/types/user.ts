@@ -1,23 +1,21 @@
-export interface Recruitment {
-  taxId?: string;
-  citizenId?: string;
-  bank?: string;
-  social?: string;
-  releaseDate?: string;
-}
-
 export interface User {
   id: number;
-  username: string;
-  email: string;
-  password?: string;
-  phone: string;
-  fullName: string;
-  role: string;
-  address: string;
-  dob: string;
-  gender: string;
-  status: string;
+  userId: number;
 
-  recruitment?: Recruitment;
+  email: string;
+  firstName: string;
+  lastName: string;
+
+  avatarUrl?: string;
+
+  gender?: string;
+  dateOfBirth?: string;
+  phone?: string;
+  address?: string;
+
+  taxCode?: string;
+  citizenId?: string;
+  releaseDate?: string;
+  socialLink?: string;
+  bankAccountName?: string;
 }

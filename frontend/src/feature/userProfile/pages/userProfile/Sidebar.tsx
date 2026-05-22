@@ -6,27 +6,61 @@ export default function Sidebar() {
     <div className={styles.sidebar}>
       <h3 className={styles.title}>My Account</h3>
 
-      <ul>
+      <ul className={styles.navList}>
         <li>
-          <NavLink to="/profile" end>
+          <NavLink
+            to="/profile"
+            end
+            className={({ isActive }) =>
+              `${styles.navLink} ${isActive ? styles.navActive : ""}`
+            }
+          >
             Personal Profile
           </NavLink>
         </li>
 
         <li>
-          <NavLink to="/profile/cv">Manage CV</NavLink>
+          <NavLink
+            to="/profile/cv"
+            className={({ isActive }) =>
+              `${styles.navLink} ${isActive ? styles.navActive : ""}`
+            }
+          >
+            Manage CV
+          </NavLink>
         </li>
 
         <li>
-          <NavLink to="/profile/saved">Saved Jobs</NavLink>
+          <NavLink
+            to="/profile/saved"
+            className={({ isActive }) =>
+              `${styles.navLink} ${isActive ? styles.navActive : ""}`
+            }
+          >
+            Saved Jobs
+          </NavLink>
         </li>
 
         <li>
-          <NavLink to="/profile/applied">Applied Jobs</NavLink>
+          <NavLink
+            to="/profile/applied"
+            className={({ isActive }) =>
+              `${styles.navLink} ${isActive ? styles.navActive : ""}`
+            }
+          >
+            Applied Jobs
+          </NavLink>
         </li>
 
         <li>
-          <NavLink to="/profile/settings">Settings</NavLink>
+          <NavLink
+            to="/profile/settings"
+            className={({ isActive }) =>
+              `${styles.navLink} ${isActive ? styles.navActive : ""}`
+            }
+          >
+            Settings
+          </NavLink>
         </li>
       </ul>
     </div>

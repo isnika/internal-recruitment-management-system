@@ -1,46 +1,33 @@
 import React from "react";
 import styles from "./JobHeader.module.css";
-import { AiOutlineMenu } from "react-icons/ai";
 
 type Props = {
   startIndex: number;
   jobsPerPage: number;
   totalJobs: number;
-  isFilterOpen: boolean;
-  activeCount: number;
-  setIsFilterOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const JobHeader = ({
   startIndex,
   jobsPerPage,
   totalJobs,
-  isFilterOpen,
-  activeCount,
-  setIsFilterOpen,
 }: Props) => {
+  // Trường hợp không tìm thấy job nào, hiển thị 0 kết quả
+  if (totalJobs === 0) {
+    return (
+      <div className={styles.jobsHeader}>
+        <span className={styles.showingText}>Showing 0 results</span>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.jobsHeader}>
       <span className={styles.showingText}>
         Showing {startIndex + 1} -{" "}
         {Math.min(startIndex + jobsPerPage, totalJobs)} of{" "}
-        {totalJobs}
+        {totalJobs} jobs
       </span>
-
-      <button
-        className={`${styles.filterToggleBtn} ${
-          isFilterOpen ? styles.filterToggleBtnActive : ""
-        }`}
-        onClick={() => setIsFilterOpen(prev => !prev)}
-      >
-        <AiOutlineMenu size={18} />
-
-        {activeCount > 0 && (
-          <span className={styles.filterBadge}>
-            {activeCount}
-          </span>
-        )}
-      </button>
     </div>
   );
 };

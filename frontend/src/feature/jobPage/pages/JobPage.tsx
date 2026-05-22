@@ -1,24 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./JobPage.module.css";
 
 import FilterSidebar from "../components/FilterSidebar/FilterSidebar";
 import CategoryTabs from "../components/CategoryTabs/CategoryTabs";
-import JobHeader from "../components/JobHeader/JobHeader";
 import JobList from "../components/JobList/JobList";
 import Pagination from "../components/Pagination/Pagination";
+import JobHeader from "../components/JobHeader/JobHeader";
 
 import { useHomeMetadata } from "../../../hooks/useHomeMetadata";
 import { useJobs } from "../../../hooks/useJobs";
 
 const JobPage = () => {
   const [activeCategory, setActiveCategory] = useState("View All");
-  const [isFilterOpen, setIsFilterOpen] = useState(true);
 
   const { metadata, isMetaLoading } = useHomeMetadata();
 
   const {
     jobs,
-    totalJobs,
+    totalJobs,       // <-- FIX: Thêm totalJobs lấy từ hook ra
     totalPages,
     currentPage,
     setCurrentPage,
@@ -28,11 +27,16 @@ const JobPage = () => {
     handleToggleFilter,
     handleClearGroup,
     handleClearAll,
-    activeCount,
-    JOBS_PER_PAGE,
+    JOBS_PER_PAGE,   // <-- FIX: Thêm JOBS_PER_PAGE lấy từ hook ra
   } = useJobs(activeCategory, !!metadata);
 
-  const startIndex = (currentPage - 1) * JOBS_PER_PAGE;
+  // <-- FIX: Tính toán startIndex dựa trên số trang hiện tại và số lượng job mỗi trang
+  const startIndex = (currentPage - 1) * (JOBS_PER_PAGE || 10);
+
+  // Reset về trang 1 mỗi khi đổi Category Tab
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeCategory, setCurrentPage]);
 
   if (isMetaLoading) {
     return <div className={styles.loading}>Loading...</div>;
@@ -42,22 +46,21 @@ const JobPage = () => {
     <div className={styles.wrapper}>
       <div className={styles.bodyLayout}>
 
-        {/* FILTER SIDEBAR */}
-        {isFilterOpen && (
-          <aside className={styles.filterSidebar}>
-            <FilterSidebar
-              filters={filters}
-              metadata={metadata}
-              onToggle={handleToggleFilter}
-              onClearGroup={handleClearGroup}
-              onClearAll={handleClearAll}
-            />
-          </aside>
-        )}
+        {/* KHUNG LỌC (Cố định ở bên trái) */}
+        <aside className={styles.filterSidebar}>
+          <FilterSidebar
+            filters={filters}
+            metadata={metadata}
+            onToggle={handleToggleFilter}
+            onClearGroup={handleClearGroup}
+            onClearAll={handleClearAll}
+          />
+        </aside>
 
-        {/* MAIN CONTENT */}
+        {/* KHUNG NỘI DUNG CHÍNH (Ở bên phải) */}
         <main className={styles.jobsColumn}>
 
+          {/* HỆ THỐNG TAB DANH MỤC */}
           <CategoryTabs
             categories={metadata?.categories}
             activeCategory={activeCategory}
@@ -65,26 +68,26 @@ const JobPage = () => {
             setCurrentPage={setCurrentPage}
           />
 
+          {/* HIỂN THỊ SỐ LƯỢNG KẾT QUẢ TÌM KIẾM */}
           <JobHeader
             startIndex={startIndex}
             jobsPerPage={JOBS_PER_PAGE}
             totalJobs={totalJobs}
-            isFilterOpen={isFilterOpen}
-            activeCount={activeCount}
-            setIsFilterOpen={setIsFilterOpen}
+          />
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            setCurrentPage={setCurrentPage}
           />
 
+          {/* DANH SÁCH VIỆC LÀM */}
           <JobList
             jobs={jobs}
             isLoading={isLoading}
             handleBookmark={handleBookmark}
           />
 
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            setCurrentPage={setCurrentPage}
-          />
+
         </main>
       </div>
     </div>

@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import styles from "./RecruitmentFilterBar.module.css";
-import { FiSliders } from "react-icons/fi";
+import { FiSliders, FiSearch, FiPlus } from "react-icons/fi";
 import { fetchMetadataApi } from "../../../../../service/jobApi";
 import type { HomeMetadata } from "../../../../../types/job";
 
@@ -22,7 +22,7 @@ const RecruitmentFilterBar: React.FC<RecruitmentFilterBarProps> = ({
   const [searchInput, setSearchInput] = useState("");
   const [metadata, setMetadata] = useState<HomeMetadata | null>(null);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const getMetadata = async () => {
       try {
         const data = await fetchMetadataApi();
@@ -34,46 +34,48 @@ const RecruitmentFilterBar: React.FC<RecruitmentFilterBarProps> = ({
     getMetadata();
   }, []);
 
-  const handleSearch = () => {
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
     onSearch(searchInput);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      handleSearch();
-    }
   };
 
   const statuses = ["Posted", "Draft", "Closed"];
 
   return (
-    <>
-      {/* Filter & Search */}
-      <div className={styles.filterRow}>
-        <div className={styles.filterLeft}>
-          <FiSliders size={18} />
-          <span>Filter</span>
-        </div>
-        <div className={styles.searchBox}>
+    <div className={styles.filterWorkspace}>
+      {/* LEFT: Search + Filters */}
+      <div className={styles.filterControls}>
+
+        {/* Search Bar */}
+        <form onSubmit={handleSearchSubmit} className={styles.searchWrapper}>
+          <FiSearch className={styles.searchIcon} />
           <input
             type="text"
-            placeholder="Job title, Skills, ..."
+            placeholder="Search job title, skills, department..."
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
-            onKeyDown={handleKeyDown}
+            className={styles.searchInput}
           />
-          <button className={styles.searchBtn} onClick={handleSearch}>
-            Search
-          </button>
-        </div>
-      </div>
 
-      {/* Dropdowns & Create Job */}
-      <div className={styles.actionRow}>
-        <div className={styles.dropdowns}>
+          {searchInput && (
+            <button type="submit" className={styles.searchInlineBtn}>
+              Search
+            </button>
+          )}
+        </form>
+
+        {/* Filters */}
+        <div className={styles.dropdownGroup}>
+          <div className={styles.filterLabelBlock}>
+            <FiSliders className={styles.filterIcon} />
+            <span>Filters:</span>
+          </div>
+
+          {/* Department */}
           <select
-            className={styles.select}
+            className={styles.selectBox}
             onChange={(e) => onDepartmentChange(e.target.value)}
+            defaultValue=""
           >
             <option value="">All Departments</option>
             {metadata?.departments.map((dept) => (
@@ -82,9 +84,12 @@ const RecruitmentFilterBar: React.FC<RecruitmentFilterBarProps> = ({
               </option>
             ))}
           </select>
+
+          {/* Status */}
           <select
-            className={styles.select}
+            className={styles.selectBox}
             onChange={(e) => onStatusChange(e.target.value)}
+            defaultValue=""
           >
             <option value="">All Statuses</option>
             {statuses.map((status) => (
@@ -93,11 +98,14 @@ const RecruitmentFilterBar: React.FC<RecruitmentFilterBarProps> = ({
               </option>
             ))}
           </select>
+
+          {/* Employment Type */}
           <select
-            className={styles.select}
+            className={styles.selectBox}
             onChange={(e) => onEmploymentTypeChange(e.target.value)}
+            defaultValue=""
           >
-            <option value="">All Employment Types</option>
+            <option value="">Employment Type</option>
             {metadata?.jobTypes.map((type) => (
               <option key={type} value={type}>
                 {type}
@@ -105,9 +113,18 @@ const RecruitmentFilterBar: React.FC<RecruitmentFilterBarProps> = ({
             ))}
           </select>
         </div>
-        <button className={styles.createJobBtn} onClick={onCreateJob}>Create Job</button>
       </div>
-    </>
+
+      {/* RIGHT: CTA Button */}
+      <button
+        type="button"
+        className={styles.createJobBtn}
+        onClick={onCreateJob}
+      >
+        <FiPlus className={styles.btnIcon} />
+        <span>Create New Job</span>
+      </button>
+    </div>
   );
 };
 

@@ -1,5 +1,5 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
-import styles from "../../Settings.module.css"; // Dùng chung file CSS với Settings
+import styles from "./ChangePassword.module.css";
 
 interface MessageState {
   type: "success" | "error" | "";
@@ -7,57 +7,45 @@ interface MessageState {
 }
 
 export default function ChangePassword(): React.ReactElement {
-  // Quản lý các bước: 1 = Nhập Email, 2 = Nhập OTP, 3 = Nhập mật khẩu mới
   const [step, setStep] = useState<1 | 2 | 3>(1);
-
-  // Dữ liệu người dùng nhập
   const [email, setEmail] = useState<string>("");
   const [otp, setOtp] = useState<string>("");
   const [newPassword, setNewPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
-
-  // Thông báo lỗi/thành công
   const [message, setMessage] = useState<MessageState>({ type: "", text: "" });
 
-  // Bước 1: Gửi yêu cầu mã OTP về Gmail
   const handleSendOtp = (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
     if (!email) {
-      setMessage({ type: "error", text: "Vui lòng nhập Email của bạn!" });
+      setMessage({ type: "error", text: "Please enter your email address!" });
       return;
     }
-    // Giả lập gọi API gửi OTP thành công
-    setMessage({ type: "success", text: `Mã OTP đã được gửi đến ${email}!` });
-    setStep(2); // Chuyển sang bước 2
+    setMessage({ type: "success", text: `Verification code dispatched to ${email}` });
+    setStep(2);
   };
 
-  // Bước 2: Xác nhận mã OTP
   const handleVerifyOtp = (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
     if (!otp) {
-      setMessage({ type: "error", text: "Vui lòng nhập mã OTP!" });
+      setMessage({ type: "error", text: "Please enter the OTP code!" });
       return;
     }
-    // Giả lập kiểm tra OTP đúng (Ví dụ: OTP đúng là 123456)
-    setMessage({ type: "success", text: "Xác thực mã OTP thành công!" });
-    setStep(3); // Chuyển sang bước 3
+    setMessage({ type: "success", text: "Identity authenticated successfully!" });
+    setStep(3);
   };
 
-  // Bước 3: Đổi mật khẩu mới
   const handleResetPassword = (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
     if (!newPassword || !confirmPassword) {
-      setMessage({ type: "error", text: "Vui lòng nhập đầy đủ mật khẩu!" });
+      setMessage({ type: "error", text: "Please populate all fields!" });
       return;
     }
     if (newPassword !== confirmPassword) {
-      setMessage({ type: "error", text: "Mật khẩu xác nhận không khớp!" });
+      setMessage({ type: "error", text: "Passwords do not match." });
       return;
     }
-    // Giả lập gọi API cập nhật mật khẩu thành công
-    setMessage({ type: "success", text: "Đổi mật khẩu thành công!" });
+    setMessage({ type: "success", text: "Password rotated successfully!" });
 
-    // Reset lại form về ban đầu sau khi thành công
     setTimeout(() => {
       setStep(1);
       setEmail("");
@@ -70,82 +58,100 @@ export default function ChangePassword(): React.ReactElement {
 
   return (
     <div className={styles.section}>
-      <h3>Đổi mật khẩu</h3>
-      <p>Hệ thống sẽ xác thực qua OTP Gmail để đảm bảo an toàn.</p>
+      <div className={styles.sectionHeader}>
+        <h3>Security Passphrase</h3>
+        <p>Rotate your access credentials securely via multi-stage OTP email verification.</p>
+      </div>
 
-      {/* Hiển thị thông báo */}
+      {/* STEP PROGRESS TRACKER */}
+      <div className={styles.stepIndicator}>
+        <div className={`${styles.stepNode} ${step >= 1 ? styles.stepNodeActive : ""}`}>1</div>
+        <div className={`${styles.stepLine} ${step >= 2 ? styles.stepLineActive : ""}`}></div>
+        <div className={`${styles.stepNode} ${step >= 2 ? styles.stepNodeActive : ""}`}>2</div>
+        <div className={`${styles.stepLine} ${step >= 3 ? styles.stepLineActive : ""}`}></div>
+        <div className={`${styles.stepNode} ${step >= 3 ? styles.stepNodeActive : ""}`}>3</div>
+      </div>
+
+      {/* FEEDBACK SYSTEM NOTIFICATIONS */}
       {message.text && (
         <div className={`${styles.alert} ${message.type === "success" ? styles.alertSuccess : styles.alertError}`}>
+          <span className={styles.alertDot}></span>
           {message.text}
         </div>
       )}
 
-      {/* BƯỚC 1: NHẬP GMAIL */}
+      {/* STAGE 1: EMAIL REQUEST */}
       {step === 1 && (
-        <form onSubmit={handleSendOtp} className={styles.form}>
+        <form onSubmit={handleSendOtp} className={styles.formStack}>
           <div className={styles.formGroup}>
-            <label>1. Nhập địa chỉ Gmail</label>
+            <label>Corporate Email</label>
             <input
               type="email"
               value={email}
               onChange={(e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
               className={styles.input}
-              placeholder="example@gmail.com"
+              placeholder="example@enterprise.com"
               required
             />
           </div>
-          <button type="submit" className={styles.button}>Gửi mã OTP</button>
+          <button type="submit" className={styles.primaryBtn}>
+            Send Verification Code
+          </button>
         </form>
       )}
 
-      {/* BƯỚC 2: NHẬP MÃ OTP */}
+      {/* STAGE 2: OTP TRANSMISSION */}
       {step === 2 && (
-        <form onSubmit={handleVerifyOtp} className={styles.form}>
+        <form onSubmit={handleVerifyOtp} className={styles.formStack}>
           <div className={styles.formGroup}>
-            <label>2. Nhập mã OTP (Đã gửi vào Gmail của bạn)</label>
+            <label>Verification Token</label>
             <input
               type="text"
               value={otp}
               onChange={(e: ChangeEvent<HTMLInputElement>) => setOtp(e.target.value)}
-              className={styles.input}
-              placeholder="Nhập 6 số OTP"
+              className={`${styles.input} ${styles.otpInput}`}
+              placeholder="0 0 0 0 0 0"
               maxLength={6}
               required
             />
           </div>
-          <div className={styles.buttonGroup}>
-            <button type="submit" className={styles.button}>Xác nhận mã</button>
-            <button type="button" onClick={() => setStep(1)} className={styles.buttonSecondary}>Quay lại</button>
+          <div className={styles.btnGroup}>
+            <button type="submit" className={styles.primaryBtn}>Verify Token</button>
+            <button type="button" onClick={() => { setStep(1); setMessage({type: "", text: ""}); }} className={styles.secondaryBtn}>
+              Back
+            </button>
           </div>
         </form>
       )}
 
-      {/* BƯỚC 3: NHẬP MẬT KHẨU MỚI */}
+      {/* STAGE 3: PASSPHRASE SELECTION */}
       {step === 3 && (
-        <form onSubmit={handleResetPassword} className={styles.form}>
+        <form onSubmit={handleResetPassword} className={styles.formStack}>
           <div className={styles.formGroup}>
-            <label>Mật khẩu mới</label>
+            <label>New Passphrase</label>
             <input
               type="password"
               value={newPassword}
               onChange={(e: ChangeEvent<HTMLInputElement>) => setNewPassword(e.target.value)}
               className={styles.input}
-              placeholder="Tối thiểu 6 ký tự"
+              placeholder="Minimum 6 characters"
               required
             />
           </div>
           <div className={styles.formGroup}>
-            <label>Xác nhận mật khẩu mới</label>
+            <label>Confirm New Passphrase</label>
             <input
               type="password"
               value={confirmPassword}
               onChange={(e: ChangeEvent<HTMLInputElement>) => setConfirmPassword(e.target.value)}
               className={styles.input}
-              placeholder="Nhập lại mật khẩu mới"
+              placeholder="Re-enter password parameters"
               required
             />
           </div>
-          <button type="submit" className={styles.button}>Cập nhật mật khẩu</button>
+          <button type="submit" className={`${styles.primaryBtn} ${styles.successBtn}`}>
+            Authorize Rotation
+          </button>
         </form>
       )}
     </div>

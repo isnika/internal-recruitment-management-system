@@ -1,145 +1,178 @@
-.row td {
+/* ── ROW ANIMATION INTERACTION ── */
+.rowInteract {
+  border-bottom: 1px solid #e2e8f0;
+  transition: background-color 0.15s ease;
+}
+
+.rowInteract:hover {
+  background-color: #f8fafc;
+}
+
+.rowInteract td {
   padding: 14px 16px;
-  border-bottom: 1px solid #eef2f7;
-
-  font-size: 14px;
-  color: #1f2937;
-
   vertical-align: middle;
-  background: #fff;
+  color: #334155;
 }
 
-.row:hover td {
-  background: #f8fbff;
-}
-
-/* ===== TEXT CELLS ===== */
-.id {
+/* ── CELL SPECIFIC LAYOUTS ── */
+.techIdCell {
+  font-family: 'JetBrains Mono', 'SF Mono', monospace;
   font-weight: 600;
   color: #64748b;
+  font-size: 13px;
 }
 
-.candidateName {
+.candidateCell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.primaryText {
   font-weight: 600;
   color: #0f172a;
 }
 
-.jobTitle {
+.secondaryText {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.jobCell {
+  max-width: 240px;
+}
+
+.jobTitleText {
+  font-weight: 500;
+  color: #1e293b;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dateCell {
+  font-size: 13px;
+  color: #64748b;
+}
+
+/* ── STATUS BADGE CHIPS (NEON MODERN TONES) ── */
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 9999px; /* Rounded pill shape */
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.pending {
+  background-color: #f1f5f9;
   color: #475569;
 }
 
-/* ===== STATUS ===== */
-.status {
-  font-weight: 600;
-  text-transform: capitalize;
-}
-
-/* fix naming consistent (lowercase mapping from JS) */
-.pending {
-  color: #f59e0b;
-}
-
 .reviewing {
-  color: #3b82f6;
+  background-color: #eff6ff;
+  color: #2563eb;
 }
 
 .passed {
-  color: #22c55e;
+  background-color: #f0fdf4;
+  color: #16a34a;
 }
 
 .failed {
-  color: #ef4444;
+  background-color: #fef2f2;
+  color: #dc2626;
 }
 
-/* ===== ACTION CELL ===== */
+/* ── STAGE BACKEND EDITOR SELECT ── */
+.stageSelect {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  background-color: #ffffff;
+  color: #334155;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.stageSelect:focus {
+  border-color: #6366f1;
+}
+
+/* ── ACTION OPERATIONAL DROPDOWN STACK ── */
 .actionCell {
   text-align: right;
 }
 
-/* dropdown wrapper nếu bạn dùng ⋯ */
 .dropdownWrapper {
   position: relative;
   display: inline-block;
-  z-index: 1;
 }
 
-.moreBtn {
-  border: none;
-  background: transparent;
+.moreActionBtn {
+  background: none;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
   cursor: pointer;
-
-  font-size: 20px;
-  padding: 4px 8px;
-
-  color: #475569;
-  border-radius: 8px;
-
-  transition: 0.2s;
+  transition: all 0.15s ease;
 }
 
-.moreBtn:hover {
-  background: #f1f5f9;
+.moreActionBtn:hover {
+  background-color: #f1f5f9;
   color: #0f172a;
+  border-color: #cbd5e1;
 }
 
-/* dropdown menu */
 .dropdownMenu {
   position: absolute;
   right: 0;
-  top: 100%; /* FIX: thay vì 30px */
-
-  min-width: 180px;
-
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
-
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
-
-  overflow: hidden;
-
-  z-index: 9999; /* tăng mạnh */
+  top: calc(100% + 6px);
+  z-index: 50;
+  min-width: 200px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
 }
 
 .dropdownMenu button {
-  width: 100%;
-  padding: 10px 12px;
-
-  text-align: left;
+  background: none;
   border: none;
-  background: #fff;
-
+  width: 100%;
+  text-align: left;
+  padding: 8px 12px;
   font-size: 13px;
-  color: #1f2937;
-
+  font-weight: 500;
+  color: #334155;
   cursor: pointer;
-  transition: 0.15s;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.1s ease;
 }
 
 .dropdownMenu button:hover {
-  background: #f8fbff;
+  background-color: #f1f5f9;
+  color: #6366f1;
 }
 
-/* ===== STATUS SELECT ===== */
-.statusSelect {
-  width: 140px;
-
-  padding: 8px 10px;
-
-  border: 1px solid #dbe3ee;
-  border-radius: 10px;
-
-  background: #f8fafc;
-  color: #1e293b;
-
-  font-size: 13px;
-
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.statusSelect:focus {
-  outline: none;
-  border-color: #6366f1;
-  background: #fff;
+.menuIcon {
+  margin-right: 8px;
+  font-size: 14px;
+  flex-shrink: 0;
 }

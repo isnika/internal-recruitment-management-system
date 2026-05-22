@@ -1,0 +1,26 @@
+.container { width: 100%; }
+.pageTitle { font-size: 1.5rem; font-weight: 700; color: #111827; margin-bottom: 0.5rem; }
+.subtitle { color: #4b5563; margin-bottom: 2rem; }
+
+/* Upload Area */
+.uploadSection { border: 2px dashed #e5e7eb; border-radius: 12px; padding: 3rem; text-align: center; background: #f9fafb; margin-bottom: 2rem; }
+.fileInput { display: none; }
+.uploadBtn { background: #2563eb; color: #fff; padding: 10px 20px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; margin-top: 1rem; }
+
+/* CV Card */
+.cvCard { display: flex; justify-content: space-between; align-items: center; padding: 1.25rem; border: 1px solid #e5e7eb; border-radius: 10px; background: #fff; }
+.cvInfo { display: flex; align-items: center; gap: 1rem; }
+.fileIcon { font-size: 1.5rem; }
+.fileName { font-weight: 600; margin: 0; }
+.fileMeta { font-size: 0.813rem; color: #6b7280; margin: 0; }
+
+.cvActions { display: flex; gap: 0.5rem; }
+.viewBtn, .deleteBtn { padding: 6px 12px; border-radius: 6px; border: 1px solid #e5e7eb; cursor: pointer; background: #fff; }
+.deleteBtn:hover { border-color: #f87171; color: #dc2626; }
+
+/* DARK MODE */
+:global(.dark-mode) .pageTitle { color: #f8fafc; }
+:global(.dark-mode) .uploadSection { background: #1e293b; border-color: #334155; }
+:global(.dark-mode) .cvCard { background: #0f172a; border-color: #334155; }
+:global(.dark-mode) .fileName { color: #f8fafc; }
+:global(.dark-mode) .viewBtn, :global(.dark-mode) .deleteBtn { background: #1e293b; color: #94a3b8; border-color: #334155; }

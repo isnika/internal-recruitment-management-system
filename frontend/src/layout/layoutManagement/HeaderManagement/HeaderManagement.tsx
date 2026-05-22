@@ -54,7 +54,8 @@ const HeaderUser = () => {
           <a
             className={`${styles.hideOnSmall} ${isAdmin ? styles.active : ""}`}
             onClick={() => {
-              if (user?.role !== "admin") {
+              // FIX: So sánh in hoa
+              if (user?.role?.toUpperCase() !== "ADMIN") {
                 alert("Bạn không có quyền truy cập trang Admin");
                 return;
               }
@@ -63,6 +64,7 @@ const HeaderUser = () => {
           >
             Admin
           </a>
+
         </nav>
 
         {/* ACTIONS */}

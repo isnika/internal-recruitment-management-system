@@ -2,7 +2,8 @@ import React, { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./Home.module.css";
 
-import { getCurrentUser } from "../../../../service/authApi";
+import { useAuth } from "../../../auth/context/AuthContext";
+
 import { useJobs } from "../../../../hooks/useJobs";
 
 import HeroBanner from "../../components/HeroBanner/HeroBanner";

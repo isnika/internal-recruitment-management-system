@@ -13,7 +13,7 @@ const HeaderUser = () => {
 
   const [keyword, setKeyword] = useState("");
   const [locationInput, setLocationInput] = useState("");
-
+  const isActive = (path: string) => location.pathname === path;
   const hideSearch = location.pathname === "/companies";
 
   const handleLogout = () => {
@@ -53,30 +53,41 @@ const HeaderUser = () => {
 
         {/* NAV */}
         <nav className={styles.nav}>
-          <a onClick={() => navigate("/")}>Home</a>
+                  <a
+                    onClick={() => navigate("/")}
+                    className={isActive("/") ? styles.active : ""}
+                  >
+                    Home
+                  </a>
 
-          <a className={styles.hideOnSmall} onClick={() => navigate("/jobPage")}>
-            Job
-          </a>
+                  <a
+                    className={`${styles.hideOnSmall} ${isActive("/jobPage") ? styles.active : ""}`}
+                    onClick={() => navigate("/jobPage")}
+                  >
+                    Job
+                  </a>
 
-          <a
-            className={styles.hideOnSmall}
-            onClick={() => navigate("/companies")}
-          >
-            Companies
-          </a>
+                  <a
+                    className={`${styles.hideOnSmall} ${isActive("/companies") ? styles.active : ""}`}
+                    onClick={() => navigate("/companies")}
+                  >
+                    Companies
+                  </a>
 
-          <a
-            className={styles.hideOnSmall}
-            onClick={() => navigate("/salary-guide")}
-          >
-            Salary Guide
-          </a>
+                  <a
+                    className={`${styles.hideOnSmall} ${isActive("/salary-guide") ? styles.active : ""}`}
+                    onClick={() => navigate("/salary-guide")}
+                  >
+                    Salary Guide
+                  </a>
 
-          <a className={styles.hideOnSmall} onClick={() => navigate("/blog")}>
-            Blog
-          </a>
-        </nav>
+                  <a
+                    className={`${styles.hideOnSmall} ${isActive("/blog") ? styles.active : ""}`}
+                    onClick={() => navigate("/blog")}
+                  >
+                    Blog
+                  </a>
+                </nav>
 
         {/* ACTIONS */}
         <div className={styles.actions}>

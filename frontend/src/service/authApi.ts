@@ -1,121 +1,92 @@
 import { request } from "./axiosClient";
-import { IS_MOCK } from "../config";
-import { users } from "../dataMock/User";
-import type { User } from "../types/user";
-import type { AuthResponse } from "../types/auth";
 
+//     TYPES    
 
-const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
-
-// ================= LOGIN =================
-export const login = async (
-  email: string,
-  password: string
-): Promise<AuthResponse> => {
-  if (IS_MOCK) {
-    await delay(500);
-
-    const found = users.find(
-      (u) => u.email === email && u.password === password
-    );
-
-    if (!found) throw new Error("Sai tài khoản hoặc mật khẩu");
-
-    // đảm bảo user luôn có recruitment
-    const user: User = {
-      ...found,
-      recruitment: found.recruitment || {
-        taxId: "",
-        citizenId: "",
-        bank: "",
-        social: "",
-      },
-    };
-
-    const res: AuthResponse = {
-      accessToken: "mock_token_" + user.id,
-      refreshToken: "mock_refresh_" + user.id,
-      user,
-    };
-
-    // lưu localStorage (QUAN TRỌNG)
-    localStorage.setItem("token", res.accessToken);
-    localStorage.setItem("refreshToken", res.refreshToken);
-    localStorage.setItem("user", JSON.stringify(user));
-
-    return res;
-  }
-
-  const res = await request.post<AuthResponse>("/auth/login", {
-    email,
-    password,
-  });
-
-  localStorage.setItem("token", res.accessToken);
-  localStorage.setItem("refreshToken", res.refreshToken);
-  localStorage.setItem("user", JSON.stringify(res.user));
-
-  return res;
+export type AuthResponse<T> = {
+  status: number;
+  message: string;
+  data: T;
 };
 
-// ================= REGISTER =================
-export const register = async (data: {
+export type UserProfile = {
+  id: number;
+  email: string;
+  firstName: string;
+  lastName: string;
+  avatarUrl: string;
+  role: string;
+  status: string;
+};
+
+export type LoginReq = { email: string; password: string };
+export type LoginRes = { token: string; type: string; userId: number; email: string; role: string };
+
+export type RegisterReq = {
   email: string;
   password: string;
-  fullName: string;
-}): Promise<AuthResponse> => {
-  if (IS_MOCK) {
-    await delay(500);
-
-    const existed = users.find((u) => u.email === data.email);
-    if (existed) throw new Error("Email đã tồn tại");
-
-    const newUser: User = {
-      id: Date.now(),
-      username: data.email,
-      email: data.email,
-      password: data.password,
-      fullName: data.fullName,
-      role: "candidate",
-      phone: "",
-      address: "",
-      dob: "",
-      gender: "",
-
-      recruitment: {
-        taxId: "",
-        citizenId: "",
-        bank: "",
-        social: "",
-      },
-    };
-
-    users.push(newUser);
-
-    const res: AuthResponse = {
-      accessToken: "mock_token_" + newUser.id,
-      refreshToken: "mock_refresh_" + newUser.id,
-      user: newUser,
-    };
-
-    localStorage.setItem("token", res.accessToken);
-    localStorage.setItem("refreshToken", res.refreshToken);
-    localStorage.setItem("user", JSON.stringify(newUser));
-
-    return res;
-  }
-
-  return request.post<AuthResponse>("/auth/register", data);
+  firstName: string;
+  lastName: string;
+  code: string;
+  role: "CANDIDATE" | "RECRUITER" | string;
+  companyId?: number;
 };
 
-// ================= LOGOUT =================
-export const logout = () => {
-  localStorage.clear();
-  window.location.href = "/login";
+export type ForgotPasswordReq = { email: string };
+export type ResetPasswordReq = { email: string; code: string; newPassword: string };
+export type SendCodeReq = { [key: string]: string }; // Dựa trên schema { "additionalProp": "string" }
+export type GoogleLoginReq = { idToken: string };
+
+export type UpdateProfileReq = {
+  firstName?: string;
+  lastName?: string;
+  avatarUrl?: string;
 };
 
-// ================= GET CURRENT USER =================
-export const getCurrentUser = (): User | null => {
-  const user = localStorage.getItem("user");
-  return user ? JSON.parse(user) : null;
+export type UpdateRecruitmentInfoReq = {
+  companyId: number;
+  department: string;
+  jobTitle: string;
+};
+
+//     AUTH APIs    
+
+// LOGIN
+export const login = (data: LoginReq) => request.post<AuthResponse<LoginRes>>("/api/auth/login", data);
+
+// REGISTER
+export const register = (data: RegisterReq) => request.post<AuthResponse<{ user: UserProfile }>>("/api/auth/register", data);
+
+// LOGOUT
+export const logout = () => request.post<AuthResponse<string>>("/api/auth/logout");
+
+// FORGOT PASSWORD
+export const forgotPassword = (data: ForgotPasswordReq) => request.post<AuthResponse<any>>("/api/auth/forgot-password", data);
+
+// RESET PASSWORD
+export const resetPassword = (data: ResetPasswordReq) => request.post<AuthResponse<any>>("/api/auth/reset-password", data);
+
+// SEND VERIFY CODE
+export const sendCode = (data: SendCodeReq) => request.post<AuthResponse<{ email: string }>>("/api/auth/send-code", data);
+
+// GOOGLE LOGIN
+export const loginWithGoogle = (data: GoogleLoginReq) => request.post<AuthResponse<LoginRes>>("/api/auth/google", data);
+
+//     ME (PROFILE)    
+
+// UPDATE PROFILE
+export const updateMyProfile = (data: UpdateProfileReq) => request.patch<AuthResponse<UserProfile>>("/api/auth/me/profile", data);
+
+// UPDATE RECRUITMENT INFO
+export const updateRecruitmentInfo = (data: UpdateRecruitmentInfoReq) => request.patch<AuthResponse<UserProfile>>("/api/auth/me/recruitment-info", data);
+
+// UPLOAD AVATAR
+export const updateAvatar = (file: File) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  return request.patch<AuthResponse<UserProfile>>("/api/auth/me/avatar", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
 };

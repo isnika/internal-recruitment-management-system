@@ -31,6 +31,8 @@ import RecruitmentPage from "../feature/employer/RecruitmentManagement/pages/rec
 import CandidatesPage from "../feature/admin/CandidateManagement/pages/candidatesManagement";
 import InterviewPage from "../feature/employer/InterviewManagement/pages/interviewManagement";
 import ApplyManagement from "../feature/employer/applyManagement/pages/ApplyManagement";
+import DashboardPage from "../feature/employer/dashBoardManagement/pages/dashboardPage";
+import SettingManagement from "../feature/employer/settingManagement/pages/settingManagement";
 /* admin */
 import HomeAdmin from "../feature/admin/home/pages/HomeAdmin/homeAdmin";
 
@@ -66,7 +68,7 @@ export default function AppRoutes() {
       <Route
         path="/layoutManagement"
         element={
-          <ProtectedRoute allowRoles={["company", "admin"]}>
+          <ProtectedRoute allowRoles={["RECRUITER", "ADMIN"]}>
             <MainLayoutManagement />
           </ProtectedRoute>
         }
@@ -77,16 +79,13 @@ export default function AppRoutes() {
 
         {/* EMPLOYER DASHBOARD */}
         <Route path="employer" element={<HomeEmployer />}>
-
-          <Route index element={<Navigate to="recruitmentManagement" replace />} />
-          <Route path="dashboard" element={<div>Dashboard</div>} />
+          <Route index element={<Navigate to="dashboardManagement" replace />} />
+          <Route path="dashboardManagement" element={<DashboardPage/>} />
           <Route path="recruitmentManagement" element={<RecruitmentPage />} />
           <Route path="applyManagement" element={<ApplyManagement />} />
           <Route path="candidatesManagement" element={<CandidatesPage />} />
           <Route path="interviewManagement" element={<InterviewPage />} />
-          <Route path="cv" element={<div>CV Review</div>} />
-          <Route path="company" element={<div>Company Profile</div>} />
-          <Route path="settings" element={<div>Settings</div>} />
+          <Route path="settingManagement" element={<SettingManagement/>} />
 
         </Route>
 

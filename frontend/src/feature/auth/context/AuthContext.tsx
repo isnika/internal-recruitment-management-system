@@ -1,17 +1,12 @@
-import {
-  createContext,
-  useContext,
-  useState,
-  ReactNode,
-} from "react";
+import { createContext, useContext, useState, ReactNode } from "react";
+
 
 type User = {
-  id?: number;
-  username?: string;
+  userId?: number;
   email?: string;
-  phone?: string;
-  fullName?: string;
   role?: string;
+  token?: string;
+  [key: string]: any;
 };
 
 type AuthContextType = {
@@ -20,31 +15,34 @@ type AuthContextType = {
   logout: () => void;
 };
 
-
-
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(() => {
     const storedUser = localStorage.getItem("user");
-    const token = localStorage.getItem("token");
+    // SỬA KEY Ở ĐÂY: Phải là "access_token" để khớp với Login.tsx
+    const token = localStorage.getItem("access_token");
 
     if (storedUser && token) {
-      return JSON.parse(storedUser);
+      try {
+        return JSON.parse(storedUser);
+      } catch (e) {
+        return null;
+      }
     }
-
     return null;
   });
 
   const login = (userData: User, token: string) => {
     localStorage.setItem("user", JSON.stringify(userData));
-    localStorage.setItem("token", token);
-
+    // SỬA KEY Ở ĐÂY
+    localStorage.setItem("access_token", token);
     setUser(userData);
   };
 
   const logout = () => {
-    localStorage.clear();
+    localStorage.removeItem("user");
+    localStorage.removeItem("access_token");
     setUser(null);
   };
 
@@ -57,10 +55,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-
   if (!context) {
     throw new Error("useAuth must be used inside AuthProvider");
   }
-
   return context;
 };

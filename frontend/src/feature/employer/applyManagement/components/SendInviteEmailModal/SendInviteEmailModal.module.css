@@ -1,182 +1,268 @@
-/* ===== OVERLAY ===== */
+/* ── UNDERLAY OVERLAY MASK ── */
 .overlay {
   position: fixed;
   inset: 0;
-
-  background: rgba(0, 0, 0, 0.55);
-
+  background-color: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
-
-  z-index: 9999;
+  z-index: 1000;
+  padding: 1.5rem;
 }
 
-/* ===== MODAL ===== */
-.modal {
-  width: 750px;
-  min-height: 600px;
-
-  background: #ffffff;
-  border-radius: 12px;
-
-  padding: 20px 22px;
-
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
-
-  animation: fadeIn 0.15s ease-in-out;
+/* ── MODAL STRUCTURE CARD ── */
+.modalCard {
+  background-color: #ffffff;
+  width: 100%;
+  max-width: 680px;
+  max-height: calc(100vh - 2rem);
+  border-radius: 14px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: modalScaleUp 0.18s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes fadeIn {
-  from {
-    transform: translateY(10px);
-    opacity: 0;
-  }
-
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+@keyframes modalScaleUp {
+  from { transform: scale(0.97); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }
 
-/* ===== TITLE ===== */
-.modal h2 {
+/* ── HEADER CONFIGURATION ── */
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.modalTitle {
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 700;
   color: #0f172a;
-
-  margin-bottom: 10px;
+  margin: 0 0 4px 0;
 }
 
-/* ===== SUB TEXT ===== */
-.sub {
+.modalSubtitle {
   font-size: 13px;
   color: #64748b;
-
-  margin-bottom: 14px;
+  margin: 0;
 }
 
-/* ===== FORM ===== */
-.form {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
+.closeIconButton {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  display: inline-flex;
+  transition: all 0.15s;
 }
 
-/* ===== LABEL (SAFE SCOPED) ===== */
-.form label {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-
-  font-size: 13px;
+.closeIconButton:hover {
+  background-color: #f1f5f9;
   color: #334155;
 }
 
-/* ===== INPUT TEXT ONLY (FIX IMPORTANT) ===== */
-.form input[type="text"],
-.form input[type="email"],
-.form input[type="password"],
-.form input[type="number"],
-.form textarea {
-  width: 100%;
-
-  padding: 10px 12px;
-
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-
-  font-size: 13px;
-  color: #0f172a;
-
-  outline: none;
-
-  transition: 0.2s ease;
-
-  background: #fff;
-
-  box-sizing: border-box;
-}
-
-/* ===== CHECKBOX / RADIO SAFE RESET ===== */
-.form input[type="checkbox"],
-.form input[type="radio"] {
-  width: auto;
-  height: auto;
-
-  padding: 0;
-  margin: 0;
-
-  border: none;
-  box-shadow: none;
-
-  accent-color: #16a34a;
-}
-
-/* ===== FOCUS ===== */
-.form input[type="text"]:focus,
-.form input[type="email"]:focus,
-.form input[type="password"]:focus,
-.form input[type="number"]:focus,
-.form textarea:focus {
-  border-color: #6366f1;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
-}
-
-/* ===== TEXTAREA ===== */
-.form textarea {
-  min-height: 300px;
-  resize: none;
-}
-
-/* ===== ACTIONS ===== */
-.actions {
+/* ── INTERNAL SCROLL CONTAINER ── */
+.modalForm {
   display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-
-  margin-top: 18px;
+  flex-direction: column;
+  overflow: hidden;
 }
 
-/* ===== BUTTONS ===== */
-.cancel {
-  padding: 8px 14px;
-
-  border: none;
-  border-radius: 10px;
-
-  background: #e2e8f0;
-  color: #0f172a;
-
-  font-size: 13px;
-
-  cursor: pointer;
-
-  transition: 0.2s;
+.scrollableBody {
+  padding: 24px;
+  overflow-y: auto;
+  max-height: 560px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-.cancel:hover {
-  background: #cbd5e1;
-}
-
-.send {
-  padding: 8px 14px;
-
-  border: none;
-  border-radius: 10px;
-
-  background: linear-gradient(135deg, #22c55e, #16a34a);
-  color: white;
-
+/* ── ERROR TEXT MESSAGES BANNER ── */
+.errorBanner {
+  background-color: #fef2f2;
+  border-left: 4px solid #ef4444;
+  color: #991b1b;
+  padding: 12px 16px;
+  border-radius: 6px;
   font-size: 13px;
   font-weight: 500;
-
-  cursor: pointer;
-
-  transition: 0.2s;
 }
 
-.send:hover {
-  transform: translateY(-1px);
-  opacity: 0.95;
+/* ── RECIPIENT PROFILE METRICS BAR ── */
+.recipientDossier {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px 16px;
+}
+
+.dossierRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #334155;
+  flex-wrap: wrap;
+}
+
+.dossierIcon {
+  color: #6366f1;
+  font-size: 16px;
+}
+
+.dossierLabel {
+  color: #64748b;
+  font-weight: 500;
+}
+
+.dossierValue {
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.dossierSubtext {
+  color: #64748b;
+  font-size: 13px;
+  font-family: monospace;
+}
+
+/* ── FORM CONTROL STRUCTURAL COMPLIANCE ── */
+.formControl {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fieldLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.required {
+  color: #ef4444;
+}
+
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.fieldIcon {
+  position: absolute;
+  left: 12px;
+  color: #94a3b8;
+  font-size: 14px;
+  pointer-events: none;
+}
+
+/* ── TEXT INPUT COMPONENT ── */
+.textInput {
+  width: 100%;
+  padding: 9px 12px 9px 36px;
+  font-size: 13px;
+  color: #1e293b;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  outline: none;
+  background-color: #ffffff;
+  transition: all 0.15s ease;
+}
+
+.textInput:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+/* ── TEXTAREA LAYOUT CORE ENGINE ── */
+.textareaWrapper {
+  position: relative;
+}
+
+.textareaIcon {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  color: #94a3b8;
+  font-size: 14px;
+  pointer-events: none;
+}
+
+.textareaInput {
+  width: 100%;
+  padding: 10px 12px 10px 36px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #1e293b;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  outline: none;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  resize: vertical;
+  transition: all 0.15s ease;
+}
+
+.textareaInput:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+/* ── FOOTER STACK BUTTON GROUP ACTIONS ── */
+.modalFooterActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 24px;
+  border-top: 1px solid #e2e8f0;
+  background-color: #f8fafc;
+}
+
+.cancelButton {
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.cancelButton:hover {
+  background-color: #f1f5f9;
+  color: #1e293b;
+}
+
+.confirmSendButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #4f46e5;
+  border: 1px solid transparent;
+  color: #ffffff;
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: all 0.15s;
+}
+
+.confirmSendButton:hover {
+  background-color: #4338ca;
+}
+
+.sendActionIcon {
+  font-size: 12px;
 }

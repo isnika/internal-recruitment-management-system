@@ -5,13 +5,11 @@ import styles from "./homeEmployer.module.css";
 
 
 const menus = [
-  { label: "Dashboard", path: "dashboard" },
+  { label: "Dashboard", path: "dashboardManagement" },
   { label: "Job Management", path: "recruitmentManagement" },
   { label: "Applications / Candidates", path: "applyManagement" },
   { label: "Interview Management", path: "interviewManagement" },
-  { label: "CV Review & Scoring", path: "cv" },
-  { label: "Company Profile", path: "company" },
-  { label: "Settings", path: "settings" },
+  { label: "Settings", path: "settingManagement" },
 ];
 
 const HomeEmployer = () => {

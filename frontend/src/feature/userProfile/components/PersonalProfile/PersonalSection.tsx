@@ -1,64 +1,104 @@
-import React, { useState, ChangeEvent, useRef } from "react";
+import React, { useEffect, useState, ChangeEvent, useRef } from "react";
 import styles from "./PersonalProfile.module.css";
 
 interface PersonalSectionProps {
   user: any;
   onSave: (updatedData: any) => Promise<void>;
-  onAvatarSave: (file: File) => Promise<void>; // Prop mới để lưu ảnh đại diện
+  onAvatarSave: (file: File) => Promise<void>;
 }
 
-export default function PersonalSection({ user, onSave, onAvatarSave }: PersonalSectionProps) {
+export default function PersonalSection({
+  user,
+  onSave,
+  onAvatarSave,
+}: PersonalSectionProps) {
   const [editPersonal, setEditPersonal] = useState(false);
-  const [address, setAddress] = useState(user.address || "");
-  const [phone, setPhone] = useState(user.phone || "");
-  const [gender, setGender] = useState(user.gender || "");
-  const [avatarPreview, setAvatarPreview] = useState<string | null>(null); // State cho ảnh preview
-  const fileInputRef = useRef<HTMLInputElement>(null); // Ref tới input file bị ẩn
 
-  const dobParts = user?.dob ? user.dob.split("-") : ["", "", ""];
+  const [address, setAddress] = useState("");
+  const [phone, setPhone] = useState("");
+  const [gender, setGender] = useState("");
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+
   const [dob, setDob] = useState({
-    year: dobParts[0] || "",
-    month: dobParts[1] || "",
-    day: dobParts[2] || "",
+    year: "",
+    month: "",
+    day: "",
   });
 
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // =========================
+  // SYNC USER (FIX BACKEND SHAPE)
+  // =========================
+  useEffect(() => {
+    if (!user) return;
+
+    setAddress(user.address || "");
+    setPhone(user.phone || "");
+    setGender(user.gender || "");
+
+    const parts = user.dateOfBirth?.split("-") || ["", "", ""];
+    setDob({
+      year: parts[0] || "",
+      month: parts[1] || "",
+      day: parts[2] || "",
+    });
+  }, [user]);
+
   const genders = ["male", "female", "other"];
-  const days = Array.from({ length: 31 }, (_, i) => String(i + 1).padStart(2, "0"));
-  const months = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, "0"));
-  const years = Array.from({ length: 50 }, (_, i) => String(2026 - i));
 
-  const nameParts = user.fullName?.split(" ") || [];
-  const firstName = nameParts[0] || "";
-  const lastName = nameParts.slice(1).join(" ");
+  const days = Array.from({ length: 31 }, (_, i) =>
+    String(i + 1).padStart(2, "0")
+  );
 
-  // Xử lý khi chọn ảnh đại diện mới
+  const months = Array.from({ length: 12 }, (_, i) =>
+    String(i + 1).padStart(2, "0")
+  );
+
+  const years = Array.from({ length: 50 }, (_, i) =>
+    String(2026 - i)
+  );
+
+  // FIX backend: firstName / lastName
+  const firstName = user?.firstName || "";
+  const lastName = user?.lastName || "";
+
+  // =========================
+  // AVATAR
+  // =========================
   const handleAvatarChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setAvatarPreview(URL.createObjectURL(file)); // Tạo link preview ảnh
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-      // Gọi hàm onAvatarSave được truyền từ component cha
-      if (onAvatarSave) {
-        onAvatarSave(file);
-      }
-    }
+    setAvatarPreview(URL.createObjectURL(file));
+    onAvatarSave(file);
   };
 
+  // =========================
+  // SAVE
+  // =========================
   const handleSave = async () => {
-    if (editPersonal) {
-      const formattedDob = dob.year && dob.month && dob.day
+    if (!editPersonal) {
+      setEditPersonal(true);
+      return;
+    }
+
+    const formattedDob =
+      dob.year && dob.month && dob.day
         ? `${dob.year}-${dob.month}-${dob.day}`
         : "";
 
-      await onSave({
-        address,
-        phone,
-        gender,
-        dob: formattedDob,
-      });
-    }
-    setEditPersonal(!editPersonal);
+    await onSave({
+      address,
+      phone,
+      gender,
+      dateOfBirth: formattedDob,
+    });
+
+    setEditPersonal(false);
   };
+
+  if (!user) return <div>Loading...</div>;
 
   return (
     <div className={styles.sectionContainer}>
@@ -70,24 +110,36 @@ export default function PersonalSection({ user, onSave, onAvatarSave }: Personal
           <input
             type="file"
             accept="image/*"
-            onChange={handleAvatarChange}
             ref={fileInputRef}
-            className={styles.avatarInput} // Ẩn input đi
+            onChange={handleAvatarChange}
+            className={styles.avatarInput}
           />
-          <div className={styles.avatarCircle} onClick={() => fileInputRef.current?.click()}>
+
+          <div
+            className={styles.avatarCircle}
+            onClick={() => fileInputRef.current?.click()}
+          >
             <img
-              src={avatarPreview || user.avatarUrl || "/path-to-default-avatar.png"}
-              alt="User Avatar"
+              src={
+                avatarPreview ||
+                user?.avatarUrl ||
+                "/default-avatar.png"
+              }
               className={styles.avatarImage}
             />
           </div>
-          <p className={styles.changeAvatarText}>Change Avatar</p>
+
+          <p className={styles.changeAvatarText}>
+            Change Avatar
+          </p>
         </div>
+
         <div className={styles.formBox}>
           <div className={styles.formGroup}>
             <label>Email</label>
-            <input value={user.email} readOnly />
+            <input value={user?.email || ""} readOnly />
           </div>
+
           <div className={styles.formGroup}>
             <label>Address</label>
             <input
@@ -99,7 +151,7 @@ export default function PersonalSection({ user, onSave, onAvatarSave }: Personal
         </div>
       </div>
 
-      {/* PERSONAL INFO */}
+      {/* INFO */}
       <div className={styles.gridTwo}>
         <div className={styles.column}>
           <div className={styles.rowTwo}>
@@ -107,6 +159,7 @@ export default function PersonalSection({ user, onSave, onAvatarSave }: Personal
               <label>First Name</label>
               <input value={firstName} readOnly />
             </div>
+
             <div className={styles.formGroup}>
               <label>Last Name</label>
               <input value={lastName} readOnly />
@@ -116,20 +169,26 @@ export default function PersonalSection({ user, onSave, onAvatarSave }: Personal
           <div className={styles.rowTwo}>
             <div className={styles.formGroup}>
               <label>Gender</label>
+
               {editPersonal ? (
-                <select value={gender} onChange={(e) => setGender(e.target.value)}>
-                  <option value="">Select Gender</option>
+                <select
+                  value={gender}
+                  onChange={(e) => setGender(e.target.value)}
+                >
+                  <option value="">Select</option>
                   {genders.map((g) => (
-                    <option key={g} value={g}>{g}</option>
+                    <option key={g} value={g}>
+                      {g}
+                    </option>
                   ))}
                 </select>
               ) : (
-                <input value={user.gender || ""} readOnly />
+                <input value={gender} readOnly />
               )}
             </div>
 
             <div className={styles.formGroup}>
-              <label>Phone Number</label>
+              <label>Phone</label>
               <input
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
@@ -138,46 +197,64 @@ export default function PersonalSection({ user, onSave, onAvatarSave }: Personal
             </div>
           </div>
 
+          {/* DOB */}
           <div className={styles.formGroup}>
             <label>Date of Birth</label>
+
             <div className={styles.dob}>
               <select
+                disabled={!editPersonal}
                 value={dob.day}
-                disabled={!editPersonal}
-                onChange={(e) => setDob({ ...dob, day: e.target.value })}
+                onChange={(e) =>
+                  setDob({ ...dob, day: e.target.value })
+                }
               >
-                <option value="">Day</option>
-                {days.map((d) => <option key={d} value={d}>{d}</option>)}
+                <option>Day</option>
+                {days.map((d) => (
+                  <option key={d} value={d}>
+                    {d}
+                  </option>
+                ))}
               </select>
 
               <select
+                disabled={!editPersonal}
                 value={dob.month}
-                disabled={!editPersonal}
-                onChange={(e) => setDob({ ...dob, month: e.target.value })}
+                onChange={(e) =>
+                  setDob({ ...dob, month: e.target.value })
+                }
               >
-                <option value="">Month</option>
-                {months.map((m) => <option key={m} value={m}>{m}</option>)}
+                <option>Month</option>
+                {months.map((m) => (
+                  <option key={m} value={m}>
+                    {m}
+                  </option>
+                ))}
               </select>
 
               <select
-                value={dob.year}
                 disabled={!editPersonal}
-                onChange={(e) => setDob({ ...dob, year: e.target.value })}
+                value={dob.year}
+                onChange={(e) =>
+                  setDob({ ...dob, year: e.target.value })
+                }
               >
-                <option value="">Year</option>
-                {years.map((y) => <option key={y} value={y}>{y}</option>)}
+                <option>Year</option>
+                {years.map((y) => (
+                  <option key={y} value={y}>
+                    {y}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
         </div>
-        <div className={styles.column}></div>
       </div>
 
       <div className={styles.headerActions}>
-        <button onClick={handleSave}>
-          {editPersonal ? "Save Personal" : "Edit Personal"}
-        </button>
-      </div>
+      <button onClick={handleSave}> {editPersonal ?
+          "Save Personal" : "Edit Personal"}
+      </button> </div>
     </div>
   );
 }

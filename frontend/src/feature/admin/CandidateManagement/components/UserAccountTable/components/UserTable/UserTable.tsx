@@ -1,16 +1,10 @@
 import { useEffect, useState } from "react";
-
-import {
-  FiEye,
-  FiEdit2,
-  FiTrash2,
-} from "react-icons/fi";
+import { FiEye, FiEdit2, FiTrash2 } from "react-icons/fi";
 
 import styles from "./UserTable.module.css";
 
 import type { User } from "../../../../../../../../types/user";
-
-import { getAllUsers } from "../../../../../../../service/userApi";
+import { getAllProfiles } from "../../../../../../../service/userApi";
 
 import UserModal from "../UserModal/UserModal";
 
@@ -20,23 +14,22 @@ export default function UserTable() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const [selectedUser, setSelectedUser] =
-    useState<User | null>(null);
-
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [modalMode, setModalMode] =
     useState<ModalMode>("view");
 
+  //  
   // FETCH USERS
+  //  
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const allUsers = await getAllUsers();
+        const allUsers = await getAllProfiles();
 
-        const candidateUsers =
-          allUsers.filter(
-            (user) =>
-              user.role === "candidate"
-          );
+        const candidateUsers = allUsers.filter(
+          (user: any) =>
+            user.role?.toUpperCase?.() === "CANDIDATE"
+        );
 
         setUsers(candidateUsers);
       } catch (error) {
@@ -52,7 +45,9 @@ export default function UserTable() {
     fetchUsers();
   }, []);
 
+  //  
   // FORMAT DATE
+  //  
   const formatDate = (date?: string) => {
     if (!date) return "N/A";
 
@@ -61,7 +56,9 @@ export default function UserTable() {
     );
   };
 
+  //  
   // OPEN MODAL
+  //  
   const openModal = (
     user: User,
     mode: ModalMode
@@ -70,33 +67,37 @@ export default function UserTable() {
     setModalMode(mode);
   };
 
-  // DELETE USER
-  const handleDelete = (
-    id: number | string
-  ) => {
+  //  
+  // DELETE UI ONLY
+  //  
+  const handleDelete = (id: number) => {
     const confirmDelete = window.confirm(
-      "Are you sure you want to delete this user?"
+      "Delete this user?"
     );
 
     if (!confirmDelete) return;
 
-    setUsers((prevUsers) =>
-      prevUsers.filter(
-        (user) => user.id !== id
-      )
+    setUsers((prev) =>
+      prev.filter((u) => u.id !== id)
     );
+
+    if (selectedUser?.id === id) {
+      setSelectedUser(null);
+    }
   };
 
-  // STATUS STYLE
-  const getStatusClass = (
-    status?: string
-  ) => {
-    return status?.toLowerCase() ===
-      "active"
+  //  
+  // STATUS CLASS
+  //  
+  const getStatusClass = (status?: string) => {
+    return status?.toLowerCase() === "active"
       ? styles.active
       : styles.inactive;
   };
 
+  //  
+  // LOADING
+  //  
   if (loading) {
     return (
       <div className={styles.loading}>
@@ -112,18 +113,14 @@ export default function UserTable() {
           <thead>
             <tr>
               <th>
-                <input
-                  type="checkbox"
-                  className={styles.checkbox}
-                />
+                <input type="checkbox" />
               </th>
-
               <th>#</th>
               <th>ID</th>
               <th>Full Name</th>
               <th>Date of Birth</th>
               <th>Gender</th>
-              <th>Phone Number</th>
+              <th>Phone</th>
               <th>Email</th>
               <th>Status</th>
               <th>Actions</th>
@@ -135,40 +132,30 @@ export default function UserTable() {
               users.map((user, index) => (
                 <tr key={user.id}>
                   <td>
-                    <input
-                      type="checkbox"
-                      className={
-                        styles.checkbox
-                      }
-                    />
+                    <input type="checkbox" />
                   </td>
 
                   <td>{index + 1}</td>
-
                   <td>{user.id}</td>
 
+                  {/* FIX: backend field */}
                   <td>
-                    {user.fullName ||
-                      "N/A"}
+                    {user.firstName +
+                      " " +
+                      user.lastName}
                   </td>
 
                   <td>
                     {formatDate(
-                      user.dob
+                      user.dateOfBirth
                     )}
                   </td>
 
-                  <td>
-                    {user.gender || "N/A"}
-                  </td>
+                  <td>{user.gender || "N/A"}</td>
 
-                  <td>
-                    {user.phone || "N/A"}
-                  </td>
+                  <td>{user.phone || "N/A"}</td>
 
-                  <td>
-                    {user.email || "N/A"}
-                  </td>
+                  <td>{user.email}</td>
 
                   <td>
                     <span
@@ -176,8 +163,7 @@ export default function UserTable() {
                         user.status
                       )}`}
                     >
-                      {user.status ||
-                        "Unknown"}
+                      {user.status || "Unknown"}
                     </span>
                   </td>
 
@@ -187,11 +173,7 @@ export default function UserTable() {
                         styles.actionIcons
                       }
                     >
-                      {/* VIEW */}
                       <button
-                        className={
-                          styles.actionBtn
-                        }
                         onClick={() =>
                           openModal(
                             user,
@@ -202,11 +184,7 @@ export default function UserTable() {
                         <FiEye />
                       </button>
 
-                      {/* EDIT */}
                       <button
-                        className={
-                          styles.actionBtn
-                        }
                         onClick={() =>
                           openModal(
                             user,
@@ -217,9 +195,7 @@ export default function UserTable() {
                         <FiEdit2 />
                       </button>
 
-                      {/* DELETE */}
                       <button
-                        className={`${styles.actionBtn} ${styles.deleteBtn}`}
                         onClick={() =>
                           handleDelete(
                             user.id
@@ -246,7 +222,6 @@ export default function UserTable() {
         </table>
       </div>
 
-      {/* MODAL */}
       {selectedUser && (
         <UserModal
           user={selectedUser}

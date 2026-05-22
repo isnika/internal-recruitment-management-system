@@ -1,89 +1,218 @@
+/*        
+   SHARED SETTINGS COMPONENT (TRADITIONAL LIGHT MODE STYLE)
+           */
+
 .container {
-  max-width: 1000px;
-  margin: 20px auto;
-  padding: 20px;
-  font-family: Arial, sans-serif;
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
   background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  color: #333333;
+  color: #111827;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
 .title {
-  margin: 0 0 10px 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.025em;
 }
 
 .divider {
   border: 0;
-  border-top: 1px solid #eeeeee;
-  margin: 20px 0;
+  height: 1px;
+  background-color: #e5e7eb;
+  margin: 1.75rem 0;
 }
 
 .section {
-  margin-bottom: 20px;
-}
-
-.select {
-  width: 100%;
-  padding: 10px;
-  border-radius: 5px;
-  border: 1px solid #cccccc;
-  font-size: 16px;
-  margin-top: 5px;
-  background-color: #ffffff;
-}
-
-.form {
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  margin-top: 10px;
+  gap: 0.5rem;
 }
 
-.formGroup {
+.section h3 {
+  font-size: 1.125rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+.section p {
+  font-size: 0.875rem;
+  color: #4b5563;
+  margin: 0 0 0.5rem 0;
+}
+
+/* UI Option Grid (Buttons) */
+.gridOptions {
   display: flex;
-  flex-direction: column;
-  gap: 5px;
+  gap: 0.75rem;
+  flex-wrap: wrap;
 }
 
-.input {
-  padding: 10px;
-  border-radius: 5px;
-  border: 1px solid #cccccc;
-  font-size: 16px;
-}
-
-.button {
-  padding: 12px;
-  background-color: #007bff;
-  color: #ffffff;
-  border: none;
-  border-radius: 5px;
+.optionCard {
+  flex: 1;
+  min-width: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #111827;
   cursor: pointer;
-  font-size: 16px;
-  font-weight: bold;
-  transition: background-color 0.2s;
+  transition: all 0.15s ease;
 }
 
-.button:hover {
-  background-color: #0056b3;
+.optionCard:hover {
+  border-color: #4b5563;
+  background-color: #f3f4f6;
 }
 
-.alert {
-  padding: 10px;
-  border-radius: 5px;
-  margin-bottom: 15px;
-  font-size: 14px;
+.optionActive {
+  border-color: #2563eb;
+  background-color: #f3f4f6;
+  color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
 }
 
-.alertSuccess {
-  background-color: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
+/* Coming Soon Banner */
+.comingSoonBanner {
+  margin-top: 1rem;
+  padding: 1rem 1.25rem;
+  background-color: #f9fafb;
+  border: 1px dashed #e5e7eb;
+  border-radius: 8px;
+  animation: fadeInSlide 0.2s ease-out;
 }
 
-.alertError {
-  background-color: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
+.bannerHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.badge {
+  font-size: 0.687rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background-color: rgba(37, 99, 235, 0.1);
+  color: #2563eb;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  color: #4b5563;
+  font-size: 1.25rem;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+}
+
+.closeBtn:hover {
+  color: #111827;
+}
+
+.comingSoonBanner h4 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin: 0 0 0.25rem 0;
+  color: #111827;
+}
+
+.comingSoonBanner p {
+  font-size: 0.812rem;
+  line-height: 1.4;
+  color: #4b5563;
+  margin: 0 !important;
+}
+
+
+/*        
+   TRADITIONAL DARK MODE OVERRIDES (:global(.dark-mode))
+           */
+
+:global(.dark-mode) .container {
+  background-color: #0f172a;
+  color: #f8fafc;
+}
+
+:global(.dark-mode) .divider {
+  background-color: #334155;
+}
+
+:global(.dark-mode) .section p {
+  color: #94a3b8;
+}
+
+:global(.dark-mode) .optionCard {
+  background-color: #1e293b;
+  border-color: #334155;
+  color: #f8fafc;
+}
+
+:global(.dark-mode) .optionCard:hover {
+  border-color: #94a3b8;
+  background-color: #334155;
+}
+
+:global(.dark-mode) .optionActive {
+  border-color: #3b82f6;
+  background-color: #334155;
+  color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+}
+
+:global(.dark-mode) .comingSoonBanner {
+  background-color: #1e293b;
+  border-color: #334155;
+}
+
+:global(.dark-mode) .badge {
+  background-color: rgba(59, 130, 246, 0.15);
+  color: #3b82f6;
+}
+
+:global(.dark-mode) .closeBtn {
+  color: #94a3b8;
+}
+
+:global(.dark-mode) .closeBtn:hover {
+  color: #f8fafc;
+}
+
+:global(.dark-mode) .comingSoonBanner h4 {
+  color: #f8fafc;
+}
+
+:global(.dark-mode) .comingSoonBanner p {
+  color: #94a3b8;
+}
+
+
+/*        
+   ANIMATIONS
+           */
+
+@keyframes fadeInSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

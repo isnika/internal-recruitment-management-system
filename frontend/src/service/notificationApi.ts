@@ -26,7 +26,7 @@ export const markAsRead = async (id: number, userId?: number) => {
     console.warn("API lỗi → fallback mock");
   }
 
-  // 👉 update mock
+  //  update mock
   const list = mockNotifications[userId || 1];
   if (!list) return;
 

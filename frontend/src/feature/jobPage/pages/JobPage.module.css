@@ -1,72 +1,80 @@
-/* ── Base Layout ── */
+/* ── WRAPPER ── */
 .wrapper {
-  max-width: 1200px;
+  /* Dùng min() thế này rất tốt, đảm bảo an toàn trên mọi kích cỡ màn hình */
+  width: min(1280px, 100%);
   margin: 0 auto;
-  padding: 20px 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
+  padding: clamp(1rem, 2vw, 2rem) 1rem;
+  box-sizing: border-box; /* Đảm bảo padding không làm nở khung gây tràn màn hình */
 }
 
-/* ── BODY LAYOUT ── */
+/* ── MAIN LAYOUT ── */
 .bodyLayout {
   display: flex;
-  gap: 20px;
-  width: 100%;
+  gap: clamp(1rem, 2vw, 2rem);
+  align-items: flex-start;
 }
 
-/* SIDEBAR */
+/* ── SIDEBAR (DESKTOP) ── */
 .filterSidebar {
-  width: 260px;
+  /* Giảm giới hạn dưới xuống 200px để an toàn hơn nếu có màn hình trung gian */
+  width: clamp(200px, 22vw, 320px);
   flex-shrink: 0;
+
+  position: sticky;
+  top: 20px;
+  /* Giới hạn chiều cao sidebar bằng màn hình để lỡ filter dài quá vẫn cuộn được nội bộ */
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
 }
 
-/* MAIN CONTENT */
+/* ── MAIN CONTENT ── */
 .jobsColumn {
   flex: 1;
-  min-width: 0; /* chống overflow */
+  min-width: 0; /* Tuyệt vời! Giữ nguyên để chặn lỗi tràn của Flexbox */
   display: flex;
   flex-direction: column;
+  gap: 1.5rem;
 }
 
-/* Khi bật sidebar */
-.bodyLayoutWithSidebar .jobsColumn {
-  border-left: 1px solid #e2e8f0;
-  padding-left: 20px;
-}
+/* ── LOADING ── */
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
-/* ── BACK TO TOP ── */
-.backToTop {
-  text-align: center;
-  padding: 12px 0;
-}
-
-.backToTop a {
-  color: #0f172a;
-  font-size: 12px;
-  font-weight: 500;
-  text-decoration: none;
-}
-
-.backToTop a:hover {
-  text-decoration: underline;
+  min-height: 300px;
+  font-size: 1rem;
+  color: #666;
 }
 
 /* ── RESPONSIVE ── */
+@media (max-width: 1024px) {
+  .filterSidebar {
+    /* Thay vì gán cứng 260px, dùng luôn tỷ lệ % hoặc giữ clamp để nó mượt hơn */
+    width: clamp(200px, 25vw, 280px);
+  }
+}
+
 @media (max-width: 768px) {
   .bodyLayout {
     flex-direction: column;
+    gap: 1.5rem; /* Thu hẹp khoảng cách giữa Sidebar và Jobs khi xếp dọc */
   }
 
   .filterSidebar {
     width: 100%;
+    position: static; /* Hủy bỏ chế độ dính khi lên mobile */
+    top: auto;        /* Reset thuộc tính top về mặc định */
+    max-height: none; /* Bỏ giới hạn chiều cao desktop */
+    overflow-y: visible;
+
+    /* TÙY CHỌN TỐI ƯU CHO MOBILE:
+       Nếu bộ lọc của bạn là một danh sách các thẻ (tags) hoặc hàng ngang,
+       bạn có thể bọc chúng trong một container có `display: flex; overflow-x: auto;`
+       để người dùng vuốt ngang trên điện thoại, không bị chiếm quá nhiều diện tích dọc. */
   }
 
-  .bodyLayoutWithSidebar .jobsColumn {
-    border-left: none;
-    padding-left: 0;
-    border-top: 1px solid #e2e8f0;
-    padding-top: 16px;
+  .jobsColumn {
+    width: 100%;
   }
 }
-
