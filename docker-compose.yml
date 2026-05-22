@@ -33,7 +33,6 @@ services:
       DB_USERNAME: root
       DB_PASSWORD: root
       JWT_SECRET: ThisIsASecretKeyForJwtAuthenticationMustBeAtLeast32BytesLong
-      GOOGLE_CLIENT_ID: 278300133755-gaho7bghdckdquguts7kfh5j62jlh2t2.apps.googleusercontent.com
     ports:
       - "8080:8080"
 
