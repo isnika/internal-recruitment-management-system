@@ -71,7 +71,8 @@ axiosClient.interceptors.response.use(
 );
 
 export const request = {
-  get: <T>(url: string, params?: any): Promise<T> => axiosClient.get(url, { params }),
+  get: <T>(url: string, config?: any): Promise<T> =>
+    axiosClient.get(url, config),
   post: <T>(url: string, data?: any): Promise<T> => axiosClient.post(url, data),
   patch: <T>(url: string, data?: any, config?: any): Promise<T> => axiosClient.patch(url, data, config),
 };

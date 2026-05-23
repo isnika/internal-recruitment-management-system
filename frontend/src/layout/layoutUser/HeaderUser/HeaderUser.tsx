@@ -1,7 +1,7 @@
 import styles from "./HeaderUser.module.css";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../../feature/auth/context/AuthContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import UserDropdown from "../../components/UserDropdown/UserDropdown";
 import MailDropdown from "../../components/MailDropdown/MailDropdown";
@@ -26,14 +26,26 @@ const HeaderUser = () => {
   };
 
   const handleSearch = () => {
-    if (!keyword.trim() && !locationInput.trim()) return;
+    const q = keyword.trim();
+    const loc = locationInput.trim();
+
+    if (!q && !loc) return;
 
     navigate(
-      `/search?q=${encodeURIComponent(keyword)}&location=${encodeURIComponent(
-        locationInput
-      )}`
+      `/search?q=${encodeURIComponent(q)}&location=${encodeURIComponent(loc)}`
     );
   };
+
+    useEffect(() => {
+      if (location.pathname !== "/search") {
+        setKeyword("");
+        setLocationInput("");
+      }
+    }, [location.pathname]);
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === "Enter") handleSearch();
+    };
 
   return (
     <header className={styles.header}>

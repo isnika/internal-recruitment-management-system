@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   fetchJobsApi,
   toggleBookmarkApi,
@@ -28,11 +28,18 @@ export const useJobs = (
   const [filters, setFilters] = useState<JobFilters>({ ...emptyFilters });
   const [isLoading, setIsLoading] = useState(false);
 
-  const activeCount = Object.values(filters).reduce(
-    (acc, curr) => acc + curr.length,
-    0
-  );
+  //    ACTIVE COUNT (FIXED)   
+  const activeCount = useMemo(() => {
+    return (
+      filters.jobTypes.length +
+      filters.experienceLevels.length +
+      filters.departments.length +
+      filters.salaryRanges.length +
+      filters.skillTags.length
+    );
+  }, [filters]);
 
+  //    FETCH JOBS   
   useEffect(() => {
     if (!metadataReady) return;
 
@@ -40,11 +47,23 @@ export const useJobs = (
       setIsLoading(true);
 
       try {
+        // sanitize filters (VERY IMPORTANT)
+        const cleanFilters: JobFilters | undefined =
+          activeCount > 0
+            ? {
+                jobTypes: filters.jobTypes,
+                experienceLevels: filters.experienceLevels,
+                departments: filters.departments,
+                salaryRanges: filters.salaryRanges,
+                skillTags: filters.skillTags,
+              }
+            : undefined;
+
         const res = await fetchJobsApi(
           activeCategory,
           currentPage,
           JOBS_PER_PAGE,
-          activeCount > 0 ? filters : undefined
+          cleanFilters
         );
 
         setJobs(res.jobs);
@@ -59,8 +78,9 @@ export const useJobs = (
     };
 
     getJobs();
-  }, [activeCategory, currentPage, filters, metadataReady]);
+  }, [activeCategory, currentPage, activeCount, metadataReady]);
 
+  //    BOOKMARK   
   const handleBookmark = async (id: string) => {
     try {
       await toggleBookmarkApi(id);
@@ -77,24 +97,35 @@ export const useJobs = (
     }
   };
 
+  //    FILTER TOGGLE   
   const handleToggleFilter = (group: keyof JobFilters, value: string) => {
     setFilters(prev => {
-      const list = prev[group];
+      const list = prev[group] || [];
+
       const newList = list.includes(value)
         ? list.filter(v => v !== value)
         : [...list, value];
 
-      return { ...prev, [group]: newList };
+      return {
+        ...prev,
+        [group]: newList,
+      };
     });
 
     setCurrentPage(1);
   };
 
+  //    CLEAR GROUP   
   const handleClearGroup = (group: keyof JobFilters) => {
-    setFilters(prev => ({ ...prev, [group]: [] }));
+    setFilters(prev => ({
+      ...prev,
+      [group]: [],
+    }));
+
     setCurrentPage(1);
   };
 
+  //    CLEAR ALL   
   const handleClearAll = () => {
     setFilters({ ...emptyFilters });
     setCurrentPage(1);

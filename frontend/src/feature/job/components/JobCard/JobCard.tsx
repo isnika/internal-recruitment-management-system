@@ -1,17 +1,19 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+
 import styles from "./JobCard.module.css";
 
 import { FiMapPin, FiBookmark } from "react-icons/fi";
 import { BsCash } from "react-icons/bs";
 import { FaBookmark } from "react-icons/fa";
 
-import type { Job } from "../../../../service/jobApi";
+import type { Job } from "../../../../types/job";
 
-// format salary từ object → string hiển thị
+// FORMAT SALARY
 const formatSalary = (salary: Job["salary"]) => {
   const min = salary.min / 1000000;
   const max = salary.max / 1000000;
+
   return `${min}M - ${max}M ${salary.currency}`;
 };
 
@@ -20,7 +22,10 @@ interface JobCardProps {
   onBookmark: (id: string) => void;
 }
 
-const JobCard: React.FC<JobCardProps> = ({ job, onBookmark }) => {
+const JobCard: React.FC<JobCardProps> = ({
+  job,
+  onBookmark,
+}) => {
   const navigate = useNavigate();
 
   return (
@@ -36,18 +41,30 @@ const JobCard: React.FC<JobCardProps> = ({ job, onBookmark }) => {
 
       {/* INFO */}
       <div className={styles.jobInfoCol}>
-        <h3 className={styles.jobTitle}>{job.title}</h3>
-        <p className={styles.jobCategory}>{job.category}</p>
+        <h3 className={styles.jobTitle}>
+          {job.title}
+        </h3>
+
+        <p className={styles.jobCategory}>
+          {job.category}
+        </p>
 
         {/* SKILLS */}
         <div className={styles.jobSkills}>
-          <span className={styles.skillLabel}>Skills:</span>
+          <span className={styles.skillLabel}>
+            Skills:
+          </span>
 
-          {job.skills.slice(0, 3).map((skill) => (
-            <span key={skill} className={styles.skillTag}>
-              {skill}
-            </span>
-          ))}
+          {job.skills
+            .slice(0, 3)
+            .map((skill) => (
+              <span
+                key={skill}
+                className={styles.skillTag}
+              >
+                {skill}
+              </span>
+            ))}
 
           {job.skills.length > 3 && (
             <span className={styles.moreSkill}>
@@ -59,14 +76,20 @@ const JobCard: React.FC<JobCardProps> = ({ job, onBookmark }) => {
         {/* META */}
         <div className={styles.jobMetaList}>
           <div className={styles.metaItem}>
-            <BsCash className={styles.metaIconYellow} />
+            <BsCash
+              className={styles.metaIconYellow}
+            />
+
             <span className={styles.metaBold}>
               {formatSalary(job.salary)}
             </span>
           </div>
 
           <div className={styles.metaItem}>
-            <FiMapPin className={styles.metaIconRed} />
+            <FiMapPin
+              className={styles.metaIconRed}
+            />
+
             <span className={styles.metaText}>
               {job.location}
             </span>
@@ -84,14 +107,20 @@ const JobCard: React.FC<JobCardProps> = ({ job, onBookmark }) => {
           <button
             className={styles.bookmarkBtn}
             onClick={() => onBookmark(job.id)}
-            title={job.isBookmarked ? "Bỏ lưu" : "Lưu công việc"}
+            title={
+              job.isBookmarked
+                ? "Bỏ lưu"
+                : "Lưu công việc"
+            }
           >
             {job.isBookmarked ? (
               <FaBookmark
                 className={`${styles.bookmarkIcon} ${styles.bookmarkIconActive}`}
               />
             ) : (
-              <FiBookmark className={styles.bookmarkIcon} />
+              <FiBookmark
+                className={styles.bookmarkIcon}
+              />
             )}
           </button>
         </div>
@@ -101,6 +130,7 @@ const JobCard: React.FC<JobCardProps> = ({ job, onBookmark }) => {
             className={styles.viewDetailsBtn}
             onClick={() => {
               navigate(`/jobs/${job.id}`);
+
               window.scrollTo(0, 0);
             }}
           >
@@ -110,7 +140,10 @@ const JobCard: React.FC<JobCardProps> = ({ job, onBookmark }) => {
           <button
             className={styles.applyBtn}
             onClick={() => {
-              navigate(`/jobs/${job.id}`, { state: { autoApply: true } });
+              navigate(`/jobs/${job.id}`, {
+                state: { autoApply: true },
+              });
+
               window.scrollTo(0, 0);
             }}
           >

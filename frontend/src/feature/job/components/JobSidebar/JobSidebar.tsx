@@ -1,49 +1,120 @@
 import styles from "./JobSidebar.module.css";
 
-import { FiUsers, FiClock, FiBriefcase } from "react-icons/fi";
+import {
+  FiUsers,
+  FiClock,
+  FiBriefcase,
+  FiMapPin,
+} from "react-icons/fi";
+
 import { AiOutlineUser } from "react-icons/ai";
+
 import { PiGraduationCap } from "react-icons/pi";
 
-const JobSidebar = ({ job, isApplying = false }: any) => {
+import type { Job } from "../../../../types/job";
+
+interface JobSidebarProps {
+  job: Job;
+
+  isApplying?: boolean;
+}
+
+const JobSidebar = ({
+  job,
+  isApplying = false,
+}: JobSidebarProps) => {
+  // FORMAT SALARY
+  const formatSalary = () => {
+    const min =
+      job?.salary?.min / 1000000 || 0;
+
+    const max =
+      job?.salary?.max / 1000000 || 0;
+
+    return `${min}M - ${max}M VND`;
+  };
+
   return (
     <>
-      {/* General Info */}
+      {/* GENERAL INFO */}
       <div className={styles.generalInfoCard}>
-        <h3 className={styles.generalInfoTitle}>General Information</h3>
+        <h3 className={styles.generalInfoTitle}>
+          General Information
+        </h3>
 
         <div className={styles.infoList}>
+          {/* JOB TITLE */}
           <div className={styles.infoItem}>
-            <AiOutlineUser className={styles.infoIcon} />
+            <AiOutlineUser
+              className={styles.infoIcon}
+            />
+
             <span className={styles.infoText}>
-              Job Title: {job?.title || "Employee"}
+              Job Title:{" "}
+              {job?.title || "Employee"}
             </span>
           </div>
 
+          {/* EXPERIENCE */}
           <div className={styles.infoItem}>
-            <PiGraduationCap className={styles.infoIcon} />
+            <PiGraduationCap
+              className={styles.infoIcon}
+            />
+
             <span className={styles.infoText}>
-              Education: {job?.education || "University degree or higher"}
+              Experience Level:{" "}
+              {job?.experienceLevel ||
+                "Not specified"}
             </span>
           </div>
 
+          {/* LOCATION */}
           <div className={styles.infoItem}>
-            <FiUsers className={styles.infoIcon} />
+            <FiMapPin
+              className={styles.infoIcon}
+            />
+
             <span className={styles.infoText}>
-              Number of Vacancies: {job?.vacancies || 1}
+              Location:{" "}
+              {job?.location ||
+                "Not specified"}
             </span>
           </div>
 
+          {/* JOB TYPE */}
           <div className={styles.infoItem}>
-            <FiBriefcase className={styles.infoIcon} />
+            <FiBriefcase
+              className={styles.infoIcon}
+            />
+
             <span className={styles.infoText}>
-              Employment Type: {job?.jobType || "Full-time"}
+              Employment Type:{" "}
+              {job?.jobType || "Full-time"}
             </span>
           </div>
 
+          {/* DEADLINE */}
           <div className={styles.infoItem}>
-            <FiClock className={styles.infoIcon} />
+            <FiClock
+              className={styles.infoIcon}
+            />
+
             <span className={styles.infoText}>
-              Application Deadline: {job?.deadline || "N/A"}
+              Application Deadline:{" "}
+              {job?.deadline || "N/A"}
+            </span>
+          </div>
+
+          {/* COMPANY */}
+          <div className={styles.infoItem}>
+            <FiUsers
+              className={styles.infoIcon}
+            />
+
+            <span className={styles.infoText}>
+              Company:{" "}
+              {job?.company?.name ||
+                "Unknown"}
             </span>
           </div>
         </div>
@@ -51,76 +122,94 @@ const JobSidebar = ({ job, isApplying = false }: any) => {
 
       {!isApplying && (
         <>
-          {/* See more */}
-      <h3 className={styles.seeMoreTitle}>See more</h3>
+          {/* SEE MORE */}
+          <h3 className={styles.seeMoreTitle}>
+            See more
+          </h3>
 
-      {/* Skill Tags */}
-      <div className={styles.blueCard}>
-        <h4 className={styles.blueCardTitle}>Skill Tags</h4>
-        <div className={styles.blueCardList}>
-          {(job?.skills || [
-            "ReactJs",
-            "Java",
-            "JavaScript",
-            "TypeScript",
-            "Adobe",
-            "UI/UX",
-            "Data Analyst",
-            "Python",
-          ]).map((skill: string) => (
-            <span key={skill} className={styles.blueCardItem}>
-              {skill}
-            </span>
-          ))}
-        </div>
-      </div>
+          {/* SKILLS */}
+          <div className={styles.blueCard}>
+            <h4 className={styles.blueCardTitle}>
+              Skill Tags
+            </h4>
 
-      {/* Department */}
-      <div className={styles.blueCard}>
-        <h4 className={styles.blueCardTitle}>Department</h4>
-        <div className={styles.blueCardList}>
-          {(job?.departments || [
-            "IT / Software",
-            "Marketing",
-            "Business / Sales",
-            "Design",
-            "Finance",
-            "HR",
-            "Operations",
-            "Customer Service",
-          ]).map((dep: string, i: number) => (
-            <span
-              key={dep}
-              className={
-                i === 2
-                  ? styles.blueCardItemActive
-                  : styles.blueCardItem
-              }
+            <div
+              className={styles.blueCardList}
             >
-              {dep}
-            </span>
-          ))}
-        </div>
-      </div>
+              {(job?.skills || []).map(
+                (skill: string) => (
+                  <span
+                    key={skill}
+                    className={
+                      styles.blueCardItem
+                    }
+                  >
+                    {skill}
+                  </span>
+                )
+              )}
+            </div>
+          </div>
 
-      {/* Salary */}
-      <div className={styles.blueCard}>
-        <h4 className={styles.blueCardTitle}>Salary</h4>
-        <div className={styles.blueCardList}>
-          {(job?.salaryRanges || [
-            "Under 10M",
-            "10M - 20M",
-            "20M - 30M",
-            "> 30M",
-            "Negotiable",
-          ]).map((salary: string) => (
-            <span key={salary} className={styles.blueCardItem}>
-              {salary}
-            </span>
-          ))}
-        </div>
-      </div>
-      </>
+          {/* DEPARTMENT */}
+          <div className={styles.blueCard}>
+            <h4 className={styles.blueCardTitle}>
+              Department
+            </h4>
+
+            <div
+              className={styles.blueCardList}
+            >
+              <span
+                className={
+                  styles.blueCardItemActive
+                }
+              >
+                {job?.department ||
+                  job?.category ||
+                  "General"}
+              </span>
+            </div>
+          </div>
+
+          {/* SALARY */}
+          <div className={styles.blueCard}>
+            <h4 className={styles.blueCardTitle}>
+              Salary
+            </h4>
+
+            <div
+              className={styles.blueCardList}
+            >
+              <span
+                className={
+                  styles.blueCardItem
+                }
+              >
+                {formatSalary()}
+              </span>
+            </div>
+          </div>
+
+          {/* STATUS */}
+          <div className={styles.blueCard}>
+            <h4 className={styles.blueCardTitle}>
+              Status
+            </h4>
+
+            <div
+              className={styles.blueCardList}
+            >
+              <span
+                className={
+                  styles.blueCardItem
+                }
+              >
+                {job?.status || "OPEN"}
+              </span>
+            </div>
+          </div>
+        </>
       )}
     </>
   );

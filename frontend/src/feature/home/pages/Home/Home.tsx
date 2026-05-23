@@ -16,7 +16,7 @@ import CTASection from "../../components/CTASection/CTASection";
 const Home = () => {
   const navigate = useNavigate();
   const jobListRef = useRef(null);
-  const { jobs, isLoading } = useJobs("View All", false);
+  const { jobs, isLoading } = useJobs("", true);
 
   /* ===================== HANDLERS ===================== */
   const handleApplyNow = () => {

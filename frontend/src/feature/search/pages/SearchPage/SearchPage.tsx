@@ -2,7 +2,7 @@ import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 import type { Job } from "../../../../types/job";
-import { searchApi } from "../../../../service/searchApi";
+import { filterJobsApi } from "../../../../service/jobApi";
 
 import JobCard from "../../../job/components/JobCard/JobCard";
 
@@ -13,37 +13,30 @@ export default function SearchPage() {
   const [loading, setLoading] = useState(false);
 
   const locationHook = useLocation();
+
   const query = new URLSearchParams(locationHook.search);
 
-  const keyword = decodeURIComponent(query.get("q") || "")
-    .trim()
-    .toLowerCase();
+  const keyword = (query.get("q") || "").trim();
 
-  const locationFilter = decodeURIComponent(query.get("location") || "")
-    .trim()
-    .toLowerCase();
+  const locationFilter = (query.get("location") || "").trim();
 
   useEffect(() => {
-    if (!keyword) {
-      setResults([]);
-      return;
-    }
-
     const fetchData = async () => {
+      // không có gì để search
+      if (!keyword && !locationFilter) {
+        setResults([]);
+        return;
+      }
+
       setLoading(true);
 
       try {
-        const res = await searchApi.searchJobs(keyword);
-
-        const filtered = res.filter((job) => {
-          const matchLocation = locationFilter
-            ? job.location?.toLowerCase().includes(locationFilter)
-            : true;
-
-          return matchLocation;
+        const res = await filterJobsApi({
+          keywords: keyword || undefined,
+          location: locationFilter || undefined,
         });
 
-        setResults(filtered);
+        setResults(res);
       } catch (error) {
         console.error("Search error:", error);
         setResults([]);
@@ -53,7 +46,7 @@ export default function SearchPage() {
     };
 
     fetchData();
-  }, [keyword, locationFilter]);
+  }, [locationHook.search]); //  FIX: quan trọng nhất
 
   const handleBookmark = (id: string) => {
     setResults((prev) =>
@@ -69,13 +62,22 @@ export default function SearchPage() {
     <div className={styles.searchPage}>
       <div className={styles.container}>
         <h2 className={styles.title}>
-          Kết quả cho: <span>"{keyword}"</span>
+          Kết quả tìm kiếm:{" "}
+          <span>
+            "{keyword || locationFilter}"
+          </span>
         </h2>
 
-        {loading && <p className={styles.loading}>Loading...</p>}
+        {loading && (
+          <p className={styles.loading}>
+            Loading...
+          </p>
+        )}
 
         {!loading && results.length === 0 && (
-          <p className={styles.empty}>Không tìm thấy job</p>
+          <p className={styles.empty}>
+            Không tìm thấy job
+          </p>
         )}
 
         {!loading && results.length > 0 && (
