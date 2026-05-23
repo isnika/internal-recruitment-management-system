@@ -35,6 +35,15 @@ import DashboardPage from "../feature/employer/dashBoardManagement/pages/dashboa
 import SettingManagement from "../feature/employer/settingManagement/pages/settingManagement";
 /* admin */
 import HomeAdmin from "../feature/admin/home/pages/HomeAdmin/homeAdmin";
+import Dashboard from "../feature/admin/Dashboard/pages/Dashboard";
+import UserManagement from "../feature/admin/UserAccountManagement/pages/UserManagement";
+import CandidateManagement from "../feature/admin/CandidateManagement/pages/candidatesManagement";
+import JobApproval from "../feature/admin/JobApproval/pages/JobApproval";
+import CompanyManagement from "../feature/admin/CompanyManagement/pages/CompanyManagement";
+import ApplicationMonitoring from "../feature/admin/ApplicationMonitoring/pages/ApplicationMonitoring";
+import RolePermission from "../feature/admin/RolePermission/pages/RolePermission";
+import StatisticalReport from "../feature/admin/StatisticalReport/pages/StatisticalReport";
+import SystemSettings from "../feature/admin/SystemSettings/pages/SystemSettings";
 
 export default function AppRoutes() {
   return (
@@ -90,7 +99,18 @@ export default function AppRoutes() {
         </Route>
 
         {/* ADMIN PANEL */}
-        <Route path="admin" element={<HomeAdmin />} />
+        <Route path="admin" element={<HomeAdmin />}>
+          <Route index element={<Navigate to="dashboard" replace />} />
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="users" element={<UserManagement />} />
+          <Route path="candidates" element={<CandidateManagement />} />
+          <Route path="job-approval" element={<JobApproval />} />
+          <Route path="companies" element={<CompanyManagement />} />
+          <Route path="applications" element={<ApplicationMonitoring />} />
+          <Route path="roles" element={<RolePermission />} />
+          <Route path="reports" element={<StatisticalReport />} />
+          <Route path="settings" element={<SystemSettings />} />
+        </Route>
 
         {/* PROFILE MANAGEMENT */}
 

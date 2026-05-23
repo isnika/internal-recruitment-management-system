@@ -6,13 +6,21 @@ import JobFilters from "../components/JobFilters";
 import JobTable from "../components/JobTable";
 import JobDetailModal from "../components/JobDetailModal";
 
-interface JobApprovalProps {
-  jobs: Job[];
-  onApprove: (id: string) => void;
-  onReject: (id: string, reason: string) => void;
-}
+import { jobs as initialJobs } from "../../../../dataMock/Job";
 
-const JobApproval: React.FC<JobApprovalProps> = ({ jobs, onApprove, onReject }) => {
+const JobApproval: React.FC = () => {
+  const [jobs, setJobs] = useState(initialJobs);
+
+  const onApprove = (id: string) => {
+    setJobs(prev => prev.map(j => j.id === id ? { ...j, status: "ACTIVE" } : j));
+    alert("Job Approved!");
+  };
+
+  const onReject = (id: string, reason: string) => {
+    setJobs(prev => prev.map(j => j.id === id ? { ...j, status: "REJECTED" } : j));
+    alert(`Job Rejected: ${reason}`);
+  };
+
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("pending");
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);

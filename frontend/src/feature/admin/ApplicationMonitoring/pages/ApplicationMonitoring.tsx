@@ -5,15 +5,14 @@ import ApplicationFilters from "../components/ApplicationFilters";
 import ApplicationTable from "../components/ApplicationTable";
 import ApplicationDetailModal from "../components/ApplicationDetailModal";
 
-interface ApplicationMonitoringProps {
-  applications: ApplicationMock[];
-  onAudit: (appId: number, notes: string) => void;
-}
+import { initialApplications } from "../../../../dataMock/adminMock";
 
-const ApplicationMonitoring: React.FC<ApplicationMonitoringProps> = ({
-  applications,
-  onAudit,
-}) => {
+const ApplicationMonitoring: React.FC = () => {
+  const [applications, setApplications] = useState(initialApplications);
+
+  const onAudit = (appId: number, notes: string) => {
+    alert(`Audit logged for App #${appId}. Notes: ${notes}`);
+  };
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [auditingApp, setAuditingApp] = useState<ApplicationMock | null>(null);

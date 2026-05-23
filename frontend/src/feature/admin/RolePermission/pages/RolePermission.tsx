@@ -3,11 +3,6 @@ import styles from "./RolePermission.module.css";
 import type { RolePermissions } from "../../../../dataMock/adminMock";
 import RolePermissionCard from "../components/RolePermissionCard";
 
-interface RolePermissionProps {
-  permissions: RolePermissions[];
-  onUpdate: (role: string, updatedPerms: RolePermissions["permissions"]) => void;
-}
-
 const PERMISSION_LABELS: Record<keyof RolePermissions["permissions"], string> = {
   viewDashboard: "View Dashboard",
   manageUsers: "Manage Users",
@@ -24,10 +19,15 @@ const ROLE_COLOR: Record<string, string> = {
   Candidate: styles.tagCandidate,
 };
 
-const RolePermission: React.FC<RolePermissionProps> = ({ permissions, onUpdate }) => {
+import { initialRolePermissions } from "../../../../dataMock/adminMock";
+
+const RolePermission: React.FC = () => {
   const [localPerms, setLocalPerms] = useState<RolePermissions[]>(() =>
-    permissions.map((p) => ({ ...p, permissions: { ...p.permissions } }))
+    initialRolePermissions.map((p) => ({ ...p, permissions: { ...p.permissions } }))
   );
+  const onUpdate = (role: string, updatedPerms: RolePermissions["permissions"]) => {
+    alert(`Permissions saved for role: ${role}`);
+  };
   const [savedRole, setSavedRole] = useState<string | null>(null);
 
   const handleToggle = (roleIndex: number, permKey: keyof RolePermissions["permissions"]) => {

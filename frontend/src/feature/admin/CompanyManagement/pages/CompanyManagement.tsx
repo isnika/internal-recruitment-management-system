@@ -4,19 +4,22 @@ import type { CompanyMock } from "../../../../dataMock/adminMock";
 import CompanyFilters from "../components/CompanyFilters";
 import CompanyTable from "../components/CompanyTable";
 
-interface CompanyManagementProps {
-  companies: CompanyMock[];
-  onApprove: (id: number) => void;
-  onBlock: (id: number) => void;
-  onVerify: (id: number) => void;
-}
+import { initialCompanies } from "../../../../dataMock/adminMock";
 
-const CompanyManagement: React.FC<CompanyManagementProps> = ({
-  companies,
-  onApprove,
-  onBlock,
-  onVerify,
-}) => {
+const CompanyManagement: React.FC = () => {
+  const [companies, setCompanies] = useState(initialCompanies);
+
+  const onApprove = (id: number) => {
+    setCompanies(prev => prev.map(c => c.id === id ? { ...c, status: "ACTIVE" } : c));
+  };
+
+  const onBlock = (id: number) => {
+    setCompanies(prev => prev.map(c => c.id === id ? { ...c, status: c.status === "BLOCKED" ? "ACTIVE" : "BLOCKED" } : c));
+  };
+
+  const onVerify = (id: number) => {
+    setCompanies(prev => prev.map(c => c.id === id ? { ...c, verified: !c.verified } : c));
+  };
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
 

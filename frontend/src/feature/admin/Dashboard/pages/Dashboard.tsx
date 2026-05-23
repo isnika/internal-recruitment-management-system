@@ -5,13 +5,14 @@ import type { User } from "../../../../types/user";
 import type { Job } from "../../../../types/job";
 import type { ApplicationMock } from "../../../../dataMock/adminMock";
 
-interface DashboardProps {
-  users: User[];
-  jobs: Job[];
-  applications: ApplicationMock[];
-}
+import { users as initialUsers } from "../../../../dataMock/User";
+import { jobs as initialJobs } from "../../../../dataMock/Job";
+import { initialApplications } from "../../../../dataMock/adminMock";
 
-const Dashboard: React.FC<DashboardProps> = ({ users, jobs, applications }) => {
+const Dashboard: React.FC = () => {
+  const users = initialUsers;
+  const jobs = initialJobs;
+  const applications = initialApplications;
   const totalUsers = users.length;
   const totalJobs = jobs.length;
   const totalApplications = applications.length;

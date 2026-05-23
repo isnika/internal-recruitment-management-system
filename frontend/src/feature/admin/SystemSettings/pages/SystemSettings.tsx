@@ -1,49 +1,29 @@
-import React from "react";
+import React, { useState } from "react";
 import styles from "./SystemSettings.module.css";
 import type { SystemLog } from "../../../../dataMock/adminMock";
 import EmailConfigForm from "../components/EmailConfigForm";
 import NotificationChannels from "../components/NotificationChannels";
 import ActivityLogsTable from "../components/ActivityLogsTable";
 
-interface SystemSettingsProps {
-  logs: SystemLog[];
-  emailConfig: {
-    smtpServer: string;
-    port: string;
-    senderName: string;
-    senderEmail: string;
-  };
-  setEmailConfig: React.Dispatch<
-    React.SetStateAction<{
-      smtpServer: string;
-      port: string;
-      senderName: string;
-      senderEmail: string;
-    }>
-  >;
-  notificationConfig: {
-    enableEmail: boolean;
-    enablePush: boolean;
-    enableSlack: boolean;
-  };
-  setNotificationConfig: React.Dispatch<
-    React.SetStateAction<{
-      enableEmail: boolean;
-      enablePush: boolean;
-      enableSlack: boolean;
-    }>
-  >;
-  onClearLogs: () => void;
-}
+import { initialLogs } from "../../../../dataMock/adminMock";
 
-const SystemSettings: React.FC<SystemSettingsProps> = ({
-  logs,
-  emailConfig,
-  setEmailConfig,
-  notificationConfig,
-  setNotificationConfig,
-  onClearLogs,
-}) => {
+const SystemSettings: React.FC = () => {
+  const [logs, setLogs] = useState<SystemLog[]>(initialLogs);
+  const [emailConfig, setEmailConfig] = useState({
+    smtpServer: "smtp.gmail.com",
+    port: "587",
+    senderName: "HKKQ Careers System",
+    senderEmail: "noreply@hkkq.vn",
+  });
+  const [notificationConfig, setNotificationConfig] = useState({
+    enableEmail: true,
+    enablePush: true,
+    enableSlack: false,
+  });
+
+  const onClearLogs = () => {
+    setLogs([]);
+  };
   return (
     <div className={styles.container}>
       <div className={styles.header}>

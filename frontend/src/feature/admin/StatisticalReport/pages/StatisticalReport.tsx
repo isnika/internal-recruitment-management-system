@@ -8,13 +8,14 @@ import type { User } from "../../../../types/user";
 import type { Job } from "../../../../types/job";
 import type { ApplicationMock } from "../../../../dataMock/adminMock";
 
-interface StatisticalReportProps {
-  users: User[];
-  jobs: Job[];
-  applications: ApplicationMock[];
-}
+import { users as initialUsers } from "../../../../dataMock/User";
+import { jobs as initialJobs } from "../../../../dataMock/Job";
+import { initialApplications } from "../../../../dataMock/adminMock";
 
-const StatisticalReport: React.FC<StatisticalReportProps> = ({ users, jobs, applications }) => {
+const StatisticalReport: React.FC = () => {
+  const users = initialUsers;
+  const jobs = initialJobs;
+  const applications = initialApplications;
   const totalJobs = jobs.length;
   const totalUsers = users.length;
   const totalApplications = applications.length;

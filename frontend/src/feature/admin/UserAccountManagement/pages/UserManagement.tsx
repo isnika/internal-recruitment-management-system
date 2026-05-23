@@ -4,21 +4,28 @@ import styles from "./UserManagement.module.css";
 import UserFilters from "../components/UserFilters";
 import UserTable from "../components/UserTable";
 
-interface UserManagementProps {
-  usersList: User[];
-  onToggleStatus: (id: number) => void;
-  onResetPassword: (id: number) => void;
-  onDeleteUser: (id: number) => void;
-  onSaveRole: (id: number, newRole: string) => void;
-}
+import { users as initialUsers } from "../../../../dataMock/User";
 
-const UserManagement: React.FC<UserManagementProps> = ({
-  usersList,
-  onToggleStatus,
-  onResetPassword,
-  onDeleteUser,
-  onSaveRole,
-}) => {
+const UserManagement: React.FC = () => {
+  const [usersList, setUsersList] = useState(initialUsers);
+
+  // Mock functions for the props that were removed
+  const onToggleStatus = useCallback((id: number) => {
+    setUsersList(prev => prev.map(u => u.id === id ? { ...u, status: u.status === "Active" ? "Inactive" : "Active" } : u));
+  }, []);
+
+  const onResetPassword = useCallback((id: number) => {
+    alert("Password reset simulated.");
+  }, []);
+
+  const onDeleteUser = useCallback((id: number) => {
+    setUsersList(prev => prev.filter(u => u.id !== id));
+  }, []);
+
+  const onSaveRole = useCallback((id: number, newRole: string) => {
+    setUsersList(prev => prev.map(u => u.id === id ? { ...u, role: newRole } : u));
+  }, []);
+
   const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState<string>("all");
