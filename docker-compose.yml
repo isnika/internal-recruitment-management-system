@@ -10,7 +10,7 @@ services:
       - "3307:3306"
     volumes:
       - recruitment-db-data:/var/lib/mysql
-      - ./db-init:/docker-entrypoint-initdb.d
+      - ./backend/db-init:/docker-entrypoint-initdb.d
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
       interval: 10s
