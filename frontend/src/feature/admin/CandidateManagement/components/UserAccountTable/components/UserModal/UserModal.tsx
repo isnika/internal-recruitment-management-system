@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import styles from "./UserModal.module.css";
 import { FiX } from "react-icons/fi";
 
-import type { User } from "../../../../../types/user";
+import type { CandidateProfile } from "../../../../../../../../types/candidate";
 
 interface UserModalProps {
-  user: User;
+  user: CandidateProfile;
   onClose: () => void;
 }
 
@@ -16,7 +16,7 @@ export default function UserModal({
   const [isEdit, setIsEdit] = useState(false);
 
   const [formData, setFormData] =
-    useState<User>(user);
+    useState<CandidateProfile>(user);
 
   // IMPORTANT: sync when user changes
   useEffect(() => {
@@ -86,12 +86,12 @@ export default function UserModal({
               <input
                 name="fullName"
                 value={
-                  formData.fullName || ""
+                  (formData.firstName + ' ' + formData.lastName) || ""
                 }
                 onChange={handleChange}
               />
             ) : (
-              <p>{formData.fullName}</p>
+              <p>{(formData.firstName + ' ' + formData.lastName)}</p>
             )}
           </div>
 
@@ -100,12 +100,12 @@ export default function UserModal({
 
             {isEdit ? (
               <input
-                name="dob"
-                value={formData.dob || ""}
+                name="dateOfBirth"
+                value={formData.dateOfBirth || ""}
                 onChange={handleChange}
               />
             ) : (
-              <p>{formData.dob}</p>
+              <p>{formData.dateOfBirth}</p>
             )}
           </div>
 
@@ -203,12 +203,12 @@ export default function UserModal({
                 {isEdit ? (
                   <input
                     name="fullName"
-                    value={formData.fullName || ""}
+                    value={(formData.firstName + ' ' + formData.lastName) || ""}
                     onChange={handleChange}
                   />
                 ) : (
                   <input
-                    value={formData.fullName || ""}
+                    value={(formData.firstName + ' ' + formData.lastName) || ""}
                     readOnly
                   />
                 )}
@@ -274,14 +274,14 @@ export default function UserModal({
 
                 {isEdit ? (
                   <input
-                    name="dob"
-                    value={formData.dob || ""}
+                    name="dateOfBirth"
+                    value={formData.dateOfBirth || ""}
                     onChange={handleChange}
                     placeholder="YYYY-MM-DD"
                   />
                 ) : (
                   <input
-                    value={formData.dob || ""}
+                    value={formData.dateOfBirth || ""}
                     readOnly
                   />
                 )}
@@ -315,21 +315,18 @@ export default function UserModal({
 
                 {isEdit ? (
                   <input
-                    name="taxId"
-                    value={formData.recruitment?.taxId || ""}
+                    name="taxCode"
+                    value={formData.taxCode || ""}
                     onChange={(e) =>
                       setFormData((prev) => ({
                         ...prev,
-                        recruitment: {
-                          ...prev.recruitment,
-                          taxId: e.target.value,
-                        },
+                        taxCode: e.target.value,
                       }))
                     }
                   />
                 ) : (
                   <input
-                    value={formData.recruitment?.taxId || ""}
+                    value={formData.taxCode || ""}
                     readOnly
                   />
                 )}
@@ -342,20 +339,17 @@ export default function UserModal({
                 {isEdit ? (
                   <input
                     name="citizenId"
-                    value={formData.recruitment?.citizenId || ""}
+                    value={formData.citizenId || ""}
                     onChange={(e) =>
                       setFormData((prev) => ({
                         ...prev,
-                        recruitment: {
-                          ...prev.recruitment,
-                          citizenId: e.target.value,
-                        },
+                        citizenId: e.target.value,
                       }))
                     }
                   />
                 ) : (
                   <input
-                    value={formData.recruitment?.citizenId || ""}
+                    value={formData.citizenId || ""}
                     readOnly
                   />
                 )}
@@ -367,21 +361,18 @@ export default function UserModal({
 
                 {isEdit ? (
                   <input
-                    name="bank"
-                    value={formData.recruitment?.bank || ""}
+                    name="bankAccountName"
+                    value={formData.bankAccountName || ""}
                     onChange={(e) =>
                       setFormData((prev) => ({
                         ...prev,
-                        recruitment: {
-                          ...prev.recruitment,
-                          bank: e.target.value,
-                        },
+                        bankAccountName: e.target.value,
                       }))
                     }
                   />
                 ) : (
                   <input
-                    value={formData.recruitment?.bank || ""}
+                    value={formData.bankAccountName || ""}
                     readOnly
                   />
                 )}
@@ -393,21 +384,18 @@ export default function UserModal({
 
                 {isEdit ? (
                   <input
-                    name="social"
-                    value={formData.recruitment?.social || ""}
+                    name="socialLink"
+                    value={formData.socialLink || ""}
                     onChange={(e) =>
                       setFormData((prev) => ({
                         ...prev,
-                        recruitment: {
-                          ...prev.recruitment,
-                          social: e.target.value,
-                        },
+                        socialLink: e.target.value,
                       }))
                     }
                   />
                 ) : (
                   <input
-                    value={formData.recruitment?.social || ""}
+                    value={formData.socialLink || ""}
                     readOnly
                   />
                 )}
@@ -420,21 +408,18 @@ export default function UserModal({
                 {isEdit ? (
                   <input
                     name="releaseDate"
-                    value={formData.recruitment?.releaseDate || ""}
+                    value={formData.releaseDate || ""}
                     onChange={(e) =>
                       setFormData((prev) => ({
                         ...prev,
-                        recruitment: {
-                          ...prev.recruitment,
-                          releaseDate: e.target.value,
-                        },
+                        releaseDate: e.target.value,
                       }))
                     }
                     placeholder="YYYY-MM-DD"
                   />
                 ) : (
                   <input
-                    value={formData.recruitment?.releaseDate || ""}
+                    value={formData.releaseDate || ""}
                     readOnly
                   />
                 )}

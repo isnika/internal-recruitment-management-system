@@ -1,31 +1,14 @@
 import { request } from "./axiosClient";
 
-/** GET current candidate profile */
-export const getMyProfile = async () => {
-  return request.get("/api/candidates/profile");
-};
+export const getAllUsers = () => request.get("/api/users");
+export const getUserById = (id: number) => request.get(`/api/users/${id}`);
+export const createUser = (data: any) => request.post("/api/users", data);
+export const updateUser = (id: number, data: any) => request.put(`/api/users/${id}`, data);
+export const deleteUser = (id: number) => request.delete(`/api/users/${id}`);
 
-/** GET candidate by id */
-export const getCandidateProfileById = async (userId: number) => {
-  return request.get(`/api/candidates/profiles/${userId}`);
-};
+// Stubs for future integrations
+export const getAllCompanies = () => request.get("/api/companies");
+export const updateCompany = (id: number, data: any) => request.put(`/api/companies/${id}`, data);
 
-/** UPDATE profile */
-export const updateProfile = async (payload: any) => {
-  return request.put("/api/candidates/profile", payload);
-};
-
-/** UPLOAD avatar */
-export const uploadAvatar = async (file: File) => {
-  const formData = new FormData();
-  formData.append("file", file);
-
-  return request.put("/api/candidates/profile/avatar", formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
-};
-
-/** GET ALL */
-export const getAllProfiles = async () => {
-  return request.get("/api/candidates/profiles");
-};
+export const getAllJobs = () => request.get("/api/jobs");
+export const updateJob = (id: number, data: any) => request.put(`/api/jobs/${id}`, data);

@@ -1,7 +1,9 @@
-import { User } from "./user";
-
 export interface AuthResponse {
-  accessToken: string;
-  refreshToken: string;
-  user: User;
+  status: number;
+  message: string;
+  token: string;
+  type: string;
+  userId: number;
+  email: string;
+  role: string;
 }

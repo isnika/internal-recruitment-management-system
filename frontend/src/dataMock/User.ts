@@ -1,6 +1,7 @@
 import type { User } from "../types/user";
+import type { CandidateProfile } from "../types/candidate";
 
-export const users: User[] = [
+export const users: (User & CandidateProfile & { recruitment?: any, password?: string, username?: string, dob?: string })[] = [
   {
     id: 1,
     username: "admin",

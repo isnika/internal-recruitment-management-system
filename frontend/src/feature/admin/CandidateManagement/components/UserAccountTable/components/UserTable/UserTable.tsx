@@ -3,18 +3,18 @@ import { FiEye, FiEdit2, FiTrash2 } from "react-icons/fi";
 
 import styles from "./UserTable.module.css";
 
-import type { User } from "../../../../../../../../types/user";
-import { getAllProfiles } from "../../../../../../../service/userApi";
+import type { CandidateProfile } from "../../../../../../../../types/candidate";
+import { getAllProfiles } from "../../../../../../../service/candidateApi";
 
 import UserModal from "../UserModal/UserModal";
 
 type ModalMode = "view" | "edit";
 
 export default function UserTable() {
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<CandidateProfile[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [selectedUser, setSelectedUser] = useState<CandidateProfile | null>(null);
   const [modalMode, setModalMode] =
     useState<ModalMode>("view");
 
@@ -24,14 +24,10 @@ export default function UserTable() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const allUsers = await getAllProfiles();
+        const response: any = await getAllProfiles();
+        const candidateUsers = response?.data || response;
 
-        const candidateUsers = allUsers.filter(
-          (user: any) =>
-            user.role?.toUpperCase?.() === "CANDIDATE"
-        );
-
-        setUsers(candidateUsers);
+        setUsers(Array.isArray(candidateUsers) ? candidateUsers : []);
       } catch (error) {
         console.error(
           "Failed to fetch users:",
@@ -60,7 +56,7 @@ export default function UserTable() {
   // OPEN MODAL
   //  
   const openModal = (
-    user: User,
+    user: CandidateProfile,
     mode: ModalMode
   ) => {
     setSelectedUser(user);

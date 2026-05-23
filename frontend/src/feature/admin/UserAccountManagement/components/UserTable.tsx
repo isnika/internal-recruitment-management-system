@@ -82,7 +82,7 @@ const UserTable: React.FC<UserTableProps> = ({
                   <td className={styles.cellId}>{index + 1}</td>
                   <td>
                     <div className={styles.userCell}>
-                      <span className={styles.userName}>{user.fullName}</span>
+                      <span className={styles.userName}>{`${user.firstName || ''} ${user.lastName || ''}`.trim()}</span>
                     </div>
                   </td>
                   <td className={styles.cellEmail}>{user.email}</td>
@@ -116,7 +116,7 @@ const UserTable: React.FC<UserTableProps> = ({
                   <td>
                     <span
                       className={`${styles.statusBadge} ${
-                        (user.status || "Active") === "Active"
+                        (user.status || "Active").toLowerCase() === "active"
                           ? styles.statusActive
                           : styles.statusInactive
                       }`}
@@ -130,28 +130,28 @@ const UserTable: React.FC<UserTableProps> = ({
                         className={styles.actionBtn}
                         title="Change Role"
                         onClick={() => onStartEditRole(user)}
-                        aria-label={`Change role for ${user.fullName}`}
+                        aria-label={`Change role for ${user.firstName} ${user.lastName}`}
                       >
                         <FiShield />
                       </button>
                       <button
                         className={styles.actionBtn}
                         title={
-                          (user.status || "Active") === "Active"
+                          (user.status || "Active").toLowerCase() === "active"
                             ? "Block Account"
                             : "Unlock Account"
                         }
                         onClick={() => onToggleStatus(user.id)}
                         style={{
-                          color: (user.status || "Active") === "Active" ? "#64748b" : "#ef4444",
+                          color: (user.status || "Active").toLowerCase() === "active" ? "#64748b" : "#ef4444",
                         }}
                         aria-label={
-                          (user.status || "Active") === "Active"
-                            ? `Block ${user.fullName}`
-                            : `Unlock ${user.fullName}`
+                          (user.status || "Active").toLowerCase() === "active"
+                            ? `Block ${user.firstName} ${user.lastName}`
+                            : `Unlock ${user.firstName} ${user.lastName}`
                         }
                       >
-                        {(user.status || "Active") === "Active" ? (
+                        {(user.status || "Active").toLowerCase() === "active" ? (
                           <FiUnlock />
                         ) : (
                           <FiLock />
@@ -161,7 +161,7 @@ const UserTable: React.FC<UserTableProps> = ({
                         className={styles.actionBtn}
                         title="Reset Password"
                         onClick={() => onResetPassword(user.id)}
-                        aria-label={`Reset password for ${user.fullName}`}
+                        aria-label={`Reset password for ${user.firstName} ${user.lastName}`}
                       >
                         <FiKey />
                       </button>
@@ -170,7 +170,7 @@ const UserTable: React.FC<UserTableProps> = ({
                         title="Delete User"
                         onClick={() => onDeleteUser(user.id)}
                         style={{ color: "#ef4444" }}
-                        aria-label={`Delete ${user.fullName}`}
+                        aria-label={`Delete ${user.firstName} ${user.lastName}`}
                       >
                         <FiTrash2 />
                       </button>

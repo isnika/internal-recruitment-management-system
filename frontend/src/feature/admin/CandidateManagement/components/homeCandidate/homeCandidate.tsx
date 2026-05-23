@@ -1,12 +1,13 @@
 import styles from "./homeCandidate.module.css";
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 import CandidateTable from "../CandidateAccountTable/candidateTable";
 import UserAccountTable from "../UserAccountTable/userAccountTable";
 
 import CandidateFilterBar from "../CandidateFilterBar/CandidateFilterBar";
 
-import { users } from "../../../../../dataMock/User";
+import * as userApi from "../../../../../service/userApi";
+import { getAllProfiles } from "../../../../../service/candidateApi";
 
 const HomeCandidate = () => {
   // active table
@@ -15,14 +16,33 @@ const HomeCandidate = () => {
   >(null);
 
   // statistics
-  const totalUsers = useMemo(() => {
-    return users.length;
-  }, []);
+  const [totalUsers, setTotalUsers] = useState<number>(0);
+  const [totalCandidates, setTotalCandidates] = useState<number>(0);
 
-  const totalCandidates = useMemo(() => {
-    return users.filter(
-      (user) => user.role === "candidate"
-    ).length;
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const [usersRes, candidatesRes] = await Promise.all([
+          userApi.getAllUsers(),
+          getAllProfiles()
+        ]);
+        
+        const usersData = (usersRes as any)?.data || usersRes;
+        const candidatesData = (candidatesRes as any)?.data || candidatesRes;
+        
+        if (Array.isArray(usersData)) {
+          setTotalUsers(usersData.length);
+        }
+        
+        if (Array.isArray(candidatesData)) {
+          setTotalCandidates(candidatesData.length);
+        }
+      } catch (error) {
+        console.error("Failed to fetch stats:", error);
+      }
+    };
+    
+    fetchStats();
   }, []);
 
   // handlers

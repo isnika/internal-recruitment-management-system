@@ -17,7 +17,7 @@ import { ToastProvider } from "../../../../../components/Toast";
 const menus = [
   { path: "dashboard", label: "Dashboard", icon: <FiGrid /> },
   { path: "users", label: "User Management", icon: <FiUsers /> },
-  { path: "candidates", label: "Candidate Management", icon: <FiUserCheck /> },
+  // { path: "candidates", label: "Candidate Management", icon: <FiUserCheck /> },
   { path: "job-approval", label: "Job Approval", icon: <FiBriefcase /> },
   { path: "companies", label: "Company Management", icon: <FiCompass /> },
   { path: "applications", label: "Application Monitoring", icon: <FiLayers /> },

@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useAuth } from "../../../auth/context/AuthContext";
-import { getMyProfile, updateProfile, uploadAvatar } from "../../../../service/userApi";
+import { getMyProfile, updateProfile, uploadAvatar } from "../../../../service/candidateApi";
 import PersonalSection from "./PersonalSection";
 import RecruitmentSection from "./RecruitmentSection";
 import styles from "./PersonalProfile.module.css";

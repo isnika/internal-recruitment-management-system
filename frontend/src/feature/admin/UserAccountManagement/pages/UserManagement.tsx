@@ -1,30 +1,74 @@
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
 import type { User } from "../../../../types/user";
 import styles from "./UserManagement.module.css";
 import UserFilters from "../components/UserFilters";
 import UserTable from "../components/UserTable";
 
-import { users as initialUsers } from "../../../../dataMock/User";
+import * as userApi from "../../../../service/userApi";
+import { useToast } from "../../../../components/Toast";
 
 const UserManagement: React.FC = () => {
-  const [usersList, setUsersList] = useState(initialUsers);
+  const [usersList, setUsersList] = useState<User[]>([]);
+  const toast = useToast();
 
-  // Mock functions for the props that were removed
-  const onToggleStatus = useCallback((id: number) => {
-    setUsersList(prev => prev.map(u => u.id === id ? { ...u, status: u.status === "Active" ? "Inactive" : "Active" } : u));
+  useEffect(() => {
+    fetchUsers();
   }, []);
 
-  const onResetPassword = useCallback((id: number) => {
-    alert("Password reset simulated.");
-  }, []);
+  const fetchUsers = async () => {
+    try {
+      const response: any = await userApi.getAllUsers();
+      const data = response?.data || response;
+      setUsersList(Array.isArray(data) ? data.map(u => ({...u, status: u.status || "Active"})) : []);
+    } catch (error) {
+      toast.error("Failed to fetch users");
+      console.error(error);
+    }
+  };
 
-  const onDeleteUser = useCallback((id: number) => {
-    setUsersList(prev => prev.filter(u => u.id !== id));
-  }, []);
+  const onToggleStatus = useCallback(async (id: number) => {
+    setUsersList(prev => prev.map(u => {
+      if (u.id === id) {
+        const newStatus = u.status === "Active" ? "Inactive" : "Active";
+        toast.success("Toggled status locally");
+        return { ...u, status: newStatus };
+      }
+      return u;
+    }));
+  }, [toast]);
 
-  const onSaveRole = useCallback((id: number, newRole: string) => {
-    setUsersList(prev => prev.map(u => u.id === id ? { ...u, role: newRole } : u));
-  }, []);
+  const onResetPassword = useCallback(async (id: number) => {
+    if (window.confirm("Are you sure you want to reset the password to '123456'?")) {
+      try {
+        await userApi.updateUser(id, { password: "123456" });
+        toast.success("Password reset successfully");
+      } catch (error) {
+        toast.error("Failed to reset password");
+      }
+    }
+  }, [toast]);
+
+  const onDeleteUser = useCallback(async (id: number) => {
+    if (window.confirm("Are you sure you want to delete this user?")) {
+      try {
+        await userApi.deleteUser(id);
+        setUsersList(prev => prev.filter(u => u.id !== id));
+        toast.success("User deleted successfully");
+      } catch (error) {
+        toast.error("Failed to delete user");
+      }
+    }
+  }, [toast]);
+
+  const onSaveRole = useCallback(async (id: number, newRole: string) => {
+    try {
+      await userApi.updateUser(id, { role: newRole });
+      setUsersList(prev => prev.map(u => u.id === id ? { ...u, role: newRole } : u));
+      toast.success("Role updated successfully");
+    } catch (error) {
+      toast.error("Failed to update role");
+    }
+  }, [toast]);
 
   const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
@@ -40,7 +84,8 @@ const UserManagement: React.FC = () => {
   const filtered = useMemo(() => {
     return usersList.filter((u) => {
       const matchSearch =
-        u.fullName.toLowerCase().includes(search.toLowerCase()) ||
+        u.firstName.toLowerCase().includes(search.toLowerCase()) ||
+        u.lastName.toLowerCase().includes(search.toLowerCase()) ||
         u.email.toLowerCase().includes(search.toLowerCase());
       const matchRole = roleFilter === "all" || u.role === roleFilter;
       const matchStatus =
