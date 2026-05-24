@@ -18,7 +18,4 @@ public interface AuthService {
     ResetPasswordResponse  resetPassword(ForgotPassword.ResetPasswordRequest request);
 
     AuthResponse  loginWithGoogle(GoogleLoginRequest request);
-    UserResponse  updateProfile(UpdateProfileRequest request);
-    UserResponse  uploadAvatar(MultipartFile file);
-    UserResponse  updateRecruitmentInfo(UpdateRecruitmentInfoRequest request);
 }

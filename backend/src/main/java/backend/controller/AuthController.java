@@ -68,17 +68,4 @@ public class AuthController {
         return ResponseEntity.ok(wrap(res, "Login with Google success", 200));
     }
 
-    @PatchMapping("/me/profile")
-    public ResponseEntity<ApiResponse<UserResponse>> updateProfile(
-            @RequestBody UpdateProfileRequest request) {
-        UserResponse res = authService.updateProfile(request);
-        return ResponseEntity.ok(wrap(res, "Profile updated", 200));
-    }
-
-    @PatchMapping("/me/recruitment-info")
-    public ResponseEntity<ApiResponse<UserResponse>> updateRecruitmentInfo(
-            @RequestBody UpdateRecruitmentInfoRequest request) {
-        UserResponse res = authService.updateRecruitmentInfo(request);
-        return ResponseEntity.ok(wrap(res, "Recruitment info updated", 200));
-    }
 }
