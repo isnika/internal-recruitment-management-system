@@ -7,6 +7,7 @@ import backend.DTO.category.CategoryResponse;
 import backend.DTO.company.CompanyResponse;
 import backend.DTO.experiencelevel.ExperienceLevelResponse;
 import backend.DTO.skill.SkillResponse;
+import backend.Enum.JobStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -29,7 +30,7 @@ public class JobResponse {
 
     private String location;
     private String type;
-    private String status;
+    private JobStatus status;
 
     private LocalDate deadline;
 

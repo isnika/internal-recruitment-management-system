@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import backend.DTO.job.CreateJobRequest;
 import backend.DTO.job.JobFilterRequest;
 import backend.DTO.job.JobResponse;
+import backend.Enum.JobStatus;
 import backend.entity.Category;
 import backend.entity.Company;
 import backend.entity.ExperienceLevel;
@@ -58,7 +59,7 @@ public class JobServiceImpl implements JobService {
     Set<Skill> skills = findSkillsByIds(request.getSkillIds());
 
     Job job = JobMapper.toEntity(request, company, category, experienceLevel, skills);
-    job.setStatus("ACTIVE");
+    job.setStatus(JobStatus.ACTIVE);
     job.setCreatedAt(LocalDateTime.now());
     job.setUpdatedAt(LocalDateTime.now());
 
@@ -82,6 +83,9 @@ public class JobServiceImpl implements JobService {
     Set<Skill> skills = findSkillsByIds(request.getSkillIds());
 
     JobMapper.updateEntity(job, request, company, category, experienceLevel, skills);
+    if (request.getStatus() != null) {
+      job.setStatus(request.getStatus());
+    }
     job.setUpdatedAt(LocalDateTime.now());
 
     return JobMapper.toResponse(jobRepository.save(job));
@@ -98,7 +102,7 @@ public class JobServiceImpl implements JobService {
   @Transactional
   public JobResponse softDeleteJob(Long jobId) {
     Job job = findJobById(jobId);
-    job.setStatus("INACTIVE");
+    job.setStatus(JobStatus.CLOSED);
     job.setUpdatedAt(LocalDateTime.now());
     return JobMapper.toResponse(jobRepository.save(job));
   }

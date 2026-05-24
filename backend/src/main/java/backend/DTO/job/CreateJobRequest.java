@@ -3,6 +3,7 @@ package backend.DTO.job;
 import java.time.LocalDate;
 import java.util.List;
 
+import backend.Enum.JobStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,6 +26,7 @@ public class CreateJobRequest {
   private String location;
   private String type;
   private LocalDate deadline;
+  private JobStatus status;
 
   private Long companyId;
   private Long categoryId;
