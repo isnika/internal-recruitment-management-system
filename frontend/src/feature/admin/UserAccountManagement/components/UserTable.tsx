@@ -97,7 +97,6 @@ const UserTable: React.FC<UserTableProps> = ({
                         >
                           <option value="candidate">Candidate</option>
                           <option value="company">Employer</option>
-                          <option value="hr">HR</option>
                           <option value="admin">Admin</option>
                         </select>
                         <button

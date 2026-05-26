@@ -6,19 +6,39 @@ import JobFilters from "../components/JobFilters";
 import JobTable from "../components/JobTable";
 import JobDetailModal from "../components/JobDetailModal";
 
-import { jobs as initialJobs } from "../../../../dataMock/Job";
-
+import { fetchJobsApi } from "../../../../service/jobApi";
+import { useToast } from "../../../../components/Toast";
 const JobApproval: React.FC = () => {
-  const [jobs, setJobs] = useState(initialJobs);
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const toast = useToast();
+
+  React.useEffect(() => {
+    loadJobs();
+  }, []);
+
+  const loadJobs = async () => {
+    try {
+      setIsLoading(true);
+      const res = await fetchJobsApi("View All", 1, 500); // Fetch up to 500 jobs
+      setJobs(res.jobs);
+    } catch (err: any) {
+      toast.error("Failed to fetch jobs from API");
+      console.error(err);
+      setError(err?.message || "Failed to load jobs from server.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const onApprove = (id: string) => {
     setJobs(prev => prev.map(j => j.id === id ? { ...j, status: "ACTIVE" } : j));
-    alert("Job Approved!");
+    toast.success("Job Approved (Local only - API missing)");
   };
 
   const onReject = (id: string, reason: string) => {
     setJobs(prev => prev.map(j => j.id === id ? { ...j, status: "REJECTED" } : j));
-    alert(`Job Rejected: ${reason}`);
+    toast.success(`Job Rejected (Local only - API missing): ${reason}`);
   };
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -92,6 +112,13 @@ const JobApproval: React.FC = () => {
         <div className={styles.errorBanner}>
           <span>{error}</span>
           <button onClick={() => setError(null)} className={styles.errorClose}>×</button>
+        </div>
+      )}
+
+      {/* Loading Indicator */}
+      {isLoading && (
+        <div style={{ textAlign: "center", padding: "20px", color: "#64748b" }}>
+          Loading jobs from server...
         </div>
       )}
 

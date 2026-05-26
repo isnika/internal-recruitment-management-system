@@ -74,7 +74,9 @@ export const request = {
   get: <T>(url: string, config?: any): Promise<T> =>
     axiosClient.get(url, config),
   post: <T>(url: string, data?: any): Promise<T> => axiosClient.post(url, data),
+  put: <T>(url: string, data?: any, config?: any): Promise<T> => axiosClient.put(url, data, config),
   patch: <T>(url: string, data?: any, config?: any): Promise<T> => axiosClient.patch(url, data, config),
+  delete: <T>(url: string, config?: any): Promise<T> => axiosClient.delete(url, config),
 };
 
 export default axiosClient;

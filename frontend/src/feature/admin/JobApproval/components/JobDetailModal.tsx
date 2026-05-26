@@ -65,27 +65,27 @@ const JobDetailModal: React.FC<JobDetailModalProps> = ({
           </div>
         </div>
         <div className={styles.modalFooter}>
-          {(selectedJob.status || "pending") === "pending" && (
-            <>
-              <button
-                className={styles.actionBtnGreen}
-                onClick={() => {
-                  onApprove(selectedJob.id);
-                  onClose();
-                }}
-              >
-                <FiCheck /> Approve Job
-              </button>
-              <button
-                className={styles.actionBtnRed}
-                onClick={() => {
-                  onReject(selectedJob.id);
-                  onClose();
-                }}
-              >
-                <FiX /> Reject Job
-              </button>
-            </>
+          {selectedJob.status?.toLowerCase() !== "active" && (
+            <button
+              className={styles.actionBtnGreen}
+              onClick={() => {
+                onApprove(selectedJob.id);
+                onClose();
+              }}
+            >
+              <FiCheck /> Approve Job
+            </button>
+          )}
+          {selectedJob.status?.toLowerCase() !== "rejected" && (
+            <button
+              className={styles.actionBtnRed}
+              onClick={() => {
+                onReject(selectedJob.id);
+                onClose();
+              }}
+            >
+              <FiX /> Reject Job
+            </button>
           )}
           <button className={styles.cancelBtn} onClick={onClose}>
             Close

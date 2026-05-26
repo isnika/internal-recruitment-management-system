@@ -78,25 +78,25 @@ const JobTable: React.FC<JobTableProps> = ({
                   >
                     <FiEye /> View
                   </button>
-                  {(job.status || "pending") === "pending" && (
-                    <>
-                      <button
-                        className={styles.actionBtnGreen}
-                        title="Approve Job"
-                        onClick={() => onApprove(job.id)}
-                        aria-label={`Approve ${job.title}`}
-                      >
-                        <FiCheck /> Approve
-                      </button>
-                      <button
-                        className={styles.actionBtnRed}
-                        title="Reject Job"
-                        onClick={() => onReject(job.id)}
-                        aria-label={`Reject ${job.title}`}
-                      >
-                        <FiX /> Reject
-                      </button>
-                    </>
+                  {job.status?.toLowerCase() !== "active" && (
+                    <button
+                      className={styles.actionBtnGreen}
+                      title="Approve Job"
+                      onClick={() => onApprove(job.id)}
+                      aria-label={`Approve ${job.title}`}
+                    >
+                      <FiCheck /> Approve
+                    </button>
+                  )}
+                  {job.status?.toLowerCase() !== "rejected" && (
+                    <button
+                      className={styles.actionBtnRed}
+                      title="Reject Job"
+                      onClick={() => onReject(job.id)}
+                      aria-label={`Reject ${job.title}`}
+                    >
+                      <FiX /> Reject
+                    </button>
                   )}
                 </div>
               </td>
