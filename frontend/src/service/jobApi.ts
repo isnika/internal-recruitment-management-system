@@ -98,6 +98,36 @@ const mapJobFromApi = (item: any): Job => {
 };
 
 //  
+// UPDATE JOB STATUS
+//  
+export const updateJobStatusApi = async (id: string, newStatus: string): Promise<void> => {
+  if (IS_MOCK) return;
+  // 1. Fetch raw job from API to get all required IDs for the PUT request
+  const rawJob = await request.get<any>(`/api/jobs/${id}`);
+  
+  // 2. Build the CreateJobRequest payload
+  const payload = {
+    title: rawJob.title,
+    description: rawJob.description,
+    requirements: rawJob.requirements,
+    benefits: rawJob.benefits,
+    salaryMin: rawJob.salaryMin,
+    salaryMax: rawJob.salaryMax,
+    location: rawJob.location,
+    type: rawJob.type,
+    deadline: rawJob.deadline,
+    status: newStatus,
+    companyId: rawJob.company?.id,
+    categoryId: rawJob.category?.id,
+    experienceLevelId: rawJob.experienceLevel?.id,
+    skillIds: rawJob.skills?.map((s: any) => s.id) || []
+  };
+
+  // 3. Send PUT request
+  await request.put(`/api/jobs/${id}`, payload);
+};
+
+//  
 // GET ALL JOBS
 //  
 

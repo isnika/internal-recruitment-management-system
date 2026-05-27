@@ -59,9 +59,9 @@ const UserFilters: React.FC<UserFiltersProps> = ({
             onChange={(e) => setRoleFilter(e.target.value)}
           >
             <option value="all">All Roles</option>
-            <option value="admin">Admin</option>
-            <option value="company">Employer</option>
-            <option value="candidate">Candidate</option>
+            <option value="ADMIN">Admin</option>
+            <option value="RECRUITER">Employer</option>
+            <option value="CANDIDATE">Candidate</option>
           </select>
 
           <select

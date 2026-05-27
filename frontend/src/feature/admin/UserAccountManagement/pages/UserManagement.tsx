@@ -27,15 +27,17 @@ const UserManagement: React.FC = () => {
   };
 
   const onToggleStatus = useCallback(async (id: number) => {
-    setUsersList(prev => prev.map(u => {
-      if (u.id === id) {
-        const newStatus = u.status === "Active" ? "Inactive" : "Active";
-        toast.success("Toggled status locally");
-        return { ...u, status: newStatus };
-      }
-      return u;
-    }));
-  }, [toast]);
+    try {
+      const userToUpdate = usersList.find(u => u.id === id);
+      if (!userToUpdate) return;
+      const newStatus = userToUpdate.status === "ACTIVE" ? "INACTIVE" : "ACTIVE";
+      await userApi.updateUser(id, { status: newStatus });
+      setUsersList(prev => prev.map(u => u.id === id ? { ...u, status: newStatus } : u));
+      toast.success("Toggled status successfully");
+    } catch (error) {
+      toast.error("Failed to toggle status");
+    }
+  }, [usersList, toast]);
 
   const onResetPassword = useCallback(async (id: number) => {
     if (window.confirm("Are you sure you want to reset the password to '123456'?")) {

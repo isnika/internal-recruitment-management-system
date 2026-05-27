@@ -76,7 +76,7 @@ const JobDetailModal: React.FC<JobDetailModalProps> = ({
               <FiCheck /> Approve Job
             </button>
           )}
-          {selectedJob.status?.toLowerCase() !== "rejected" && (
+          {selectedJob.status?.toLowerCase() !== "closed" && (
             <button
               className={styles.actionBtnRed}
               onClick={() => {

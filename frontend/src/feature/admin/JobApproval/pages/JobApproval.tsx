@@ -6,7 +6,7 @@ import JobFilters from "../components/JobFilters";
 import JobTable from "../components/JobTable";
 import JobDetailModal from "../components/JobDetailModal";
 
-import { fetchJobsApi } from "../../../../service/jobApi";
+import { fetchJobsApi, updateJobStatusApi } from "../../../../service/jobApi";
 import { useToast } from "../../../../components/Toast";
 const JobApproval: React.FC = () => {
   const [jobs, setJobs] = useState<Job[]>([]);
@@ -31,14 +31,26 @@ const JobApproval: React.FC = () => {
     }
   };
 
-  const onApprove = (id: string) => {
-    setJobs(prev => prev.map(j => j.id === id ? { ...j, status: "ACTIVE" } : j));
-    toast.success("Job Approved (Local only - API missing)");
+  const onApprove = async (id: string) => {
+    try {
+      await updateJobStatusApi(id, "ACTIVE");
+      setJobs(prev => prev.map(j => j.id === id ? { ...j, status: "ACTIVE" } : j));
+      toast.success("Job Approved successfully!");
+    } catch (err: any) {
+      toast.error(err?.message || "Failed to approve job on server.");
+      setError(err?.message || "Failed to approve job");
+    }
   };
 
-  const onReject = (id: string, reason: string) => {
-    setJobs(prev => prev.map(j => j.id === id ? { ...j, status: "REJECTED" } : j));
-    toast.success(`Job Rejected (Local only - API missing): ${reason}`);
+  const onReject = async (id: string, reason: string) => {
+    try {
+      await updateJobStatusApi(id, "CLOSED"); // Using CLOSED as REJECTED since REJECTED is not in enum
+      setJobs(prev => prev.map(j => j.id === id ? { ...j, status: "CLOSED" } : j));
+      toast.success(`Job Rejected successfully: ${reason}`);
+    } catch (err: any) {
+      toast.error(err?.message || "Failed to reject job on server.");
+      setError(err?.message || "Failed to reject job");
+    }
   };
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -67,7 +79,7 @@ const JobApproval: React.FC = () => {
     setError(null);
   };
 
-  const handleConfirmReject = () => {
+  const handleConfirmReject = async () => {
     if (!rejectingId || !rejectReason.trim()) {
       setError("Please provide a reason for rejection");
       return;
@@ -76,7 +88,7 @@ const JobApproval: React.FC = () => {
     try {
       setIsProcessing(true);
       setError(null);
-      onReject(rejectingId, rejectReason);
+      await onReject(rejectingId, rejectReason);
       setRejectingId(null);
       setRejectReason("");
     } catch (err) {
@@ -86,11 +98,11 @@ const JobApproval: React.FC = () => {
     }
   };
 
-  const handleApprove = (id: string) => {
+  const handleApprove = async (id: string) => {
     try {
       setIsProcessing(true);
       setError(null);
-      onApprove(id);
+      await onApprove(id);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to approve job");
     } finally {
