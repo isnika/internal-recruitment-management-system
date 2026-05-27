@@ -10,16 +10,16 @@ import { FaBookmark } from "react-icons/fa";
 import type { Job } from "../../../../types/job";
 
 // FORMAT SALARY
-const formatSalary = (salary: Job["salary"]) => {
-  const min = salary.min / 1000000;
-  const max = salary.max / 1000000;
+const formatSalary = (job: Job) => {
+  const min = job.salaryMin / 1000000;
+  const max = job.salaryMax / 1000000;
 
-  return `${min}M - ${max}M ${salary.currency}`;
+  return `${min}M - ${max}M VND`;
 };
 
 interface JobCardProps {
   job: Job;
-  onBookmark: (id: string) => void;
+  onBookmark: (id: number) => void;
 }
 
 const JobCard: React.FC<JobCardProps> = ({
@@ -33,7 +33,10 @@ const JobCard: React.FC<JobCardProps> = ({
       {/* LOGO */}
       <div className={styles.jobLogoCol}>
         <img
-          src={job.logo}
+          src={
+            job.company?.logoUrl ||
+            "/images/default-company.png"
+          }
           alt={job.title}
           className={styles.logoImage}
         />
@@ -46,7 +49,7 @@ const JobCard: React.FC<JobCardProps> = ({
         </h3>
 
         <p className={styles.jobCategory}>
-          {job.category}
+          {job.category?.name}
         </p>
 
         {/* SKILLS */}
@@ -56,17 +59,17 @@ const JobCard: React.FC<JobCardProps> = ({
           </span>
 
           {job.skills
-            .slice(0, 3)
+            ?.slice(0, 3)
             .map((skill) => (
               <span
-                key={skill}
+                key={skill.id}
                 className={styles.skillTag}
               >
-                {skill}
+                {skill.name}
               </span>
             ))}
 
-          {job.skills.length > 3 && (
+          {(job.skills?.length || 0) > 3 && (
             <span className={styles.moreSkill}>
               +{job.skills.length - 3}
             </span>
@@ -81,7 +84,7 @@ const JobCard: React.FC<JobCardProps> = ({
             />
 
             <span className={styles.metaBold}>
-              {formatSalary(job.salary)}
+              {formatSalary(job)}
             </span>
           </div>
 
@@ -101,17 +104,12 @@ const JobCard: React.FC<JobCardProps> = ({
       <div className={styles.jobActionCol}>
         <div className={styles.jobTopRight}>
           <span className={styles.jobPostedAt}>
-            {job.postedAt}
+            {job.deadline}
           </span>
 
           <button
             className={styles.bookmarkBtn}
             onClick={() => onBookmark(job.id)}
-            title={
-              job.isBookmarked
-                ? "Bỏ lưu"
-                : "Lưu công việc"
-            }
           >
             {job.isBookmarked ? (
               <FaBookmark

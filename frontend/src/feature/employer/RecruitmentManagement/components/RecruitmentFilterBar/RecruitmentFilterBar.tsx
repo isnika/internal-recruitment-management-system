@@ -6,9 +6,9 @@ import { useHomeMetadata } from "../../../../../hooks/useHomeMetadata";
 
 interface RecruitmentFilterBarProps {
   onSearch: (query: string) => void;
-  onCategoryChange: (categoryId: string) => void;
+  onCategoryChange: (categoryId: number | "") => void;
   onStatusChange: (status: string) => void;
-  onEmploymentTypeChange: (type: string) => void;
+  onEmploymentTypeChange: (skillId: number | "") => void;
   onCreateJob: () => void;
 }
 
@@ -32,7 +32,8 @@ const RecruitmentFilterBar: React.FC<RecruitmentFilterBarProps> = ({
   const statuses = [
     { label: "All Statuses", value: "" },
     { label: "Draft", value: "DRAFT" },
-    { label: "Open", value: "OPEN" },
+    { label: "Active", value: "ACTIVE" },
+    { label: "Paused", value: "PAUSED" },
     { label: "Closed", value: "CLOSED" },
   ];
 

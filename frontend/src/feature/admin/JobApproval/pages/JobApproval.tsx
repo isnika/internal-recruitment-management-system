@@ -13,7 +13,6 @@ import { useToast } from "../../../../components/Toast";
 const JobApproval: React.FC = () => {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-
   const [error, setError] = useState<string | null>(null);
 
   const toast = useToast();
@@ -29,7 +28,7 @@ const JobApproval: React.FC = () => {
   const [isProcessing, setIsProcessing] = useState(false);
 
   // =========================
-  // LOAD JOBS
+  // LOAD JOBS (SERVER SIDE)
   // =========================
   const loadJobs = async () => {
     try {
@@ -55,14 +54,14 @@ const JobApproval: React.FC = () => {
   }, [searchTerm, statusFilter]);
 
   // =========================
-  // APPROVE (OPEN JOB)
+  // APPROVE JOB (FIXED)
   // =========================
   const onApprove = async (job: Job) => {
     try {
       setIsProcessing(true);
 
       await jobApi.update(job.id, {
-        status: "OPEN",
+        status: "ACTIVE", // ❌ FIX: KHÔNG CÒN OPEN
       });
 
       toast.success("Job approved");
@@ -76,7 +75,7 @@ const JobApproval: React.FC = () => {
   };
 
   // =========================
-  // REJECT (CLOSE JOB)
+  // REJECT JOB
   // =========================
   const onReject = async (job: Job, reason: string) => {
     try {
@@ -98,7 +97,7 @@ const JobApproval: React.FC = () => {
   };
 
   // =========================
-  // FILTERED VIEW (CLIENT SIDE)
+  // CLIENT FILTER (OPTIONAL - FIXED SAFE)
   // =========================
   const filteredJobs = useMemo(() => {
     return jobs.filter((job) => {
@@ -113,6 +112,9 @@ const JobApproval: React.FC = () => {
     });
   }, [jobs, searchTerm, statusFilter]);
 
+  // =========================
+  // UI
+  // =========================
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>Job Approval System</h1>
@@ -178,7 +180,9 @@ const JobApproval: React.FC = () => {
                 disabled={!rejectReason || isProcessing}
                 onClick={() => {
                   if (!rejectingJob) return;
+
                   onReject(rejectingJob, rejectReason);
+
                   setRejectingJob(null);
                   setRejectReason("");
                 }}

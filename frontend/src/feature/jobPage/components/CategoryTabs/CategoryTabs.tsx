@@ -1,10 +1,18 @@
 import React from "react";
 import styles from "./CategoryTabs.module.css";
 
+interface Category {
+  id: number;
+  name: string;
+}
+
 type Props = {
-  categories?: string[];
-  activeCategory: string;
-  setActiveCategory: (value: string) => void;
+  categories?: Category[];
+
+  activeCategory?: number;
+
+  setActiveCategory: (value: number | undefined) => void;
+
   setCurrentPage: (page: number) => void;
 };
 
@@ -16,31 +24,36 @@ const CategoryTabs = ({
 }: Props) => {
   return (
     <div className={styles.categoriesList}>
+      {/* VIEW ALL */}
       <button
         className={`${styles.categoryBtn} ${
-          activeCategory === "View All"
+          activeCategory === undefined
             ? styles.categoryBtnActive
             : ""
         }`}
-        onClick={() => setActiveCategory("View All")}
+        onClick={() => {
+          setActiveCategory(undefined);
+          setCurrentPage(1);
+        }}
       >
         View All
       </button>
 
-      {categories?.map(cat => (
+      {/* CATEGORY */}
+      {categories?.map((cat) => (
         <button
-          key={cat}
+          key={cat.id}
           className={`${styles.categoryBtn} ${
-            activeCategory === cat
+            activeCategory === cat.id
               ? styles.categoryBtnActive
               : ""
           }`}
           onClick={() => {
-            setActiveCategory(cat);
+            setActiveCategory(cat.id);
             setCurrentPage(1);
           }}
         >
-          {cat}
+          {cat.name}
         </button>
       ))}
     </div>

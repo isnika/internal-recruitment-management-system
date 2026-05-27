@@ -1,14 +1,6 @@
-import React, { useState, useEffect } from "react";
-
-import { jobApi } from "../service/jobApi";
-import { skillApi } from "../service/skillApi";
-import { experienceLevelApi } from "../service/experienceLevelApi";
-
-export interface HomeMetadata {
-  categories: { id: number; name: string }[];
-  skills: Skill[];
-  experienceLevels: ExperienceLevel[];
-}
+import { useEffect, useState } from "react";
+import jobApi from "../service/jobApi";
+import type { HomeMetadata, Job } from "../types/job";
 
 export const useHomeMetadata = () => {
   const [metadata, setMetadata] = useState<HomeMetadata | null>(null);
@@ -16,20 +8,40 @@ export const useHomeMetadata = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const getMeta = async () => {
+    const fetchMetadata = async () => {
       try {
         setIsMetaLoading(true);
 
-        const [jobs, skills, experienceLevels] = await Promise.all([
-          jobApi.getAll(), // 👈 lấy luôn category từ đây
-          skillApi.getAll(),
-          experienceLevelApi.getAll(),
-        ]);
+        // 🔥 LẤY TOÀN BỘ JOB ACTIVE TỪ API FILTER
+        const jobs: Job[] = await jobApi.filter({
+          status: "ACTIVE",
+        });
 
-        // extract unique categories
+        // CATEGORY
         const categories = Array.from(
           new Map(
-            jobs.map(job => [job.category.id, job.category])
+            jobs
+              .filter((job) => job.category)
+              .map((job) => [job.category.id, job.category])
+          ).values()
+        );
+
+        // SKILLS
+        const allSkills = jobs.flatMap((job) => job.skills || []);
+
+        const skills = Array.from(
+          new Map(allSkills.map((skill) => [skill.id, skill])).values()
+        );
+
+        // EXPERIENCE LEVEL
+        const experienceLevels = Array.from(
+          new Map(
+            jobs
+              .filter((job) => job.experienceLevel)
+              .map((job) => [
+                job.experienceLevel.id,
+                job.experienceLevel,
+              ])
           ).values()
         );
 
@@ -39,15 +51,19 @@ export const useHomeMetadata = () => {
           experienceLevels,
         });
       } catch (err: any) {
-        console.error(err);
-        setError(err?.message || "Không thể tải metadata");
+        console.error("❌ METADATA ERROR:", err);
+        setError(err?.message || "Lỗi tải metadata");
       } finally {
         setIsMetaLoading(false);
       }
     };
 
-    getMeta();
+    fetchMetadata();
   }, []);
 
-  return { metadata, isMetaLoading, error };
+  return {
+    metadata,
+    isMetaLoading,
+    error,
+  };
 };

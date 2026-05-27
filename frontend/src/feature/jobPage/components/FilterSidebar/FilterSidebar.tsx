@@ -1,43 +1,17 @@
+import React from "react";
 import styles from "./FilterSidebar.module.css";
-
 import type {
-  JobFilters,
+  JobFilterRequest,
   HomeMetadata,
 } from "../../../../types/job";
 
 interface Props {
-  filters: JobFilters;
-
+  filters: JobFilterRequest;
   metadata: HomeMetadata | null;
 
-  // SEARCH
-  keyword: string;
-
-  location: string;
-
-  status: string;
-
-  onKeywordChange: (
-    value: string
-  ) => void;
-
-  onLocationChange: (
-    value: string
-  ) => void;
-
-  onStatusChange: (
-    value: string
-  ) => void;
-
-  // CHECKBOX FILTER
-  onToggle: (
-    group: keyof JobFilters,
-    value: string
-  ) => void;
-
-  onClearGroup: (
-    group: keyof JobFilters
-  ) => void;
+  onStatusChange: (value: string) => void;
+  onToggleSkill: (id: number) => void;
+  onCategoryChange: (id: number) => void;
 
   onClearAll: () => void;
 }
@@ -45,146 +19,113 @@ interface Props {
 const FilterSidebar = ({
   filters,
   metadata,
-
-  keyword,
-  location,
-  status,
-
-  onKeywordChange,
-  onLocationChange,
   onStatusChange,
-
-  onToggle,
-  onClearGroup,
+  onToggleSkill,
+  onCategoryChange,
   onClearAll,
 }: Props) => {
-  const renderGroup = (
-    title: string,
-    group: keyof JobFilters,
-    options: string[]
-  ) => {
-    if (!options?.length) return null;
-
-    return (
-      <div className={styles.group}>
-        <div className={styles.header}>
-          <span>{title}</span>
-
-          <button
-            onClick={() =>
-              onClearGroup(group)
-            }
-          >
-            Clear
-          </button>
-        </div>
-
-        <div className={styles.list}>
-          {options.map((option) => (
-            <label
-              key={option}
-              className={styles.item}
-            >
-              <input
-                type="checkbox"
-                checked={filters[
-                  group
-                ].includes(option)}
-                onChange={() =>
-                  onToggle(group, option)
-                }
-              />
-
-              <span>{option}</span>
-            </label>
-          ))}
-        </div>
-      </div>
-    );
-  };
-
   return (
     <aside className={styles.sidebar}>
-      {/* TOP */}
       <div className={styles.top}>
         <span className={styles.title}>
-          Filters
+          Bộ lọc tìm kiếm
         </span>
 
         <button
           className={styles.clearAllBtn}
           onClick={onClearAll}
         >
-          Clear All
+          Xóa tất cả
         </button>
       </div>
-
 
       {/* STATUS */}
       <div className={styles.group}>
         <div className={styles.header}>
-          <span>Status</span>
+          <span>Trạng thái</span>
         </div>
 
         <select
-          value={status}
+          value={filters.status || ""}
           onChange={(e) =>
-            onStatusChange(
-              e.target.value
-            )
+            onStatusChange(e.target.value)
           }
           className={styles.select}
         >
-          <option value="">
-            All Jobs
-          </option>
-
+          <option value="">Tất cả</option>
           <option value="ACTIVE">
-            Active Jobs
+            Đang tuyển dụng
           </option>
-
+          <option value="PAUSED">
+            Tạm dừng
+          </option>
           <option value="CLOSED">
-            Closed Jobs
+            Đã đóng
           </option>
-
+          <option value="DRAFT">
+            Bản nháp
+          </option>
         </select>
       </div>
 
-      {/* JOB TYPE */}
-      {renderGroup(
-        "Job Type",
-        "jobTypes",
-        metadata?.jobTypes || []
-      )}
+      {/* CATEGORY */}
+      <div className={styles.group}>
+        <div className={styles.header}>
+          <span>Danh mục</span>
+        </div>
 
-      {/* EXPERIENCE */}
-      {renderGroup(
-        "Experience Level",
-        "experienceLevels",
-        metadata?.experienceLevels ||
-          []
-      )}
+        <div className={styles.list}>
+          {metadata?.categories?.map((category) => (
+            <label
+              key={category.id}
+              className={styles.item}
+            >
+              <input
+                type="checkbox"
+                checked={
+                  filters.categoryId === category.id
+                }
+                onChange={() =>
+                  onCategoryChange(category.id)
+                }
+              />
 
-      {/* DEPARTMENT */}
-      {renderGroup(
-        "Department",
-        "departments",
-        metadata?.departments || []
-      )}
-
-      {/* SALARY */}
-      {renderGroup(
-        "Salary Range",
-        "salaryRanges",
-        metadata?.salaryRanges || []
-      )}
+              <span>{category.name}</span>
+            </label>
+          ))}
+        </div>
+      </div>
 
       {/* SKILLS */}
-      {renderGroup(
-        "Skill Tags",
-        "skillTags",
-        metadata?.skillTags || []
-      )}
+      <div className={styles.group}>
+        <div className={styles.header}>
+          <span>Kỹ năng</span>
+        </div>
+
+        <div className={styles.list}>
+          {metadata?.skills?.map((skill) => {
+            const checked =
+              filters.skillIds?.includes(skill.id);
+
+            return (
+              <label
+                key={skill.id}
+                className={styles.item}
+              >
+                <input
+                  type="checkbox"
+                  checked={checked}
+                  onChange={() =>
+                    onToggleSkill(skill.id)
+                  }
+                />
+
+                <span>{skill.name}</span>
+              </label>
+            );
+          })}
+        </div>
+      </div>
     </aside>
   );
 };

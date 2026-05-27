@@ -93,13 +93,17 @@ export interface CreateJobRequest {
 export interface UpdateJobRequest
   extends CreateJobRequest {}
 
-export interface JobFilterRequest {
+export interface JobFilters {
   keywords?: string;
   minSalary?: number;
   maxSalary?: number;
-  skillIds?: number[];
+
+  skillIds: number[];
   location?: string;
-  categoryId?: number;
+
+  categoryId?: number | null;
+  experienceLevelId?: number | null;
+
   jobType?: string;
-  status?: string;
+  status?: JobStatus | "";
 }

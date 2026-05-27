@@ -2,9 +2,9 @@ import { useEffect, useMemo, useState } from "react";
 import jobApi from "../service/jobApi";
 import type { Job, JobFilterRequest } from "../types/job";
 
-const JOBS_PER_PAGE = 5;
+export const JOBS_PER_PAGE = 5;
 
-const emptyFilters: JobFilterRequest = {
+const initialFilters: JobFilterRequest = {
   keywords: "",
   minSalary: undefined,
   maxSalary: undefined,
@@ -12,124 +12,117 @@ const emptyFilters: JobFilterRequest = {
   location: "",
   categoryId: undefined,
   jobType: "",
-  status: "",
+  status: "ACTIVE",
 };
 
-export const useJobs = (
-  activeCategory?: number,
-  metadataReady?: boolean
-) => {
+export const useJobs = () => {
   const [jobs, setJobs] = useState<Job[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalJobs, setTotalJobs] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
-  const [filters, setFilters] = useState<JobFilterRequest>({
-    ...emptyFilters,
-  });
+  const [filters, setFilters] =
+    useState<JobFilterRequest>(initialFilters);
 
-  // =========================
-  // ACTIVE FILTER COUNT
-  // =========================
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // 🔥 COUNT FILTERS
   const activeCount = useMemo(() => {
     let count = 0;
 
     if (filters.keywords?.trim()) count++;
-    if (filters.minSalary !== undefined) count++;
-    if (filters.maxSalary !== undefined) count++;
     if (filters.location?.trim()) count++;
-    if (filters.categoryId !== undefined) count++;
+    if (filters.categoryId) count++;
     if (filters.jobType) count++;
     if (filters.status) count++;
+    if (filters.minSalary) count++;
+    if (filters.maxSalary) count++;
 
-    count += filters.skillIds?.length || 0;
+    if (filters.skillIds?.length) {
+      count += filters.skillIds.length;
+    }
 
     return count;
   }, [filters]);
 
-  // =========================
-  // FETCH JOBS
-  // =========================
+  // 🔥 FETCH JOBS
   useEffect(() => {
-    if (metadataReady === false) return;
-
     const fetchJobs = async () => {
-      setIsLoading(true);
-
       try {
-        const cleanFilters: JobFilterRequest = Object.fromEntries(
-          Object.entries(filters).filter(([_, value]) => {
-            if (value === "" || value === undefined || value === null) return false;
-            if (Array.isArray(value) && value.length === 0) return false;
-            return true;
-          })
-        );
+        setIsLoading(true);
 
-        // category tab override
-        if (activeCategory !== undefined) {
-          cleanFilters.categoryId = activeCategory;
-        }
+        const cleanFilters: JobFilterRequest = {
+          keywords: filters.keywords || undefined,
+          minSalary: filters.minSalary,
+          maxSalary: filters.maxSalary,
+          location: filters.location || undefined,
+          categoryId: filters.categoryId,
+          jobType: filters.jobType || undefined,
+          status: filters.status || undefined,
+          skillIds:
+            filters.skillIds && filters.skillIds.length > 0
+              ? filters.skillIds
+              : undefined,
+        };
 
-        const data =
-          activeCount > 0 || activeCategory !== undefined
+        const data: Job[] =
+          activeCount > 0
             ? await jobApi.filter(cleanFilters)
-            : await jobApi.getAll();
+            : await jobApi.filter({
+                status: "ACTIVE",
+              });
 
-        // FRONTEND PAGINATION
-        const start = (currentPage - 1) * JOBS_PER_PAGE;
-        const end = start + JOBS_PER_PAGE;
-
-        const paginatedJobs = data.slice(start, end);
-
-        setJobs(paginatedJobs);
-        setTotalJobs(data.length);
-        setTotalPages(Math.ceil(data.length / JOBS_PER_PAGE));
+        setJobs(data);
       } catch (err) {
-        console.error("Lỗi jobs:", err);
+        console.error("❌ FETCH JOBS ERROR:", err);
+        setJobs([]);
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchJobs();
-  }, [activeCategory, currentPage, activeCount, metadataReady]);
+  }, [filters, activeCount]);
 
-  // =========================
-  // TOGGLE SKILL
-  // =========================
+  // PAGINATION
+  const totalJobs = jobs.length;
+
+  const totalPages = Math.ceil(totalJobs / JOBS_PER_PAGE);
+
+  const paginatedJobs = useMemo(() => {
+    const start = (currentPage - 1) * JOBS_PER_PAGE;
+    const end = start + JOBS_PER_PAGE;
+
+    return jobs.slice(start, end);
+  }, [jobs, currentPage]);
+
+  // FILTER ACTIONS
+
   const handleToggleSkill = (skillId: number) => {
     setFilters((prev) => {
-      const list = prev.skillIds || [];
-
-      const newList = list.includes(skillId)
-        ? list.filter((id) => id !== skillId)
-        : [...list, skillId];
+      const exists = prev.skillIds?.includes(skillId);
 
       return {
         ...prev,
-        skillIds: newList,
+        skillIds: exists
+          ? prev.skillIds?.filter((id) => id !== skillId)
+          : [...(prev.skillIds || []), skillId],
       };
     });
 
     setCurrentPage(1);
   };
 
-  // =========================
-  // JOB TYPE
-  // =========================
-  const handleSetJobType = (type: string) => {
+  const handleSetCategory = (categoryId: number) => {
     setFilters((prev) => ({
       ...prev,
-      jobType: prev.jobType === type ? "" : type,
+      categoryId:
+        prev.categoryId === categoryId
+          ? undefined
+          : categoryId,
     }));
 
     setCurrentPage(1);
   };
 
-  // =========================
-  // STATUS
-  // =========================
   const handleSetStatus = (status: string) => {
     setFilters((prev) => ({
       ...prev,
@@ -139,18 +132,22 @@ export const useJobs = (
     setCurrentPage(1);
   };
 
-  // =========================
-  // CLEAR FILTERS
-  // =========================
   const handleClearAll = () => {
-    setFilters({ ...emptyFilters });
+    setFilters(initialFilters);
     setCurrentPage(1);
   };
 
+  const handleBookmark = (jobId: number) => {
+    console.log("BOOKMARK:", jobId);
+  };
+
   return {
-    jobs,
+    jobs: paginatedJobs,
+    allJobs: jobs,
+
     totalJobs,
     totalPages,
+
     currentPage,
     setCurrentPage,
 
@@ -159,13 +156,10 @@ export const useJobs = (
     filters,
     setFilters,
 
-    activeCount,
-
     handleToggleSkill,
-    handleSetJobType,
+    handleSetCategory,
     handleSetStatus,
     handleClearAll,
-
-    JOBS_PER_PAGE,
+    handleBookmark,
   };
 };

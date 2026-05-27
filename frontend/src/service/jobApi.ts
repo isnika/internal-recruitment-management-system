@@ -1,7 +1,8 @@
+import qs from "qs";
 import { request } from "./axiosClient";
 
 // =========================
-// TYPES
+// TYPES & INTERFACES
 // =========================
 
 export interface Company {
@@ -29,48 +30,37 @@ export interface Skill {
   name: string;
 }
 
+export type JobStatus = "DRAFT" | "ACTIVE" | "PAUSED" | "CLOSED";
+
 export interface Job {
   id: number;
   title: string;
   description: string;
   requirements: string;
   benefits: string;
-
   salaryMin: number;
   salaryMax: number;
-
   location: string;
   type: string;
-
-  status: "DRAFT" | "OPEN" | "CLOSED";
-
+  status: JobStatus;
   deadline: string;
-
   company: Company;
   category: Category;
   experienceLevel: ExperienceLevel;
   skills: Skill[];
 }
 
-// =========================
-// REQUEST TYPES
-// =========================
-
 export interface CreateJobRequest {
   title: string;
   description: string;
   requirements: string;
   benefits: string;
-
   salaryMin: number;
   salaryMax: number;
-
   location: string;
   type: string;
-
   deadline: string;
-  status: "DRAFT" | "OPEN" | "CLOSED";
-
+  status: JobStatus;
   companyId: number;
   categoryId: number;
   experienceLevelId: number;
@@ -87,47 +77,51 @@ export interface JobFilterRequest {
   location?: string;
   categoryId?: number;
   jobType?: string;
-  status?: string;
+  status?: JobStatus | "";
+}
+
+export interface HomeMetadata {
+  categories: Category[];
+  skills: Skill[];
+  experienceLevels: ExperienceLevel[];
 }
 
 // =========================
-// API
+// API SERVICES
 // =========================
 
 const ENDPOINT = "/api/jobs";
 
 export const jobApi = {
-  // GET ALL JOBS
-  getAll: (): Promise<Job[]> => {
-    return request.get<Job[]>(ENDPOINT);
-  },
+  // Lấy tất cả công việc
+  getAll: (): Promise<Job[]> => 
+    request.get<Job[]>(ENDPOINT),
 
-  // GET JOB BY ID
-  getById: (jobId: number): Promise<Job> => {
-    return request.get<Job>(`${ENDPOINT}/${jobId}`);
-  },
+  // Lấy chi tiết công việc theo ID (Đã fix lỗi cú pháp ở đây)
+  getById: (jobId: number): Promise<Job> => 
+    request.get<Job>(`${ENDPOINT}/${jobId}`),
 
-  // CREATE JOB
-  create: (data: CreateJobRequest): Promise<Job> => {
-    return request.post<Job>(ENDPOINT, data);
-  },
+  // Tạo công việc mới
+  create: (data: CreateJobRequest): Promise<Job> => 
+    request.post<Job>(ENDPOINT, data),
 
-  // UPDATE JOB
-  update: (jobId: number, data: UpdateJobRequest): Promise<Job> => {
-    return request.put<Job>(`${ENDPOINT}/${jobId}`, data);
-  },
+  // Cập nhật thông tin công việc
+  update: (jobId: number, data: UpdateJobRequest): Promise<Job> => 
+    request.put<Job>(`${ENDPOINT}/${jobId}`, data),
 
-  // DELETE JOB
-  delete: (jobId: number): Promise<void> => {
-    return request.delete<void>(`${ENDPOINT}/${jobId}`);
-  },
+  // Xóa công việc
+  delete: (jobId: number): Promise<void> => 
+    request.delete<void>(`${ENDPOINT}/${jobId}`),
 
-  // FILTER JOBS
-  filter: (params: JobFilterRequest): Promise<Job[]> => {
-    return request.get<Job[]>(`${ENDPOINT}/filter`, {
+  // Lọc và tìm kiếm công việc nâng cao
+  filter: (params: JobFilterRequest): Promise<Job[]> => 
+    request.get<Job[]>(`${ENDPOINT}/filter`, {
       params,
-    });
-  },
+      paramsSerializer: (params) =>
+        qs.stringify(params, {
+          arrayFormat: "repeat", // skillIds=1&skillIds=2
+        }),
+    }),
 };
 
 export default jobApi;
