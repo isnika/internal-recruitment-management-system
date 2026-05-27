@@ -32,20 +32,18 @@ const UserTable: React.FC<UserTableProps> = ({
     const map: Record<string, string> = {
       admin: styles.roleAdmin,
       candidate: styles.roleCandidate,
-      company: styles.roleCompany,
-      hr: styles.roleHr,
+      recruiter: styles.roleCompany,
     };
-    return map[role] || styles.roleCandidate;
+    return map[role?.toLowerCase()] || styles.roleCandidate;
   };
 
   const getRoleLabel = (role: string) => {
     const map: Record<string, string> = {
       admin: "Admin",
       candidate: "Candidate",
-      company: "Employer",
-      hr: "HR",
+      recruiter: "Employer",
     };
-    return map[role] || role;
+    return map[role?.toLowerCase()] || role;
   };
 
   return (
@@ -95,9 +93,9 @@ const UserTable: React.FC<UserTableProps> = ({
                           onChange={(e) => setEditRole(e.target.value)}
                           className={styles.roleSelect}
                         >
-                          <option value="candidate">Candidate</option>
-                          <option value="company">Employer</option>
-                          <option value="admin">Admin</option>
+                          <option value="CANDIDATE">Candidate</option>
+                          <option value="RECRUITER">Employer</option>
+                          <option value="ADMIN">Admin</option>
                         </select>
                         <button
                           className={styles.btnSave}

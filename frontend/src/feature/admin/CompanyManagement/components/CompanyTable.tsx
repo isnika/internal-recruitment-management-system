@@ -1,10 +1,10 @@
 import React from "react";
 import { FiCheck, FiSlash, FiShield } from "react-icons/fi";
 import styles from "../pages/CompanyManagement.module.css";
-import type { CompanyMock } from "../../../../dataMock/adminMock";
+import type { Company } from "../../../../types/company";
 
 interface CompanyTableProps {
-  filteredCompanies: CompanyMock[];
+  filteredCompanies: Company[];
   onApprove: (id: number) => void;
   onBlock: (id: number) => void;
   onVerify: (id: number) => void;
@@ -22,10 +22,9 @@ const CompanyTable: React.FC<CompanyTableProps> = ({
         <thead>
           <tr>
             <th>Company Name</th>
-            <th>Email</th>
-            <th>Phone</th>
+            <th>Website</th>
             <th>Address</th>
-            <th>Industry</th>
+            <th>Description</th>
             <th>Status</th>
             <th style={{ textAlign: "right", paddingRight: "24px" }}>Actions</th>
           </tr>
@@ -43,24 +42,23 @@ const CompanyTable: React.FC<CompanyTableProps> = ({
                   )}
                 </div>
               </td>
-              <td>{c.email}</td>
-              <td>{c.phone}</td>
+              <td>{c.website}</td>
               <td>{c.address}</td>
               <td>
-                <span className={styles.industryTag}>{c.industry}</span>
+                <span className={styles.industryTag}>{c.description ? (c.description.length > 30 ? c.description.substring(0, 30) + '...' : c.description) : ''}</span>
               </td>
               <td>
                 <span
                   className={`${styles.statusBadge} ${
-                    styles[c.status.toLowerCase()]
+                    styles[c.status?.toLowerCase()] || styles.active
                   }`}
                 >
-                  {c.status}
+                  {c.status || "ACTIVE"}
                 </span>
               </td>
               <td>
                 <div className={styles.actions}>
-                  {c.status === "Pending" && (
+                  {c.status === "PENDING" && (
                     <button
                       className={styles.actionBtnGreen}
                       onClick={() => onApprove(c.id)}
@@ -69,16 +67,16 @@ const CompanyTable: React.FC<CompanyTableProps> = ({
                       <FiCheck /> Approve
                     </button>
                   )}
-                  {c.status !== "Pending" && (
+                  {c.status !== "PENDING" && (
                     <button
                       className={`${styles.actionBtnBlock} ${
-                        c.status === "Blocked" ? styles.blockedBtn : ""
+                        c.status === "BLOCKED" ? styles.blockedBtn : ""
                       }`}
                       onClick={() => onBlock(c.id)}
-                      title={c.status === "Blocked" ? "Unblock Company" : "Block Company"}
-                      aria-label={c.status === "Blocked" ? `Unblock ${c.name}` : `Block ${c.name}`}
+                      title={c.status === "BLOCKED" ? "Unblock Company" : "Block Company"}
+                      aria-label={c.status === "BLOCKED" ? `Unblock ${c.name}` : `Block ${c.name}`}
                     >
-                      <FiSlash /> {c.status === "Blocked" ? "Unblock" : "Block"}
+                      <FiSlash /> {c.status === "BLOCKED" ? "Unblock" : "Block"}
                     </button>
                   )}
                   <button

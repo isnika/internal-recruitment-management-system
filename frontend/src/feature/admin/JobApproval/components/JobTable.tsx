@@ -88,7 +88,7 @@ const JobTable: React.FC<JobTableProps> = ({
                       <FiCheck /> Approve
                     </button>
                   )}
-                  {job.status?.toLowerCase() !== "rejected" && (
+                  {job.status?.toLowerCase() !== "closed" && (
                     <button
                       className={styles.actionBtnRed}
                       title="Reject Job"

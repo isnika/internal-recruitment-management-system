@@ -1,23 +1,68 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import styles from "./CompanyManagement.module.css";
-import type { CompanyMock } from "../../../../dataMock/adminMock";
 import CompanyFilters from "../components/CompanyFilters";
 import CompanyTable from "../components/CompanyTable";
-
-import { initialCompanies } from "../../../../dataMock/adminMock";
+import { useToast } from "../../../../components/Toast";
+import * as userApi from "../../../../service/userApi";
+import type { Company } from "../../../../types/company";
 
 const CompanyManagement: React.FC = () => {
-  const [companies, setCompanies] = useState(initialCompanies);
+  const [companies, setCompanies] = useState<Company[]>([]);
+  const toast = useToast();
 
-  const onApprove = (id: number) => {
-    setCompanies(prev => prev.map(c => c.id === id ? { ...c, status: "ACTIVE" } : c));
+  useEffect(() => {
+    fetchCompanies();
+  }, []);
+
+  const fetchCompanies = async () => {
+    try {
+      const res: any = await userApi.getAllCompanies();
+      const data = res?.data || res;
+      setCompanies(Array.isArray(data) ? data : []);
+    } catch (error) {
+      toast.error("Failed to fetch companies");
+    }
   };
 
-  const onBlock = (id: number) => {
-    setCompanies(prev => prev.map(c => c.id === id ? { ...c, status: c.status === "BLOCKED" ? "ACTIVE" : "BLOCKED" } : c));
+  const onApprove = async (id: number) => {
+    try {
+      const companyToUpdate = companies.find((c) => c.id === id);
+      if (!companyToUpdate) return;
+      await userApi.updateCompany(id, { 
+        name: companyToUpdate.name,
+        description: companyToUpdate.description,
+        address: companyToUpdate.address,
+        website: companyToUpdate.website,
+        status: "ACTIVE" 
+      });
+      setCompanies(prev => prev.map(c => c.id === id ? { ...c, status: "ACTIVE" } : c));
+      toast.success("Company approved successfully");
+    } catch (error) {
+      toast.error("Failed to approve company");
+    }
+  };
+
+  const onBlock = async (id: number) => {
+    try {
+      const companyToUpdate = companies.find((c) => c.id === id);
+      if (!companyToUpdate) return;
+      const newStatus = companyToUpdate.status === "BLOCKED" ? "ACTIVE" : "BLOCKED";
+      await userApi.updateCompany(id, {
+        name: companyToUpdate.name,
+        description: companyToUpdate.description,
+        address: companyToUpdate.address,
+        website: companyToUpdate.website,
+        status: newStatus
+      });
+      setCompanies(prev => prev.map(c => c.id === id ? { ...c, status: newStatus } : c));
+      toast.success(`Company ${newStatus === "BLOCKED" ? "blocked" : "unblocked"} successfully`);
+    } catch (error) {
+      toast.error("Failed to update company status");
+    }
   };
 
   const onVerify = (id: number) => {
+    // API does not support verifying currently, toggle locally for demo
     setCompanies(prev => prev.map(c => c.id === id ? { ...c, verified: !c.verified } : c));
   };
   const [searchTerm, setSearchTerm] = useState("");
@@ -26,8 +71,8 @@ const CompanyManagement: React.FC = () => {
   const filteredCompanies = useMemo(() => {
     return companies.filter((c) => {
       const matchSearch =
-        c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        c.email.toLowerCase().includes(searchTerm.toLowerCase());
+        c.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        c.website?.toLowerCase().includes(searchTerm.toLowerCase());
       const matchStatus = statusFilter === "all" || c.status === statusFilter;
       return matchSearch && matchStatus;
     });
