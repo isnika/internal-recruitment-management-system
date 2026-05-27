@@ -12,7 +12,7 @@ export const useHomeMetadata = () => {
       try {
         setIsMetaLoading(true);
 
-        // 🔥 LẤY TOÀN BỘ JOB ACTIVE TỪ API FILTER
+        //  LẤY TOÀN BỘ JOB ACTIVE TỪ API FILTER
         const jobs: Job[] = await jobApi.filter({
           status: "ACTIVE",
         });
@@ -53,7 +53,7 @@ export const useHomeMetadata = () => {
           experienceLevels,
         });
       } catch (err: any) {
-        console.error("❌ METADATA ERROR:", err);
+        console.error(" METADATA ERROR:", err);
         setError(err?.message || "Lỗi tải metadata");
       } finally {
         setIsMetaLoading(false);

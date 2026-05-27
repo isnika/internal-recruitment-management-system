@@ -33,6 +33,10 @@ import InterviewPage from "../feature/employer/InterviewManagement/pages/intervi
 import ApplyManagement from "../feature/employer/applyManagement/pages/ApplyManagement";
 import DashboardPage from "../feature/employer/dashBoardManagement/pages/dashboardPage";
 import SettingManagement from "../feature/employer/settingManagement/pages/settingManagement";
+import ExperienceLevelManagement from "../feature/employer/ExperienceLevelManagement/pages/ExperienceLevelManagement";
+import DepartmentManagement from "../feature/employer/DepartmentManagement/pages/DepartmentManagement";
+import SkillManagement from "../feature/employer/skillManagement/pages/SkillManagement";
+
 /* admin */
 import HomeAdmin from "../feature/admin/home/pages/HomeAdmin/homeAdmin";
 import Dashboard from "../feature/admin/Dashboard/pages/Dashboard";
@@ -44,6 +48,7 @@ import ApplicationMonitoring from "../feature/admin/ApplicationMonitoring/pages/
 import RolePermission from "../feature/admin/RolePermission/pages/RolePermission";
 import StatisticalReport from "../feature/admin/StatisticalReport/pages/StatisticalReport";
 import SystemSettings from "../feature/admin/SystemSettings/pages/SystemSettings";
+
 
 export default function AppRoutes() {
   return (
@@ -95,6 +100,9 @@ export default function AppRoutes() {
           <Route path="candidatesManagement" element={<CandidatesPage />} />
           <Route path="interviewManagement" element={<InterviewPage />} />
           <Route path="settingManagement" element={<SettingManagement/>} />
+          <Route path="skillManagement" element={<SkillManagement/>} />
+          <Route path="departmentManagement" element={<DepartmentManagement/>} />
+          <Route path="experienceLevelManagement" element={<ExperienceLevelManagement/>} />
 
         </Route>
 

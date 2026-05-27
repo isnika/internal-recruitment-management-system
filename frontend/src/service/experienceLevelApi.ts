@@ -1,68 +1,38 @@
 import { request } from "./axiosClient";
-
-// =========================
-// TYPES
-// =========================
-
-export interface ExperienceLevel {
-  id: number;
-  name: string;
-}
+import type { ExperienceLevel } from "./types/experienceLevel.types";
 
 export interface CreateExperienceLevelRequest {
   name: string;
+  monthsMin: number;
+  monthsMax: number;
 }
 
 export interface UpdateExperienceLevelRequest {
   name: string;
+  monthsMin: number;
+  monthsMax: number;
 }
-
-// =========================
-// API
-// =========================
 
 const ENDPOINT = "/api/experience-levels";
 
 export const experienceLevelApi = {
-  // GET ALL
   getAll: (): Promise<ExperienceLevel[]> => {
-    return request.get<ExperienceLevel[]>(ENDPOINT);
+    return request.get(ENDPOINT);
   },
 
-  // GET BY ID
   getById: (id: number): Promise<ExperienceLevel> => {
-    return request.get<ExperienceLevel>(
-      `${ENDPOINT}/${id}`
-    );
+    return request.get(`${ENDPOINT}/${id}`);
   },
 
-  // CREATE
-  create: (
-    data: CreateExperienceLevelRequest
-  ): Promise<ExperienceLevel> => {
-    return request.post<ExperienceLevel>(
-      ENDPOINT,
-      data
-    );
+  create: (data: CreateExperienceLevelRequest): Promise<ExperienceLevel> => {
+    return request.post(ENDPOINT, data);
   },
 
-  // UPDATE
-  update: (
-    id: number,
-    data: UpdateExperienceLevelRequest
-  ): Promise<ExperienceLevel> => {
-    return request.put<ExperienceLevel>(
-      `${ENDPOINT}/${id}`,
-      data
-    );
+  update: (id: number, data: UpdateExperienceLevelRequest): Promise<ExperienceLevel> => {
+    return request.put(`${ENDPOINT}/${id}`, data);
   },
 
-  // DELETE
   delete: (id: number): Promise<void> => {
-    return request.delete<void>(
-      `${ENDPOINT}/${id}`
-    );
+    return request.delete(`${ENDPOINT}/${id}`);
   },
 };
-
-export default experienceLevelApi;

@@ -186,26 +186,65 @@
   }
 }
 
-/* Container bọc ngoài cho phân trang để căn chỉnh khoảng cách */
-.paginationFooter {
+.paginationWrapper {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  padding: 20px 0;
-  margin-top: 16px;
-  border-top: 1px solid #f1f5f9; /* Đường kẻ viền mờ tách biệt với chân bảng */
-}
-
-/* Tối ưu hiển thị loading / error state cho sạch */
-.loadingText, .errorText {
-  text-align: center;
-  padding: 40px;
-  font-size: 15px;
-  font-weight: 500;
-  color: #64748b;
+  padding: 16px 20px;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-top: none;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
   font-family: system-ui, -apple-system, sans-serif;
 }
 
-.errorText {
-  color: #ef4444;
+.paginationInfo {
+  font-size: 14px;
+  color: #64748b;
+}
+
+.paginationActions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.pageIndicator {
+  font-size: 14px;
+  color: #334155;
+}
+
+.pageBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #334155;
+  background-color: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pageBtn:hover:not(:disabled) {
+  background-color: #f8fafc;
+  border-color: #94a3b8;
+}
+
+.pageBtn:disabled {
+  color: #cbd5e1;
+  background-color: #f1f5f9;
+  border-color: #e2e8f0;
+  cursor: not-allowed;
+}
+
+.loadingState {
+  text-align: center;
+  padding: 30px;
+  color: #64748b;
+  font-weight: 500;
 }

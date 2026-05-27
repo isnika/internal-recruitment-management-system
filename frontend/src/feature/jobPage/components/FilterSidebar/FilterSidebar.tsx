@@ -114,8 +114,17 @@ const FilterSidebar = ({
                 filters.maxSalary === 500
               }
               onChange={() => {
-                onMinSalaryChange(0);
-                onMaxSalaryChange(500);
+                const checked =
+                  filters.minSalary === 0 &&
+                  filters.maxSalary === 500;
+
+                if (checked) {
+                  onMinSalaryChange(undefined);
+                  onMaxSalaryChange(undefined);
+                } else {
+                  onMinSalaryChange(0);
+                  onMaxSalaryChange(500);
+                }
               }}
             />
 
@@ -130,8 +139,17 @@ const FilterSidebar = ({
                 filters.maxSalary === 1000
               }
               onChange={() => {
-                onMinSalaryChange(500);
-                onMaxSalaryChange(1000);
+                const checked =
+                  filters.minSalary === 500 &&
+                  filters.maxSalary === 1000;
+
+                if (checked) {
+                  onMinSalaryChange(undefined);
+                  onMaxSalaryChange(undefined);
+                } else {
+                  onMinSalaryChange(500);
+                  onMaxSalaryChange(1000);
+                }
               }}
             />
 
@@ -146,8 +164,17 @@ const FilterSidebar = ({
                 filters.maxSalary === 2000
               }
               onChange={() => {
-                onMinSalaryChange(1000);
-                onMaxSalaryChange(2000);
+                const checked =
+                  filters.minSalary === 1000 &&
+                  filters.maxSalary === 2000;
+
+                if (checked) {
+                  onMinSalaryChange(undefined);
+                  onMaxSalaryChange(undefined);
+                } else {
+                  onMinSalaryChange(1000);
+                  onMaxSalaryChange(2000);
+                }
               }}
             />
 
@@ -162,8 +189,17 @@ const FilterSidebar = ({
                 filters.maxSalary === 3000
               }
               onChange={() => {
-                onMinSalaryChange(2000);
-                onMaxSalaryChange(3000);
+                const checked =
+                  filters.minSalary === 2000 &&
+                  filters.maxSalary === 3000;
+
+                if (checked) {
+                  onMinSalaryChange(undefined);
+                  onMaxSalaryChange(undefined);
+                } else {
+                  onMinSalaryChange(2000);
+                  onMaxSalaryChange(3000);
+                }
               }}
             />
 
@@ -178,8 +214,17 @@ const FilterSidebar = ({
                 filters.maxSalary === undefined
               }
               onChange={() => {
-                onMinSalaryChange(3000);
-                onMaxSalaryChange(undefined);
+                const checked =
+                  filters.minSalary === 3000 &&
+                  filters.maxSalary === undefined;
+
+                if (checked) {
+                  onMinSalaryChange(undefined);
+                  onMaxSalaryChange(undefined);
+                } else {
+                  onMinSalaryChange(3000);
+                  onMaxSalaryChange(undefined);
+                }
               }}
             />
 

@@ -7,14 +7,15 @@ import RecruitmentFilterBar from "../components/RecruitmentFilterBar/Recruitment
 import RecruitmentTable from "../components/RecruitmentTable/RecruitmentTable";
 import CreateJobModal from "../components/CreateJobModal/CreateJobModal";
 import DeleteJobModal from "../components/DeleteJobModal/DeleteJobModal";
-import Pagination from "../../../jobPage/components/Pagination/Pagination"; //
 
 import {
   FiCheckCircle,
   FiXCircle,
   FiFileText,
   FiBriefcase,
-  FiPlus
+  FiPlus,
+  FiChevronLeft,
+  FiChevronRight
 } from "react-icons/fi";
 
 const normalize = (s?: string) => (s || "").toLowerCase();
@@ -24,9 +25,11 @@ const RecruitmentManagement = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Phân trang: Đổi limit thành 15 kết quả/trang
+  // =========================
+  // STATE PHÂN TRANG
+  // =========================
   const [page, setPage] = useState(1);
-  const [limit] = useState(10);
+  const [limit] = useState(10); // Đổi thành 15 nếu thích hiển thị nhiều hơn
   const [total, setTotal] = useState(0);
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -39,16 +42,16 @@ const RecruitmentManagement = () => {
   const [editingJob, setEditingJob] = useState<Job | null>(null);
   const [deletingJob, setDeletingJob] = useState<Job | null>(null);
 
-  const totalPages = useMemo(() => {
-    return Math.ceil(total / limit) || 1;
-  }, [total, limit]);
-
+  // =========================
   // RESET PAGE WHEN FILTER CHANGE
+  // =========================
   useEffect(() => {
     setPage(1);
   }, [searchQuery, status, jobType, department]);
 
-  // LOAD JOBS (SERVER SIDE)
+  // =========================
+  // LOAD JOBS
+  // =========================
   const loadJobs = async () => {
     try {
       setLoading(true);
@@ -59,15 +62,17 @@ const RecruitmentManagement = () => {
         status: status || undefined,
         jobType: jobType || undefined,
         categoryId: undefined,
-        page: page,   
-        limit: limit, 
+        // Truyền thêm param lên API nếu Backend có hỗ trợ phân trang
+        page: page,
+        limit: limit,
       });
 
+      const rawData = res.data || res;
+      setJobs(rawData);
 
-      const resultData = res.data || res;
-      setJobs(resultData);
-
-      setTotal(res.total ?? resultData.length);
+      // Nếu Backend trả về tổng số item thật (ví dụ: res.total), hãy ưu tiên dùng nó.
+      // Ngược lại, lấy tạm chiều dài mảng (nếu API trả về tất cả dữ liệu).
+      setTotal(res.total ?? rawData.length);
     } catch (err) {
       setError("Failed to load jobs");
     } finally {
@@ -79,9 +84,26 @@ const RecruitmentManagement = () => {
     loadJobs();
   }, [page, searchQuery, status, jobType, department]);
 
-  //  
-  // STATS (STATS TRÊN TOÀN BỘ DATA HOẶC DATA TRANG HIỆN TẠI)
-  //  
+  // TÍNH TỔNG SỐ TRANG
+  const totalPages = useMemo(() => {
+    return Math.ceil(total / limit) || 1;
+  }, [total, limit]);
+
+  // DỮ LIỆU ĐÃ PHÂN TRANG ĐỂ TRUYỀN VÀO BẢNG
+  // Nếu API tự phân trang rồi thì dùng luôn `jobs`, nếu API trả về full mảng thì slice()
+  const displayedJobs = useMemo(() => {
+    if (total === jobs.length) {
+      // Trường hợp Client-side pagination (API trả về mảng gốc gồm tất cả phần tử)
+      const start = (page - 1) * limit;
+      return jobs.slice(start, start + limit);
+    }
+    // Trường hợp Server-side pagination (API chỉ trả về đúng số lượng tương ứng với trang)
+    return jobs;
+  }, [jobs, page, limit, total]);
+
+  // =========================
+  // STATS (Tính trên tổng số lượng thay vì mảng đã cắt)
+  // =========================
   const stats = useMemo(() => {
     let active = 0;
     let closed = 0;
@@ -95,38 +117,44 @@ const RecruitmentManagement = () => {
     });
 
     return {
-      total,
+      total: total === jobs.length ? total : total,
       active,
       closed,
       draft
     };
   }, [jobs, total]);
 
-  //  
-  // CREATE / UPDATE
-  //  
-  const handleSaveJob = async (data: Partial<Job>) => {
+  // =========================
+  // ACTION HANDLERS (Giữ nguyên của bạn)
+  // =========================
+  const handleSaveJob = async (
+    payload: CreateJobRequest,
+    jobId?: number
+  ) => {
     try {
-      if (editingJob) {
-        await jobApi.update(editingJob.id, data);
+      if (jobId) {
+        await jobApi.update(
+          jobId,
+          payload
+        );
       } else {
-        await jobApi.create(data);
+        await jobApi.create(
+          payload
+        );
       }
 
+      await loadJobs();
+
       setIsCreateModalOpen(false);
+
       setEditingJob(null);
-      loadJobs();
     } catch (err) {
       console.error(err);
     }
   };
 
-  //  
-  // DELETE
-  //  
   const handleConfirmDelete = async () => {
     if (!deletingJob) return;
-
     try {
       await jobApi.delete(deletingJob.id);
       setDeletingJob(null);
@@ -142,20 +170,8 @@ const RecruitmentManagement = () => {
       <header className={styles.dashboardHeader}>
         <div>
           <h1 className={styles.mainTitle}>Requisition Hub</h1>
-          <p className={styles.subTitle}>
-            Manage recruitment pipeline efficiently
-          </p>
+          <p className={styles.subTitle}>Manage recruitment pipeline efficiently</p>
         </div>
-
-        <button
-          className={styles.primaryActionButton}
-          onClick={() => {
-            setEditingJob(null);
-            setIsCreateModalOpen(true);
-          }}
-        >
-          <FiPlus /> Create Job
-        </button>
       </header>
 
       {/* STATS */}
@@ -194,15 +210,15 @@ const RecruitmentManagement = () => {
         }}
       />
 
-      {/* TABLE DATA STATE */}
-      {loading ? (
-        <div className={styles.loadingText}>Loading jobs...</div>
-      ) : error ? (
-        <div className={styles.errorText}>{error}</div>
-      ) : (
+      {/* LOADING / ERROR */}
+      {loading && <p className={styles.loadingState}>Loading jobs...</p>}
+      {error && <p style={{ color: "red" }}>{error}</p>}
+
+      {/* TABLE */}
+      {!loading && (
         <>
           <RecruitmentTable
-            jobs={jobs}
+            jobs={displayedJobs} // Sử dụng mảng đã được phân trang ở đây
             onEditJob={(job) => {
               setEditingJob(job);
               setIsCreateModalOpen(true);
@@ -210,13 +226,33 @@ const RecruitmentManagement = () => {
             onDeleteJob={(job) => setDeletingJob(job)}
           />
 
-          {/* PAGINATION COMPONENT (Hiển thị ngay dưới bảng) */}
-          <div className={styles.paginationFooter}>
-            <Pagination
-              currentPage={page}
-              totalPages={totalPages}
-              setCurrentPage={setPage}
-            />
+          {/* COMPONENT PHÂN TRANG ĐƠN GIẢN, DỄ THAO TÁC */}
+          <div className={styles.paginationWrapper}>
+            <span className={styles.paginationInfo}>
+              Showing <strong>{displayedJobs.length}</strong> of <strong>{total}</strong> jobs
+            </span>
+
+            <div className={styles.paginationActions}>
+              <button
+                className={styles.pageBtn}
+                disabled={page === 1}
+                onClick={() => setPage((prev) => prev - 1)}
+              >
+                <FiChevronLeft /> Prev
+              </button>
+
+              <span className={styles.pageIndicator}>
+                Page <strong>{page}</strong> of <strong>{totalPages}</strong>
+              </span>
+
+              <button
+                className={styles.pageBtn}
+                disabled={page === totalPages}
+                onClick={() => setPage((prev) => prev + 1)}
+              >
+                Next <FiChevronRight />
+              </button>
+            </div>
           </div>
         </>
       )}

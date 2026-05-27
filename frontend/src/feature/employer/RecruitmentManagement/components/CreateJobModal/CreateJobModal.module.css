@@ -1,21 +1,31 @@
-.modalHeader {
+/* ==========================================================================
+   1. MODAL LAYOUT CONTAINERS
+   ========================================================================== */
+.modalWrapper {
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 800px; /* Định vị kích thước chuẩn cho một modal nhiều tab */
+  margin: 0 auto;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.header {
   margin-bottom: 24px;
 }
 
-.modalTitle {
-  color: #22c55e; /* Green */
-  font-size: 20px;
+.header h2 {
+  color: #1e293b; /* Sử dụng màu tối thanh lịch thay vì ép màu xanh/đỏ ở tiêu đề gốc */
+  font-size: 22px;
   font-weight: 600;
   margin: 0;
 }
 
-.modalTitleRed {
-  color: #ef4444; /* Red for Update Status */
-  font-size: 20px;
-  font-weight: 600;
-  margin: 0;
-}
-
+/* ==========================================================================
+   2. NAVIGATION TABS
+   ========================================================================== */
 .tabs {
   display: flex;
   gap: 24px;
@@ -23,17 +33,28 @@
   margin-bottom: 24px;
 }
 
-.tab {
-  padding: 8px 0;
+.tab, .activeTab {
+  padding: 10px 0;
   font-size: 14px;
   font-weight: 500;
-  color: #64748b;
+  background: none;
+  border: none;
   cursor: pointer;
   position: relative;
+  transition: color 0.2s ease;
+}
+
+.tab {
+  color: #64748b;
+}
+
+.tab:hover {
+  color: #334155;
 }
 
 .activeTab {
-  color: #6366f1; /* Purple */
+  color: #6366f1; /* Indigo thời thượng */
+  font-weight: 600;
 }
 
 .activeTab::after {
@@ -46,21 +67,36 @@
   background-color: #6366f1;
 }
 
+/* ==========================================================================
+   3. TAB CONTENT CORES
+   ========================================================================== */
 .tabContent {
-  min-height: 550px;
+  min-height: 480px;
+  position: relative;
 }
 
-/* Form Styles */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  color: #64748b;
+  font-size: 14px;
+}
+
+/* ==========================================================================
+   4. FORM ELEMENTS & GRID (Sử dụng cho các file Tabs con)
+   ========================================================================== */
 .formGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 24px;
+  gap: 20px;
 }
 
 .formGroup {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .formGroup label {
@@ -71,129 +107,105 @@
 
 .input, .select, .textarea {
   padding: 10px 14px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #cbd5e1;
   border-radius: 8px;
   font-size: 14px;
   outline: none;
   color: #334155;
+  background-color: #ffffff;
+  transition: all 0.2s ease;
 }
 
 .input:focus, .select:focus, .textarea:focus {
   border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
 
 .textarea {
   resize: vertical;
-  min-height: 300px;
+  min-height: 240px;
   width: 100%;
+  line-height: 1.5;
 }
 
-/* Footer */
-.modalFooter {
+/* ==========================================================================
+   5. MODAL FOOTER & BUTTONS
+   ========================================================================== */
+.footer {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
   margin-top: 32px;
+  padding-top: 16px;
+  border-top: 1px solid #e2e8f0;
 }
 
-.validationText {
-  color: #1e293b;
+.cancelBtn, .submitBtn {
+  padding: 10px 20px;
+  border-radius: 8px;
   font-size: 14px;
-  margin-right: auto;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .cancelBtn {
-  padding: 10px 24px;
-  border: 1px solid #22c55e;
-  color: #22c55e;
-  background: white;
-  border-radius: 8px;
-  font-weight: 500;
-  cursor: pointer;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+  background: #ffffff;
+}
+
+.cancelBtn:hover {
+  background: #f8fafc;
+  color: #1e293b;
+  border-color: #94a3b8;
 }
 
 .submitBtn {
-  padding: 10px 24px;
   border: none;
-  color: white;
-  background: #22c55e;
-  border-radius: 8px;
-  font-weight: 500;
-  cursor: pointer;
+  color: #ffffff;
+  background-color: #22c55e; /* Thống nhất nút tạo là màu xanh lục */
+}
+
+.submitBtn:hover:not(:disabled) {
+  background-color: #16a34a;
 }
 
 .submitBtn:disabled {
-  background: #94a3b8;
+  background-color: #cbd5e1;
+  color: #94a3b8;
   cursor: not-allowed;
 }
 
-/* Status Cards
-(Dùng chung cho Table & Modal) --- */
-.statusBadge {
-  padding: 6px 16px;
-  border-radius: 9999px;
-  font-size: 14px;
-  font-weight: 600;
-  display: inline-block;
-  margin-bottom: 24px;
-  border: 1px solid transparent;
-}
-
-/* Định nghĩa màu sắc theo trạng thái */
-.statusActive { background: #e6f7ed; color: #2e7d32; border-color: #c8e6c9; }
-.statusPaused { background: #fff8e1; color: #f57f17; border-color: #ffe082; }
-.statusClosed { background: #ffebee; color: #c62828; border-color: #ffcdd2; }
-.statusDraft  { background: #f5f5f5; color: #616161; border-color: #e0e0e0; }
+/* ==========================================================================
+   6. JOB STATUS SELECTION CARDS (Dùng cho StatusTab)
+   ========================================================================== */
 .statusContainer {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
 }
 
 .statusCard {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
   padding: 16px;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
   cursor: pointer;
-}
-
-/* Đảm bảo card có transition mượt mà */
-.statusCard {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
-  cursor: pointer;
   transition: all 0.2s ease;
-  margin-bottom: 10px;
 }
 
 .statusCard:hover {
   border-color: #cbd5e1;
-}
-
-/* Khi được chọn */
-.statusCardActive {
-  border-color: #3b82f6; /* Màu xanh thương hiệu */
   background-color: #f8fafc;
 }
 
-/* Icon container */
-.statusIcon {
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-  margin-right: 12px;
-  font-size: 20px;
+.statusCardActive {
+  border-color: #6366f1;
+  background-color: #f5f3ff;
 }
 
 .statusInfo {
@@ -209,14 +221,20 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
-  font-size: 20px;
+  color: #ffffff;
+  font-size: 18px;
+  background-color: #64748b; /* Fallback mặc định */
+}
+
+/* Gắn màu ngữ nghĩa trực tiếp cho vòng Icon sinh động */
+.statusCardActive .statusIcon {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
 .statusTitle {
   font-weight: 600;
   color: #1e293b;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .statusDesc {
@@ -224,6 +242,7 @@
   color: #64748b;
 }
 
+/* Custom Radio UI Component */
 .radioCircle {
   width: 20px;
   height: 20px;
@@ -232,20 +251,23 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.2s ease;
 }
 
 .radioCircleActive {
-  border-color: #3b82f6;
+  border-color: #6366f1;
 }
 
 .radioDot {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background-color: #3b82f6;
+  background-color: #6366f1;
 }
 
-/* Multi-select Dropdown */
+/* ==========================================================================
+   7. MULTI-SELECT DROPDOWN (Dùng cho Skills/Tags)
+   ========================================================================== */
 .multiSelectContainer {
   position: relative;
 }
@@ -255,11 +277,12 @@
   justify-content: space-between;
   align-items: center;
   padding: 10px 14px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #cbd5e1;
   border-radius: 8px;
   cursor: pointer;
-  background: white;
+  background: #ffffff;
   font-size: 14px;
+  color: #334155;
 }
 
 .multiSelectDropdown {
@@ -267,14 +290,14 @@
   top: 100%;
   left: 0;
   right: 0;
-  background: white;
+  background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
-  margin-top: 4px;
+  margin-top: 6px;
   max-height: 200px;
   overflow-y: auto;
-  z-index: 10;
-  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+  z-index: 50;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
 }
 
 .multiSelectOption {
@@ -282,13 +305,15 @@
   align-items: center;
   justify-content: flex-start;
   gap: 12px;
-  padding: 4px 14px;
+  padding: 8px 14px;
   cursor: pointer;
   font-size: 14px;
+  color: #334155;
+  transition: background 0.15s ease;
 }
 
 .multiSelectOption:hover {
-  background: #f8fafc;
+  background: #f1f5f9;
 }
 
 .checkbox {
