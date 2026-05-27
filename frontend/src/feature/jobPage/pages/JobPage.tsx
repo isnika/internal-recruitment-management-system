@@ -11,7 +11,7 @@ import { useHomeMetadata } from "../../../hooks/useHomeMetadata";
 import { useJobs } from "../../../hooks/useJobs";
 
 const JobPage = () => {
-  const [activeCategory, setActiveCategory] = useState("View All");
+  const [activeCategory, setActiveCategory] = useState<number | undefined>(undefined);
 
   const { metadata, isMetaLoading } = useHomeMetadata();
 
@@ -31,7 +31,7 @@ const JobPage = () => {
   } = useJobs(activeCategory, !!metadata);
 
   // <-- FIX: Tính toán startIndex dựa trên số trang hiện tại và số lượng job mỗi trang
-  const startIndex = (currentPage - 1) * (JOBS_PER_PAGE || 10);
+  const startIndex = (currentPage - 1) * JOBS_PER_PAGE;
 
   // Reset về trang 1 mỗi khi đổi Category Tab
   useEffect(() => {
