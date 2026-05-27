@@ -17,6 +17,8 @@ export const useHomeMetadata = () => {
           status: "ACTIVE",
         });
 
+    console.log(jobs);
+
         // CATEGORY
         const categories = Array.from(
           new Map(

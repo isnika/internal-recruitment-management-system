@@ -10,11 +10,24 @@ import { FaBookmark } from "react-icons/fa";
 import type { Job } from "../../../../types/job";
 
 // FORMAT SALARY
-const formatSalary = (job: Job) => {
-  const min = job.salaryMin / 1000000;
-  const max = job.salaryMax / 1000000;
+const formatMoney = (value?: number) => {
+  if (!value) return "Thoả thuận";
 
-  return `${min}M - ${max}M VND`;
+  return new Intl.NumberFormat("vi-VN").format(
+    value
+  );
+};
+
+const formatSalary = (job: Job) => {
+  if (!job.salaryMin && !job.salaryMax) {
+    return "Thoả thuận";
+  }
+
+  return `$${formatMoney(
+    job.salaryMin
+  )} - $${formatMoney(
+    job.salaryMax
+  )}`;
 };
 
 interface JobCardProps {

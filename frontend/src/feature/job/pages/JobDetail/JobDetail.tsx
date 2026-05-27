@@ -1,8 +1,15 @@
-import { useState, useEffect, useRef } from "react";
+import {
+  useState,
+  useEffect,
+  useRef,
+  useMemo,
+  useCallback,
+} from "react";
 import { useParams, useLocation } from "react-router-dom";
 import { FiChevronDown } from "react-icons/fi";
 
 import styles from "./JobDetail.module.css";
+
 import type { Job } from "../../../../types/job";
 
 import { jobApi } from "../../../../service/jobApi";
@@ -16,118 +23,152 @@ import RelatedJobs from "../../components/RelatedJobs/RelatedJobs";
 import ApplyJobForm from "../../components/ApplyJob/ApplyJobForm/ApplyJobForm";
 import SubmitSuccessMessage from "../../components/ApplyJob/SubmitSuccessMessage/SubmitSuccessMessage";
 
-// Định nghĩa kiểu mở rộng cho Job ở Frontend để quản lý trạng thái lưu bài viết
-interface FrontendJob extends Job {
+//   
+// TYPES
+//   
+type JobWithBookmark = Job & {
   isBookmarked: boolean;
-}
-
-// =========================
-// SAVED JOB API
-// =========================
-const savedJobApi = {
-  toggle: (jobId: number): Promise<any> =>
-    request.post(`/api/saved-jobs/${jobId}`),
-
-  getStatus: (jobId: number): Promise<{ data: boolean } | boolean | any> =>
-    request.get(`/api/saved-jobs/${jobId}/status`),
 };
 
-// =========================
+//   
+// SAVED JOB API
+//   
+const savedJobApi = {
+  toggle: (jobId: number): Promise<void> =>
+    request.post(`/api/saved-jobs/${jobId}`),
+
+  getStatus: (jobId: number): Promise<boolean> =>
+    request.get<boolean>(
+      `/api/saved-jobs/${jobId}/status`
+    ),
+};
 
 const JobDetail = () => {
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
 
-  const [job, setJob] = useState<FrontendJob | null>(null);
+  const [job, setJob] = useState<JobWithBookmark | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("Description");
-
+  const [bookmarkLoading, setBookmarkLoading] = useState(false);
   const [isApplying, setIsApplying] = useState<boolean>(
     location.state?.autoApply || false
   );
   const [isSubmitted, setIsSubmitted] = useState(false);
 
+  //
+  // REFS
+  //
   const descriptionRef = useRef<HTMLDivElement>(null);
   const requirementsRef = useRef<HTMLDivElement>(null);
   const benefitsRef = useRef<HTMLDivElement>(null);
   const companyRef = useRef<HTMLDivElement>(null);
 
-  const tabRefs = {
-    Description: descriptionRef,
-    Requirements: requirementsRef,
-    Benefits: benefitsRef,
-    Company: companyRef,
+  const tabRefs = useMemo(
+    () => ({
+      Description: descriptionRef,
+      Requirements: requirementsRef,
+      Benefits: benefitsRef,
+      Company: companyRef,
+    }),
+    []
+  );
+
+  //
+  // HELPERS
+  //
+  const scrollTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   };
 
-  // =========================
-  // FETCH JOB & BOOKMARK STATUS
-  // =========================
-  useEffect(() => {
-    const getJobData = async () => {
-      if (!id) return;
-
-      try {
-        setIsLoading(true);
-        const jobId = Number(id);
-
-        // Lấy chi tiết công việc
-        const jobData = await jobApi.getById(jobId);
-
-        let bookmarked = false;
-        try {
-          // Lấy trạng thái bookmark thực tế từ backend
-          const statusRes = await savedJobApi.getStatus(jobId);
-          // Dự phòng các trường hợp trả về trực tiếp boolean hoặc bọc trong object data
-          bookmarked = typeof statusRes === "boolean" ? statusRes : !!statusRes?.data;
-        } catch (bookmarkErr) {
-          console.warn("Không thể lấy trạng thái lưu công việc:", bookmarkErr);
-        }
-
-        setJob({
-          ...jobData,
-          isBookmarked: bookmarked,
-        });
-      } catch (err) {
-        console.error("❌ Lỗi khi tải chi tiết công việc:", err);
-        setJob(null);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    getJobData();
-  }, [id]);
-
-  // =========================
-  // BOOKMARK (saved-jobs API)
-  // =========================
-  const handleBookmark = async () => {
-    if (!job) return;
+  //
+  // FETCH JOB DATA
+  //
+  const fetchJobData = useCallback(async () => {
+    if (!id) return;
 
     try {
-      // Tối ưu UI phản hồi nhanh (Optimistic Update)
+      setIsLoading(true);
+      const jobId = Number(id);
+
+      // LOAD JOB DETAIL
+      const jobData = await jobApi.getById(jobId);
+
+      // DEFAULT BOOKMARK
+      let bookmarked = false;
+
+      // LOAD BOOKMARK STATUS
+      try {
+        bookmarked = await savedJobApi.getStatus(jobId);
+      } catch (bookmarkErr) {
+        console.warn("Cannot load bookmark status:", bookmarkErr);
+      }
+
+      setJob({
+        ...jobData,
+        isBookmarked: bookmarked,
+      });
+    } catch (err) {
+      // ✅ ĐÃ FIX: Thêm dấu nháy kép mở đầu chuỗi string hợp lệ
+      console.error("Failed to load job detail:", err);
+      setJob(null);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [id]);
+
+  useEffect(() => {
+    fetchJobData();
+  }, [fetchJobData]);
+
+  //
+  // BOOKMARK
+  //
+  const handleBookmark = async () => {
+    if (!job || bookmarkLoading) return;
+
+    try {
+      setBookmarkLoading(true);
+
+      // Optimistic UI
       setJob((prev) =>
-        prev ? { ...prev, isBookmarked: !prev.isBookmarked } : null
+        prev
+          ? {
+              ...prev,
+              isBookmarked: !prev.isBookmarked,
+            }
+          : null
       );
 
-      // Gọi API cập nhật lên server
       await savedJobApi.toggle(job.id);
     } catch (err) {
-      console.error("Lỗi khi xử lý lưu/bỏ lưu công việc:", err);
-      // Hoàn tác lại trạng thái nếu API lỗi
+      // ✅ ĐÃ FIX: Thêm dấu nháy kép mở đầu chuỗi string hợp lệ
+      console.error("Failed to bookmark job:", err);
+
+      // Rollback nếu gọi API lỗi
       setJob((prev) =>
-        prev ? { ...prev, isBookmarked: !prev.isBookmarked } : null
+        prev
+          ? {
+              ...prev,
+              isBookmarked: !prev.isBookmarked,
+            }
+          : null
       );
+    } finally {
+      setBookmarkLoading(false);
     }
   };
 
-  // =========================
+  //
   // APPLY ACTIONS
-  // =========================
+  //
   const handleApply = () => {
     setIsApplying(true);
     setIsSubmitted(false);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    scrollTop();
   };
 
   const handleCancelApply = () => {
@@ -136,24 +177,47 @@ const JobDetail = () => {
 
   const handleSubmitSuccess = () => {
     setIsSubmitted(true);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    scrollTop();
   };
 
+  //
+  // LOADING STATE
+  //
   if (isLoading) {
-    return <div className={styles.wrapper}>Đang tải thông tin chi tiết...</div>;
+    return (
+      <div className={styles.wrapper}>
+        <div className={styles.loadingWrapper}>
+          <div className={styles.spinner}></div>
+          <p>Loading job details...</p>
+        </div>
+      </div>
+    );
   }
 
+  //
+  // EMPTY STATE
+  //
   if (!job) {
-    return <div className={styles.wrapper}>Không tìm thấy thông tin công việc yêu cầu.</div>;
+    return (
+      <div className={styles.wrapper}>
+        <div className={styles.emptyState}>
+          Job not found.
+        </div>
+      </div>
+    );
   }
 
+  //
+  // RENDER
+  //
   return (
     <div className={styles.wrapper}>
-      {/* LAYOUT THÔNG TIN TRÊN */}
+      {/* TOP LAYOUT */}
       <div
         className={styles.contentLayout}
         style={isApplying ? {} : { alignItems: "flex-start" }}
       >
+        {/* LEFT */}
         <div className={styles.leftCol}>
           <div className={styles.headerCard}>
             <JobHeader
@@ -168,23 +232,30 @@ const JobDetail = () => {
               tabRefs={tabRefs}
             />
 
+            {/* APPLY MODE */}
             {isApplying && (
               <>
                 <div
                   className={styles.seeMore}
                   onClick={handleCancelApply}
                 >
-                  Xem chi tiết công việc
+                  View job details
                 </div>
+
                 <div
                   className={styles.collapseIcon}
                   onClick={handleCancelApply}
                 >
-                  <FiChevronDown style={{ transform: "rotate(180deg)" }} />
+                  <FiChevronDown
+                    style={{
+                      transform: "rotate(180deg)",
+                    }}
+                  />
                 </div>
               </>
             )}
 
+            {/* JOB CONTENT */}
             {!isApplying && (
               <div className={styles.sectionsContainer}>
                 <JobSections
@@ -197,12 +268,16 @@ const JobDetail = () => {
           </div>
         </div>
 
+        {/* RIGHT */}
         <div className={styles.rightCol}>
-          <JobSidebar job={job} isApplying={isApplying} />
+          <JobSidebar
+            job={job}
+            isApplying={isApplying}
+          />
         </div>
       </div>
 
-      {/* FORM NỘP ĐƠN ỨNG TUYỂN */}
+      {/* APPLY FORM */}
       {isApplying && (
         <div className={styles.contentLayout}>
           <div className={styles.leftCol}>
@@ -216,12 +291,15 @@ const JobDetail = () => {
               />
             )}
           </div>
-          <div className={styles.rightCol}></div>
+
+          <div className={styles.rightCol} />
         </div>
       )}
 
-      {/* CÔNG VIỆC LIÊN QUAN */}
-      {!isApplying && <RelatedJobs job={job} />}
+      {/* RELATED JOBS */}
+      {!isApplying && (
+        <RelatedJobs job={job} />
+      )}
     </div>
   );
 };

@@ -141,6 +141,56 @@ export const useJobs = () => {
     console.log("BOOKMARK:", jobId);
   };
 
+const handleKeywordsChange = (value: string) => {
+  setFilters((prev) => ({
+    ...prev,
+    keywords: value,
+  }));
+
+  setCurrentPage(1);
+};
+
+const handleLocationChange = (value: string) => {
+  setFilters((prev) => ({
+    ...prev,
+    location: value,
+  }));
+
+  setCurrentPage(1);
+};
+
+const handleMinSalaryChange = (
+  value: number | undefined
+) => {
+  setFilters((prev) => ({
+    ...prev,
+    minSalary: value,
+  }));
+
+  setCurrentPage(1);
+};
+
+const handleMaxSalaryChange = (
+  value: number | undefined
+) => {
+  setFilters((prev) => ({
+    ...prev,
+    maxSalary: value,
+  }));
+
+  setCurrentPage(1);
+};
+
+const handleSetJobType = (value: string) => {
+  setFilters((prev) => ({
+    ...prev,
+    jobType:
+      prev.jobType === value ? "" : value,
+  }));
+
+  setCurrentPage(1);
+};
+
   return {
     jobs: paginatedJobs,
     allJobs: jobs,
@@ -161,5 +211,10 @@ export const useJobs = () => {
     handleSetStatus,
     handleClearAll,
     handleBookmark,
+    handleKeywordsChange,
+    handleLocationChange,
+    handleMinSalaryChange,
+    handleMaxSalaryChange,
+    handleSetJobType,
   };
 };

@@ -15,7 +15,6 @@ import type { Job } from "../../../../types/job";
 
 interface JobSidebarProps {
   job: Job;
-
   isApplying?: boolean;
 }
 
@@ -23,15 +22,8 @@ const JobSidebar = ({
   job,
   isApplying = false,
 }: JobSidebarProps) => {
-  // FORMAT SALARY
   const formatSalary = () => {
-    const min =
-      job?.salary?.min / 1000000 || 0;
-
-    const max =
-      job?.salary?.max / 1000000 || 0;
-
-    return `${min}M - ${max}M VND`;
+    return `$${job.salaryMin} - $${job.salaryMax}`;
   };
 
   return (
@@ -43,19 +35,16 @@ const JobSidebar = ({
         </h3>
 
         <div className={styles.infoList}>
-          {/* JOB TITLE */}
           <div className={styles.infoItem}>
             <AiOutlineUser
               className={styles.infoIcon}
             />
 
             <span className={styles.infoText}>
-              Job Title:{" "}
-              {job?.title || "Employee"}
+              Job Title: {job.title}
             </span>
           </div>
 
-          {/* EXPERIENCE */}
           <div className={styles.infoItem}>
             <PiGraduationCap
               className={styles.infoIcon}
@@ -63,49 +52,41 @@ const JobSidebar = ({
 
             <span className={styles.infoText}>
               Experience Level:{" "}
-              {job?.experienceLevel ||
+              {job.experienceLevel?.name ||
                 "Not specified"}
             </span>
           </div>
 
-          {/* LOCATION */}
           <div className={styles.infoItem}>
             <FiMapPin
               className={styles.infoIcon}
             />
 
             <span className={styles.infoText}>
-              Location:{" "}
-              {job?.location ||
-                "Not specified"}
+              Location: {job.location}
             </span>
           </div>
 
-          {/* JOB TYPE */}
           <div className={styles.infoItem}>
             <FiBriefcase
               className={styles.infoIcon}
             />
 
             <span className={styles.infoText}>
-              Employment Type:{" "}
-              {job?.jobType || "Full-time"}
+              Employment Type: {job.type}
             </span>
           </div>
 
-          {/* DEADLINE */}
           <div className={styles.infoItem}>
             <FiClock
               className={styles.infoIcon}
             />
 
             <span className={styles.infoText}>
-              Application Deadline:{" "}
-              {job?.deadline || "N/A"}
+              Deadline: {job.deadline}
             </span>
           </div>
 
-          {/* COMPANY */}
           <div className={styles.infoItem}>
             <FiUsers
               className={styles.infoIcon}
@@ -113,8 +94,7 @@ const JobSidebar = ({
 
             <span className={styles.infoText}>
               Company:{" "}
-              {job?.company?.name ||
-                "Unknown"}
+              {job.company?.name}
             </span>
           </div>
         </div>
@@ -122,39 +102,34 @@ const JobSidebar = ({
 
       {!isApplying && (
         <>
-          {/* SEE MORE */}
-          <h3 className={styles.seeMoreTitle}>
-            See more
-          </h3>
-
           {/* SKILLS */}
           <div className={styles.blueCard}>
             <h4 className={styles.blueCardTitle}>
-              Skill Tags
+              Skills
             </h4>
 
             <div
               className={styles.blueCardList}
             >
-              {(job?.skills || []).map(
-                (skill: string) => (
+              {(job.skills || []).map(
+                (skill) => (
                   <span
-                    key={skill}
+                    key={skill.id}
                     className={
                       styles.blueCardItem
                     }
                   >
-                    {skill}
+                    {skill.name}
                   </span>
                 )
               )}
             </div>
           </div>
 
-          {/* DEPARTMENT */}
+          {/* CATEGORY */}
           <div className={styles.blueCard}>
             <h4 className={styles.blueCardTitle}>
-              Department
+              Category
             </h4>
 
             <div
@@ -165,9 +140,7 @@ const JobSidebar = ({
                   styles.blueCardItemActive
                 }
               >
-                {job?.department ||
-                  job?.category ||
-                  "General"}
+                {job.category?.name}
               </span>
             </div>
           </div>
@@ -205,7 +178,7 @@ const JobSidebar = ({
                   styles.blueCardItem
                 }
               >
-                {job?.status || "OPEN"}
+                {job.status}
               </span>
             </div>
           </div>

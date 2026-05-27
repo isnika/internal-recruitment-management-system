@@ -6,15 +6,19 @@ import { FaBookmark } from "react-icons/fa";
 import { formatSalary } from "../../../../utils/format";
 import type { Job } from "../../../../types/job";
 
+type JobWithBookmark = Job & {
+  isBookmarked?: boolean;
+};
+
 const JobHeader = ({
-  job,
-  onBookmark,
-  onApply,
-}: {
-  job: Job;
-  onBookmark: () => void;
-  onApply: () => void;
-}) => {
+                    job,
+                    onBookmark,
+                    onApply,
+                  }: {
+                    job: JobWithBookmark;
+                    onBookmark: () => void;
+                    onApply: () => void;
+                  }) => {
   return (
     <div className={styles.headerCard}>
       <div className={styles.logoWrapper}>

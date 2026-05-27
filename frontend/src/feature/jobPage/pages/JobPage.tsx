@@ -31,6 +31,11 @@ const JobPage = () => {
     handleSetStatus,
     handleClearAll,
     handleBookmark,
+    handleKeywordsChange,
+    handleLocationChange,
+    handleMinSalaryChange,
+    handleMaxSalaryChange,
+    handleSetJobType,
   } = useJobs();
 
   const startIndex =
@@ -43,6 +48,7 @@ const JobPage = () => {
       </div>
     );
   }
+console.log(metadata);
 
   return (
     <div className={styles.wrapper}>
@@ -52,6 +58,11 @@ const JobPage = () => {
           <FilterSidebar
             filters={filters}
             metadata={metadata}
+            onKeywordsChange={handleKeywordsChange}
+            onLocationChange={handleLocationChange}
+            onMinSalaryChange={handleMinSalaryChange}
+            onMaxSalaryChange={handleMaxSalaryChange}
+            onJobTypeChange={handleSetJobType}
             onStatusChange={handleSetStatus}
             onToggleSkill={handleToggleSkill}
             onCategoryChange={handleSetCategory}

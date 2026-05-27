@@ -185,3 +185,27 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Container bọc ngoài cho phân trang để căn chỉnh khoảng cách */
+.paginationFooter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 0;
+  margin-top: 16px;
+  border-top: 1px solid #f1f5f9; /* Đường kẻ viền mờ tách biệt với chân bảng */
+}
+
+/* Tối ưu hiển thị loading / error state cho sạch */
+.loadingText, .errorText {
+  text-align: center;
+  padding: 40px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #64748b;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.errorText {
+  color: #ef4444;
+}

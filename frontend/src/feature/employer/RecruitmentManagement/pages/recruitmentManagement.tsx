@@ -7,6 +7,7 @@ import RecruitmentFilterBar from "../components/RecruitmentFilterBar/Recruitment
 import RecruitmentTable from "../components/RecruitmentTable/RecruitmentTable";
 import CreateJobModal from "../components/CreateJobModal/CreateJobModal";
 import DeleteJobModal from "../components/DeleteJobModal/DeleteJobModal";
+import Pagination from "../../../jobPage/components/Pagination/Pagination"; //
 
 import {
   FiCheckCircle,
@@ -23,6 +24,7 @@ const RecruitmentManagement = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Phân trang: Đổi limit thành 15 kết quả/trang
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
   const [total, setTotal] = useState(0);
@@ -37,16 +39,16 @@ const RecruitmentManagement = () => {
   const [editingJob, setEditingJob] = useState<Job | null>(null);
   const [deletingJob, setDeletingJob] = useState<Job | null>(null);
 
-  // =========================
+  const totalPages = useMemo(() => {
+    return Math.ceil(total / limit) || 1;
+  }, [total, limit]);
+
   // RESET PAGE WHEN FILTER CHANGE
-  // =========================
   useEffect(() => {
     setPage(1);
   }, [searchQuery, status, jobType, department]);
 
-  // =========================
   // LOAD JOBS (SERVER SIDE)
-  // =========================
   const loadJobs = async () => {
     try {
       setLoading(true);
@@ -57,10 +59,15 @@ const RecruitmentManagement = () => {
         status: status || undefined,
         jobType: jobType || undefined,
         categoryId: undefined,
+        page: page,   
+        limit: limit, 
       });
 
-      setJobs(res.data || res); // tùy axios wrapper
-      setTotal((res.data || res).length);
+
+      const resultData = res.data || res;
+      setJobs(resultData);
+
+      setTotal(res.total ?? resultData.length);
     } catch (err) {
       setError("Failed to load jobs");
     } finally {
@@ -72,9 +79,9 @@ const RecruitmentManagement = () => {
     loadJobs();
   }, [page, searchQuery, status, jobType, department]);
 
-  // =========================
-  // STATS (FIXED STATUS LOGIC)
-  // =========================
+  //  
+  // STATS (STATS TRÊN TOÀN BỘ DATA HOẶC DATA TRANG HIỆN TẠI)
+  //  
   const stats = useMemo(() => {
     let active = 0;
     let closed = 0;
@@ -82,7 +89,6 @@ const RecruitmentManagement = () => {
 
     jobs.forEach((job) => {
       const st = normalize(job.status);
-
       if (st === "open" || st === "active") active++;
       else if (st === "closed") closed++;
       else draft++;
@@ -96,9 +102,9 @@ const RecruitmentManagement = () => {
     };
   }, [jobs, total]);
 
-  // =========================
+  //  
   // CREATE / UPDATE
-  // =========================
+  //  
   const handleSaveJob = async (data: Partial<Job>) => {
     try {
       if (editingJob) {
@@ -115,9 +121,9 @@ const RecruitmentManagement = () => {
     }
   };
 
-  // =========================
+  //  
   // DELETE
-  // =========================
+  //  
   const handleConfirmDelete = async () => {
     if (!deletingJob) return;
 
@@ -130,18 +136,8 @@ const RecruitmentManagement = () => {
     }
   };
 
-  // =========================
-  // DEBUG STATUS (SAFE)
-  // =========================
-  useEffect(() => {
-    if (jobs.length > 0) {
-      console.log("RAW STATUS LIST:", jobs.map(j => j.status));
-    }
-  }, [jobs]);
-
   return (
     <div className={styles.recruitmentSection}>
-
       {/* HEADER */}
       <header className={styles.dashboardHeader}>
         <div>
@@ -162,10 +158,6 @@ const RecruitmentManagement = () => {
         </button>
       </header>
 
-      {/* LOADING / ERROR */}
-      {loading && <p>Loading jobs...</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
-
       {/* STATS */}
       <section className={styles.statsOverviewGrid}>
         <div className={styles.statCard}>
@@ -173,19 +165,16 @@ const RecruitmentManagement = () => {
           <span>Total</span>
           <strong>{stats.total}</strong>
         </div>
-
         <div className={styles.statCard}>
           <FiCheckCircle />
           <span>Active</span>
           <strong>{stats.active}</strong>
         </div>
-
         <div className={styles.statCard}>
           <FiXCircle />
           <span>Closed</span>
           <strong>{stats.closed}</strong>
         </div>
-
         <div className={styles.statCard}>
           <FiFileText />
           <span>Draft</span>
@@ -205,17 +194,34 @@ const RecruitmentManagement = () => {
         }}
       />
 
-      {/* TABLE */}
-      <RecruitmentTable
-        jobs={jobs}
-        onEditJob={(job) => {
-          setEditingJob(job);
-          setIsCreateModalOpen(true);
-        }}
-        onDeleteJob={(job) => setDeletingJob(job)}
-      />
+      {/* TABLE DATA STATE */}
+      {loading ? (
+        <div className={styles.loadingText}>Loading jobs...</div>
+      ) : error ? (
+        <div className={styles.errorText}>{error}</div>
+      ) : (
+        <>
+          <RecruitmentTable
+            jobs={jobs}
+            onEditJob={(job) => {
+              setEditingJob(job);
+              setIsCreateModalOpen(true);
+            }}
+            onDeleteJob={(job) => setDeletingJob(job)}
+          />
 
-      {/* CREATE / EDIT MODAL */}
+          {/* PAGINATION COMPONENT (Hiển thị ngay dưới bảng) */}
+          <div className={styles.paginationFooter}>
+            <Pagination
+              currentPage={page}
+              totalPages={totalPages}
+              setCurrentPage={setPage}
+            />
+          </div>
+        </>
+      )}
+
+      {/* MODALS */}
       <CreateJobModal
         isOpen={isCreateModalOpen}
         onClose={() => {
@@ -226,7 +232,6 @@ const RecruitmentManagement = () => {
         initialData={editingJob}
       />
 
-      {/* DELETE MODAL */}
       <DeleteJobModal
         isOpen={!!deletingJob}
         jobTitle={deletingJob?.title || ""}

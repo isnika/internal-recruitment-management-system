@@ -31,4 +31,4 @@ build/
 backend/.m2/
 ### VS Code ###
 .vscode/
-.env
+../.env
