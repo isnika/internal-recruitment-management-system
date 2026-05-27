@@ -1,128 +1,134 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { FiX } from "react-icons/fi";
 import styles from "./JobApproval.module.css";
+
 import type { Job } from "../../../../types/job";
 import JobFilters from "../components/JobFilters";
 import JobTable from "../components/JobTable";
 import JobDetailModal from "../components/JobDetailModal";
 
-import { fetchJobsApi } from "../../../../service/jobApi";
+import { jobApi } from "../../../../service/jobApi";
 import { useToast } from "../../../../components/Toast";
+
 const JobApproval: React.FC = () => {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  const [error, setError] = useState<string | null>(null);
+
   const toast = useToast();
 
-  React.useEffect(() => {
-    loadJobs();
-  }, []);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("");
 
+  const [selectedJob, setSelectedJob] = useState<Job | null>(null);
+
+  const [rejectingJob, setRejectingJob] = useState<Job | null>(null);
+  const [rejectReason, setRejectReason] = useState("");
+
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  // =========================
+  // LOAD JOBS
+  // =========================
   const loadJobs = async () => {
     try {
       setIsLoading(true);
-      const res = await fetchJobsApi("View All", 1, 500); // Fetch up to 500 jobs
-      setJobs(res.jobs);
+      setError(null);
+
+      const data = await jobApi.filter({
+        keywords: searchTerm || undefined,
+        status: statusFilter || undefined,
+      });
+
+      setJobs(data);
     } catch (err: any) {
-      toast.error("Failed to fetch jobs from API");
-      console.error(err);
-      setError(err?.message || "Failed to load jobs from server.");
+      toast.error("Failed to fetch jobs");
+      setError(err?.message || "Load failed");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const onApprove = (id: string) => {
-    setJobs(prev => prev.map(j => j.id === id ? { ...j, status: "ACTIVE" } : j));
-    toast.success("Job Approved (Local only - API missing)");
+  useEffect(() => {
+    loadJobs();
+  }, [searchTerm, statusFilter]);
+
+  // =========================
+  // APPROVE (OPEN JOB)
+  // =========================
+  const onApprove = async (job: Job) => {
+    try {
+      setIsProcessing(true);
+
+      await jobApi.update(job.id, {
+        status: "OPEN",
+      });
+
+      toast.success("Job approved");
+
+      loadJobs();
+    } catch (err) {
+      toast.error("Approve failed");
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
-  const onReject = (id: string, reason: string) => {
-    setJobs(prev => prev.map(j => j.id === id ? { ...j, status: "REJECTED" } : j));
-    toast.success(`Job Rejected (Local only - API missing): ${reason}`);
+  // =========================
+  // REJECT (CLOSE JOB)
+  // =========================
+  const onReject = async (job: Job, reason: string) => {
+    try {
+      setIsProcessing(true);
+
+      await jobApi.update(job.id, {
+        status: "CLOSED",
+        description: job.description + `\n\nREJECTED: ${reason}`,
+      });
+
+      toast.success("Job rejected");
+
+      loadJobs();
+    } catch (err) {
+      toast.error("Reject failed");
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("pending");
-  const [selectedJob, setSelectedJob] = useState<Job | null>(null);
-  const [rejectingId, setRejectingId] = useState<string | null>(null);
-  const [rejectReason, setRejectReason] = useState("");
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
+  // =========================
+  // FILTERED VIEW (CLIENT SIDE)
+  // =========================
   const filteredJobs = useMemo(() => {
     return jobs.filter((job) => {
       const matchSearch =
         job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (job.company?.name || "").toLowerCase().includes(searchTerm.toLowerCase());
+        job.company?.name?.toLowerCase().includes(searchTerm.toLowerCase());
 
-      const currentStatus = (job.status || "pending").toLowerCase();
-      const matchStatus = statusFilter === "all" || currentStatus === statusFilter;
+      const matchStatus =
+        !statusFilter || job.status === statusFilter;
+
       return matchSearch && matchStatus;
     });
   }, [jobs, searchTerm, statusFilter]);
 
-  const handleOpenRejectModal = (id: string) => {
-    setRejectingId(id);
-    setRejectReason("");
-    setError(null);
-  };
-
-  const handleConfirmReject = () => {
-    if (!rejectingId || !rejectReason.trim()) {
-      setError("Please provide a reason for rejection");
-      return;
-    }
-
-    try {
-      setIsProcessing(true);
-      setError(null);
-      onReject(rejectingId, rejectReason);
-      setRejectingId(null);
-      setRejectReason("");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to reject job");
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  const handleApprove = (id: string) => {
-    try {
-      setIsProcessing(true);
-      setError(null);
-      onApprove(id);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to approve job");
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
   return (
     <div className={styles.container}>
-      <div className={styles.header}>
-        <h1 className={styles.title}>Job Approval System</h1>
-        <p className={styles.subtitle}>
-          Review, approve, or reject job listings before they go public.
-        </p>
-      </div>
+      <h1 className={styles.title}>Job Approval System</h1>
 
-      {/* Error Message */}
+      {/* ERROR */}
       {error && (
         <div className={styles.errorBanner}>
-          <span>{error}</span>
-          <button onClick={() => setError(null)} className={styles.errorClose}>×</button>
+          {error}
+          <button onClick={() => setError(null)}>×</button>
         </div>
       )}
 
-      {/* Loading Indicator */}
-      {isLoading && (
-        <div style={{ textAlign: "center", padding: "20px", color: "#64748b" }}>
-          Loading jobs from server...
-        </div>
-      )}
+      {/* LOADING */}
+      {isLoading && <p>Loading jobs...</p>}
 
-      {/* Filters bar */}
+      {/* FILTERS */}
       <JobFilters
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
@@ -130,63 +136,57 @@ const JobApproval: React.FC = () => {
         setStatusFilter={setStatusFilter}
       />
 
-      {/* List and Table Grid */}
+      {/* TABLE */}
       <JobTable
         filteredJobs={filteredJobs}
         onViewDetails={setSelectedJob}
-        onApprove={handleApprove}
-        onReject={handleOpenRejectModal}
+        onApprove={onApprove}
+        onReject={(job: Job) => setRejectingJob(job)}
       />
 
-      {/* Details Modal */}
+      {/* DETAIL MODAL */}
       {selectedJob && (
         <JobDetailModal
           selectedJob={selectedJob}
           onClose={() => setSelectedJob(null)}
-          onApprove={handleApprove}
-          onReject={handleOpenRejectModal}
+          onApprove={onApprove}
+          onReject={(job: Job) => setRejectingJob(job)}
         />
       )}
 
-      {/* Reject Modal */}
-      {rejectingId && (
-        <div className={styles.modalOverlay} onClick={() => setRejectingId(null)}>
-          <div className={styles.modalContentSmall} onClick={(e) => e.stopPropagation()}>
+      {/* REJECT MODAL */}
+      {rejectingJob && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modalContentSmall}>
             <div className={styles.modalHeader}>
-              <h3>Reject Reason</h3>
-              <button
-                className={styles.closeBtn}
-                onClick={() => setRejectingId(null)}
-                aria-label="Close modal"
-              >
+              <h3>Reject Job</h3>
+              <button onClick={() => setRejectingJob(null)}>
                 <FiX />
               </button>
             </div>
+
             <div className={styles.modalBody}>
-              <p>Please provide a reason for rejecting this job listing.</p>
-              {error && <p className={styles.errorText}>{error}</p>}
               <textarea
-                className={styles.textarea}
-                placeholder="Write reason here..."
                 value={rejectReason}
                 onChange={(e) => setRejectReason(e.target.value)}
-                rows={4}
-                aria-label="Rejection reason"
+                placeholder="Reason..."
               />
             </div>
+
             <div className={styles.modalFooter}>
               <button
-                className={styles.actionBtnRed}
-                onClick={handleConfirmReject}
-                disabled={!rejectReason.trim() || isProcessing}
+                disabled={!rejectReason || isProcessing}
+                onClick={() => {
+                  if (!rejectingJob) return;
+                  onReject(rejectingJob, rejectReason);
+                  setRejectingJob(null);
+                  setRejectReason("");
+                }}
               >
-                {isProcessing ? "Processing..." : "Confirm Reject"}
+                Confirm Reject
               </button>
-              <button
-                className={styles.cancelBtn}
-                onClick={() => setRejectingId(null)}
-                disabled={isProcessing}
-              >
+
+              <button onClick={() => setRejectingJob(null)}>
                 Cancel
               </button>
             </div>

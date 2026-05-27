@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import styles from "./RecruitmentFilterBar.module.css";
 import { FiSliders, FiSearch, FiPlus } from "react-icons/fi";
-import { fetchMetadataApi } from "../../../../../service/jobApi";
-import type { HomeMetadata } from "../../../../../types/job";
+
+import { useHomeMetadata } from "../../../../../hooks/useHomeMetadata";
 
 interface RecruitmentFilterBarProps {
   onSearch: (query: string) => void;
-  onDepartmentChange: (department: string) => void;
+  onCategoryChange: (categoryId: string) => void;
   onStatusChange: (status: string) => void;
   onEmploymentTypeChange: (type: string) => void;
   onCreateJob: () => void;
@@ -14,44 +14,39 @@ interface RecruitmentFilterBarProps {
 
 const RecruitmentFilterBar: React.FC<RecruitmentFilterBarProps> = ({
   onSearch,
-  onDepartmentChange,
+  onCategoryChange,
   onStatusChange,
   onEmploymentTypeChange,
   onCreateJob,
 }) => {
   const [searchInput, setSearchInput] = useState("");
-  const [metadata, setMetadata] = useState<HomeMetadata | null>(null);
 
-  React.useEffect(() => {
-    const getMetadata = async () => {
-      try {
-        const data = await fetchMetadataApi();
-        setMetadata(data);
-      } catch (err) {
-        console.error("Failed to load metadata", err);
-      }
-    };
-    getMetadata();
-  }, []);
+  const { metadata } = useHomeMetadata();
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSearch(searchInput);
   };
 
-  const statuses = ["Posted", "Draft", "Closed"];
+  // STATUS (MATCH BACKEND)
+  const statuses = [
+    { label: "All Statuses", value: "" },
+    { label: "Draft", value: "DRAFT" },
+    { label: "Open", value: "OPEN" },
+    { label: "Closed", value: "CLOSED" },
+  ];
 
   return (
     <div className={styles.filterWorkspace}>
-      {/* LEFT: Search + Filters */}
+      {/* LEFT */}
       <div className={styles.filterControls}>
-
-        {/* Search Bar */}
+        {/* SEARCH */}
         <form onSubmit={handleSearchSubmit} className={styles.searchWrapper}>
           <FiSearch className={styles.searchIcon} />
+
           <input
             type="text"
-            placeholder="Search job title, skills, department..."
+            placeholder="Search job title, skills..."
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             className={styles.searchInput}
@@ -64,58 +59,57 @@ const RecruitmentFilterBar: React.FC<RecruitmentFilterBarProps> = ({
           )}
         </form>
 
-        {/* Filters */}
+        {/* FILTERS */}
         <div className={styles.dropdownGroup}>
           <div className={styles.filterLabelBlock}>
             <FiSliders className={styles.filterIcon} />
             <span>Filters:</span>
           </div>
 
-          {/* Department */}
+          {/* CATEGORY (FIXED) */}
           <select
             className={styles.selectBox}
-            onChange={(e) => onDepartmentChange(e.target.value)}
+            onChange={(e) => onCategoryChange(e.target.value)}
             defaultValue=""
           >
-            <option value="">All Departments</option>
-            {metadata?.departments.map((dept) => (
-              <option key={dept} value={dept}>
-                {dept}
+            <option value="">All Categories</option>
+            {metadata?.categories?.map((cat) => (
+              <option key={cat.id} value={cat.id}>
+                {cat.name}
               </option>
             ))}
           </select>
 
-          {/* Status */}
+          {/* STATUS */}
           <select
             className={styles.selectBox}
             onChange={(e) => onStatusChange(e.target.value)}
             defaultValue=""
           >
-            <option value="">All Statuses</option>
-            {statuses.map((status) => (
-              <option key={status} value={status}>
-                {status}
+            {statuses.map((s) => (
+              <option key={s.value} value={s.value}>
+                {s.label}
               </option>
             ))}
           </select>
 
-          {/* Employment Type */}
+          {/* SKILLS (thay cho jobTypes) */}
           <select
             className={styles.selectBox}
             onChange={(e) => onEmploymentTypeChange(e.target.value)}
             defaultValue=""
           >
-            <option value="">Employment Type</option>
-            {metadata?.jobTypes.map((type) => (
-              <option key={type} value={type}>
-                {type}
+            <option value="">All Skills</option>
+            {metadata?.skills?.map((skill) => (
+              <option key={skill.id} value={skill.id}>
+                {skill.name}
               </option>
             ))}
           </select>
         </div>
       </div>
 
-      {/* RIGHT: CTA Button */}
+      {/* RIGHT CTA */}
       <button
         type="button"
         className={styles.createJobBtn}

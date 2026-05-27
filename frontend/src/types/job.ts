@@ -1,172 +1,105 @@
 // =========================
-// JOB
+// ENUMS
+// =========================
+
+export enum JobStatus {
+  DRAFT = "DRAFT",
+  OPEN = "OPEN",
+  CLOSED = "CLOSED",
+}
+
+export enum JobType {
+  FULL_TIME = "FULL_TIME",
+  PART_TIME = "PART_TIME",
+  INTERNSHIP = "INTERNSHIP",
+  FREELANCE = "FREELANCE",
+  REMOTE = "REMOTE",
+}
+
+// =========================
+// COMMON TYPES
+// =========================
+
+export interface Company {
+  id: number;
+  name: string;
+  description: string;
+  address: string;
+  website: string;
+  logoUrl: string;
+  status: string;
+}
+
+export interface Category {
+  id: number;
+  name: string;
+}
+
+export interface ExperienceLevel {
+  id: number;
+  name: string;
+}
+
+export interface Skill {
+  id: number;
+  name: string;
+}
+
+// =========================
+// JOB RESPONSE
 // =========================
 
 export interface Job {
-  id: string;
-
+  id: number;
   title: string;
-
-  category: string;
-
-  skills: string[];
-
-  salary: {
-    min: number;
-
-    max: number;
-
-    currency: string;
-  };
-
+  description: string;
+  requirements: string;
+  benefits: string;
+  salaryMin: number;
+  salaryMax: number;
   location: string;
+  type: string;
+  status: JobStatus;
+  deadline: string;
 
-  postedAt: string;
-
-  isBookmarked: boolean;
-
-  logo: string;
-
-  jobType: string;
-
-  experienceLevel: string;
-
-  department: string;
-
-  description?: string[];
-
-  requirements?: string[];
-
-  benefits?: string[];
-
-  company?: {
-    name: string;
-
-    address: string;
-
-    bio?: string;
-  };
-
-  workingHours?: string;
-
-  deadline?: string;
-
-  createdBy?: string;
-
-  status?: string;
+  company: Company;
+  category: Category;
+  experienceLevel: ExperienceLevel;
+  skills: Skill[];
 }
 
 // =========================
-// METADATA
-// =========================
-
-export interface HomeMetadata {
-  categories: string[];
-
-  jobTypes: string[];
-
-  experienceLevels: string[];
-
-  departments: string[];
-
-  salaryRanges: string[];
-
-  skillTags: string[];
-}
-
-// =========================
-// FETCH JOB RESPONSE
-// =========================
-
-export interface FetchJobsResponse {
-  jobs: Job[];
-
-  total: number;
-
-  totalPages: number;
-
-  currentPage: number;
-}
-
-// =========================
-// UI FILTERS
-// =========================
-
-export interface JobFilters {
-  jobTypes: string[];
-
-  experienceLevels: string[];
-
-  departments: string[];
-
-  salaryRanges: string[];
-
-  skillTags: string[];
-
-  keyword?: string;
-
-  location?: string;
-
-  status?: string;
-}
-
-// =========================
-// CREATE JOB DTO
+// REQUEST TYPES
 // =========================
 
 export interface CreateJobRequest {
   title: string;
-
   description: string;
-
   requirements: string;
-
   benefits: string;
-
   salaryMin: number;
-
   salaryMax: number;
-
   location: string;
-
   type: string;
-
   deadline: string;
+  status: JobStatus;
 
   companyId: number;
-
   categoryId: number;
-
   experienceLevelId: number;
-
   skillIds: number[];
 }
-
-// =========================
-// UPDATE JOB DTO
-// =========================
 
 export interface UpdateJobRequest
   extends CreateJobRequest {}
 
-// =========================
-// FILTER JOB API REQUEST
-// =========================
-
-export interface FilterJobsRequest {
+export interface JobFilterRequest {
   keywords?: string;
-
   minSalary?: number;
-
   maxSalary?: number;
-
   skillIds?: number[];
-
   location?: string;
-
   categoryId?: number;
-
   jobType?: string;
-
   status?: string;
 }

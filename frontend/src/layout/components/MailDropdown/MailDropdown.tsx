@@ -3,10 +3,7 @@ import { FaEnvelope } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import styles from "./MailDropdown.module.css";
 
-import {
-  getMyNotifications,
-  markAsRead,
-} from "../../../service/notificationApi";
+import { notificationApi } from "../../../service/notificationApi";
 
 interface Props {
   user: any;
@@ -18,7 +15,7 @@ const MailDropdown = ({ user }: Props) => {
   const ref = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
 
-  // Fetch notifications theo user
+  // FETCH NOTIFICATIONS
   useEffect(() => {
     if (!user?.id) {
       setMails([]);
@@ -27,7 +24,7 @@ const MailDropdown = ({ user }: Props) => {
 
     const fetchMails = async () => {
       try {
-        const data = await getMyNotifications(user.id);
+        const data = await notificationApi.getMyNotifications();
         setMails(data || []);
       } catch (err) {
         console.error("Load notifications error:", err);
@@ -37,7 +34,7 @@ const MailDropdown = ({ user }: Props) => {
     fetchMails();
   }, [user]);
 
-  // Click ngoài để đóng dropdown
+  // click outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) {
@@ -49,33 +46,40 @@ const MailDropdown = ({ user }: Props) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Tính số lượng thông báo chưa đọc
   const unreadCount = mails.filter((m) => !m.isRead).length;
 
-  // Click xử lý đọc thông báo
+  // MARK AS READ
   const handleClickMail = async (mail: any) => {
-    // Nếu đã đọc rồi thì không gọi API nữa
-    if (mail.isRead) return;
+    if (!mail.isRead) {
+      try {
+        await notificationApi.markAsRead(mail.id);
 
-    try {
-      await markAsRead(mail.id);
-      setMails((prev) =>
-        prev.map((m) => (m.id === mail.id ? { ...m, isRead: true } : m))
-      );
-    } catch (err) {
-      console.error("Mark as read error:", err);
+        setMails((prev) =>
+          prev.map((m) =>
+            m.id === mail.id ? { ...m, isRead: true } : m
+          )
+        );
+      } catch (err) {
+        console.error("Mark as read error:", err);
+      }
     }
+
+    // redirect nếu có
+    if (mail.redirectUrl) {
+      navigate(mail.redirectUrl);
+    }
+
+    setOpen(false);
   };
 
   return (
     <div className={styles.wrapper} ref={ref}>
-      {/* ICON TRIGGER */}
       <button
         className={`${styles.iconBtn} ${open ? styles.activeIcon : ""}`}
-        onClick={() => setOpen((prev) => !prev)}
-        aria-label="Notifications"
+        onClick={() => setOpen((p) => !p)}
       >
         <FaEnvelope size={18} />
+
         {user && unreadCount > 0 && (
           <span className={styles.badge}>
             {unreadCount > 99 ? "99+" : unreadCount}
@@ -83,7 +87,6 @@ const MailDropdown = ({ user }: Props) => {
         )}
       </button>
 
-      {/* DROPDOWN MENU */}
       {open && (
         <div className={styles.dropdown}>
           <div className={styles.dropHeader}>
@@ -97,7 +100,10 @@ const MailDropdown = ({ user }: Props) => {
                 <p>Vui lòng đăng nhập để xem thông báo</p>
                 <button
                   className={styles.loginBtn}
-                  onClick={() => { setOpen(false); navigate("/login"); }}
+                  onClick={() => {
+                    setOpen(false);
+                    navigate("/login");
+                  }}
                 >
                   Đăng nhập ngay
                 </button>
@@ -110,22 +116,31 @@ const MailDropdown = ({ user }: Props) => {
               mails.map((mail) => (
                 <div
                   key={mail.id}
-                  className={`${styles.item} ${!mail.isRead ? styles.unread : ""}`}
+                  className={`${styles.item} ${
+                    !mail.isRead ? styles.unread : ""
+                  }`}
                   onClick={() => handleClickMail(mail)}
                 >
-                  {/* Avatar/Icon đại diện giả lập HR */}
                   <div className={styles.avatar}>HR</div>
 
                   <div className={styles.content}>
                     <div className={styles.topRow}>
-                      <span className={styles.title}>{mail.title}</span>
-                      <span className={styles.time}>{mail.time}</span>
+                      <span className={styles.title}>
+                        {mail.content}
+                      </span>
+                      <span className={styles.time}>
+                        {new Date(mail.createdAt).toLocaleString()}
+                      </span>
                     </div>
-                    <p className={styles.desc}>{mail.desc}</p>
+
+                    <p className={styles.desc}>
+                      {mail.type}
+                    </p>
                   </div>
 
-                  {/* Chấm tròn báo chưa đọc tinh tế bên phải */}
-                  {!mail.isRead && <span className={styles.unreadDot} />}
+                  {!mail.isRead && (
+                    <span className={styles.unreadDot} />
+                  )}
                 </div>
               ))
             )}

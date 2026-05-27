@@ -75,7 +75,7 @@ export default function AppRoutes() {
 
       {/* MANAGEMENT */}
       <Route
-        path="/layoutManagement"
+        path="/layoutmanagement"
         element={
           <ProtectedRoute allowRoles={["RECRUITER", "ADMIN"]}>
             <MainLayoutManagement />

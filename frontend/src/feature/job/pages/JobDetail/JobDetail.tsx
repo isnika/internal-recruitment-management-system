@@ -4,7 +4,9 @@ import { FiChevronDown } from "react-icons/fi";
 
 import styles from "./JobDetail.module.css";
 import type { Job } from "../../../../types/job";
-import { fetchJobByIdApi, toggleBookmarkApi } from "../../../../service/jobApi";
+
+import { jobApi } from "../../../../service/jobApi";
+import { request } from "../../../../service/axiosClient";
 
 import JobHeader from "../../components/JobHeader/JobHeader";
 import JobTabs from "../../components/JobTabs/JobTabs";
@@ -14,14 +16,31 @@ import RelatedJobs from "../../components/RelatedJobs/RelatedJobs";
 import ApplyJobForm from "../../components/ApplyJob/ApplyJobForm/ApplyJobForm";
 import SubmitSuccessMessage from "../../components/ApplyJob/SubmitSuccessMessage/SubmitSuccessMessage";
 
+// =========================
+// SAVED JOB API (đúng backend bạn gửi)
+// =========================
+const savedJobApi = {
+  toggle: (jobId: number) =>
+    request.post(`/api/saved-jobs/${jobId}`),
+
+  getStatus: (jobId: number) =>
+    request.get(`/api/saved-jobs/${jobId}/status`),
+};
+
+// =========================
+
 const JobDetail = () => {
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
+
   const [job, setJob] = useState<Job | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("Description");
 
-  const [isApplying, setIsApplying] = useState(location.state?.autoApply || false);
+  const [isApplying, setIsApplying] = useState(
+    location.state?.autoApply || false
+  );
+
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const descriptionRef = useRef<HTMLDivElement>(null);
@@ -36,22 +55,52 @@ const JobDetail = () => {
     Company: companyRef,
   };
 
+  // =========================
+  // FETCH JOB
+  // =========================
   useEffect(() => {
     const getJob = async () => {
       if (!id) return;
-      const data = await fetchJobByIdApi(id);
-      setJob(data);
-      setIsLoading(false);
+
+      try {
+        setIsLoading(true);
+
+        const data = await jobApi.getById(Number(id));
+
+        setJob({
+          ...data,
+          // normalize thêm field FE cần (không có backend)
+          isBookmarked: false,
+        } as any);
+      } finally {
+        setIsLoading(false);
+      }
     };
+
     getJob();
   }, [id]);
 
+  // =========================
+  // BOOKMARK (saved-jobs API)
+  // =========================
   const handleBookmark = async () => {
     if (!job) return;
-    await toggleBookmarkApi(job.id);
-    setJob({ ...job, isBookmarked: !job.isBookmarked });
+
+    await savedJobApi.toggle(job.id);
+
+    setJob((prev) =>
+      prev
+        ? {
+            ...prev,
+            isBookmarked: !((prev as any).isBookmarked),
+          }
+        : prev
+    );
   };
 
+  // =========================
+  // APPLY
+  // =========================
   const handleApply = () => {
     setIsApplying(true);
     setIsSubmitted(false);
@@ -67,43 +116,65 @@ const JobDetail = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  if (isLoading || !job) return <div className={styles.wrapper}>Loading...</div>;
+  if (isLoading || !job)
+    return <div className={styles.wrapper}>Loading...</div>;
 
   return (
     <div className={styles.wrapper}>
-      {/* Top Section */}
-      <div className={styles.contentLayout} style={isApplying ? {} : { alignItems: 'flex-start' }}>
+      {/* TOP */}
+      <div
+        className={styles.contentLayout}
+        style={isApplying ? {} : { alignItems: "flex-start" }}
+      >
         <div className={styles.leftCol}>
           <div className={styles.headerCard}>
-            <JobHeader job={job} onBookmark={handleBookmark} onApply={handleApply} />
-            <JobTabs activeTab={activeTab} setActiveTab={setActiveTab} tabRefs={tabRefs} />
+            <JobHeader
+              job={job as any}
+              onBookmark={handleBookmark}
+              onApply={handleApply}
+            />
 
-            {/* Show See More only when applying, to allow cancelling/expanding,  */}
+            <JobTabs
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+              tabRefs={tabRefs}
+            />
+
             {isApplying && (
               <>
-                <div className={styles.seeMore} onClick={handleCancelApply}>See More</div>
-                <div className={styles.collapseIcon} onClick={handleCancelApply}>
+                <div
+                  className={styles.seeMore}
+                  onClick={handleCancelApply}
+                >
+                  See More
+                </div>
+                <div
+                  className={styles.collapseIcon}
+                  onClick={handleCancelApply}
+                >
                   <FiChevronDown />
                 </div>
               </>
             )}
 
-            {/* If NOT applying, show the job details right here so it shares the white background */}
             {!isApplying && (
               <div className={styles.sectionsContainer}>
-                <JobSections job={job} refs={tabRefs} onApply={handleApply} />
+                <JobSections
+                  job={job}
+                  refs={tabRefs}
+                  onApply={handleApply}
+                />
               </div>
             )}
           </div>
         </div>
 
         <div className={styles.rightCol}>
-          {/* Sidebar acts as General Info when applying */}
           <JobSidebar job={job} isApplying={isApplying} />
         </div>
       </div>
 
-      {/* Bottom Section: Form aligns with leftCol */}
+      {/* APPLY FORM */}
       {isApplying && (
         <div className={styles.contentLayout}>
           <div className={styles.leftCol}>

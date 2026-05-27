@@ -212,3 +212,10 @@ input:focus {
     grid-template-columns: 1fr;
   }
 }
+
+.uploadMessage {
+  margin-top: 8px;
+  font-size: 14px;
+  color: #2563eb;
+  text-align: center;
+}

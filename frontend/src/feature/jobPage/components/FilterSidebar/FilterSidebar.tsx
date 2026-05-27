@@ -136,20 +136,17 @@ const FilterSidebar = ({
           className={styles.select}
         >
           <option value="">
-            All Status
+            All Jobs
           </option>
 
-          <option value="OPEN">
-            OPEN
+          <option value="ACTIVE">
+            Active Jobs
           </option>
 
           <option value="CLOSED">
-            CLOSED
+            Closed Jobs
           </option>
 
-          <option value="PENDING">
-            PENDING
-          </option>
         </select>
       </div>
 

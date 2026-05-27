@@ -2,10 +2,9 @@ import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 import type { Job } from "../../../../types/job";
-import { filterJobsApi } from "../../../../service/jobApi";
+import { jobApi } from "../../../../service/jobApi";
 
 import JobCard from "../../../job/components/JobCard/JobCard";
-
 import styles from "./SearchPage.module.css";
 
 export default function SearchPage() {
@@ -13,16 +12,13 @@ export default function SearchPage() {
   const [loading, setLoading] = useState(false);
 
   const locationHook = useLocation();
-
   const query = new URLSearchParams(locationHook.search);
 
   const keyword = (query.get("q") || "").trim();
-
   const locationFilter = (query.get("location") || "").trim();
 
   useEffect(() => {
     const fetchData = async () => {
-      // không có gì để search
       if (!keyword && !locationFilter) {
         setResults([]);
         return;
@@ -31,7 +27,7 @@ export default function SearchPage() {
       setLoading(true);
 
       try {
-        const res = await filterJobsApi({
+        const res = await jobApi.filter({
           keywords: keyword || undefined,
           location: locationFilter || undefined,
         });
@@ -46,13 +42,19 @@ export default function SearchPage() {
     };
 
     fetchData();
-  }, [locationHook.search]); //  FIX: quan trọng nhất
+  }, [locationHook.search]);
 
-  const handleBookmark = (id: string) => {
+  // =========================
+  // BOOKMARK (fake FE state)
+  // =========================
+  const handleBookmark = (jobId: number) => {
     setResults((prev) =>
       prev.map((job) =>
-        job.id === id
-          ? { ...job, isBookmarked: !job.isBookmarked }
+        job.id === jobId
+          ? {
+              ...job,
+              isBookmarked: !(job as any).isBookmarked,
+            }
           : job
       )
     );
@@ -63,21 +65,13 @@ export default function SearchPage() {
       <div className={styles.container}>
         <h2 className={styles.title}>
           Kết quả tìm kiếm:{" "}
-          <span>
-            "{keyword || locationFilter}"
-          </span>
+          <span>"{keyword || locationFilter}"</span>
         </h2>
 
-        {loading && (
-          <p className={styles.loading}>
-            Loading...
-          </p>
-        )}
+        {loading && <p className={styles.loading}>Loading...</p>}
 
         {!loading && results.length === 0 && (
-          <p className={styles.empty}>
-            Không tìm thấy job
-          </p>
+          <p className={styles.empty}>Không tìm thấy job</p>
         )}
 
         {!loading && results.length > 0 && (
@@ -85,8 +79,11 @@ export default function SearchPage() {
             {results.map((job) => (
               <JobCard
                 key={job.id}
-                job={job}
-                onBookmark={handleBookmark}
+                job={{
+                  ...job,
+                  isBookmarked: (job as any).isBookmarked || false,
+                }}
+                onBookmark={() => handleBookmark(job.id)}
               />
             ))}
           </div>

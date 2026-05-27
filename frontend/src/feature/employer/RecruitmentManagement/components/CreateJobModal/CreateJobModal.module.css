@@ -128,18 +128,23 @@
   cursor: not-allowed;
 }
 
-/* Status Cards */
+/* Status Cards
+(Dùng chung cho Table & Modal) --- */
 .statusBadge {
-  background: #dcfce7;
-  color: #16a34a;
   padding: 6px 16px;
   border-radius: 9999px;
   font-size: 14px;
   font-weight: 600;
   display: inline-block;
   margin-bottom: 24px;
+  border: 1px solid transparent;
 }
 
+/* Định nghĩa màu sắc theo trạng thái */
+.statusActive { background: #e6f7ed; color: #2e7d32; border-color: #c8e6c9; }
+.statusPaused { background: #fff8e1; color: #f57f17; border-color: #ffe082; }
+.statusClosed { background: #ffebee; color: #c62828; border-color: #ffcdd2; }
+.statusDraft  { background: #f5f5f5; color: #616161; border-color: #e0e0e0; }
 .statusContainer {
   display: flex;
   flex-direction: column;
@@ -156,9 +161,39 @@
   cursor: pointer;
 }
 
+/* Đảm bảo card có transition mượt mà */
+.statusCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 10px;
+}
+
+.statusCard:hover {
+  border-color: #cbd5e1;
+}
+
+/* Khi được chọn */
 .statusCardActive {
-  border-color: #6366f1;
+  border-color: #3b82f6; /* Màu xanh thương hiệu */
   background-color: #f8fafc;
+}
+
+/* Icon container */
+.statusIcon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  margin-right: 12px;
+  font-size: 20px;
 }
 
 .statusInfo {

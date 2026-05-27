@@ -1,75 +1,110 @@
 import { useEffect, useMemo, useState } from "react";
-import {
-  fetchJobsApi,
-  toggleBookmarkApi,
-  type Job,
-  type JobFilters,
-} from "../service/jobApi";
+
+import jobApi from "../service/jobApi";
+
+import type {
+  Job,
+  JobFilterRequest,
+} from "../types/job";
 
 const JOBS_PER_PAGE = 5;
 
-const emptyFilters: JobFilters = {
-  jobTypes: [],
-  experienceLevels: [],
-  departments: [],
-  salaryRanges: [],
-  skillTags: [],
+const emptyFilters: JobFilterRequest = {
+  keywords: "",
+  minSalary: undefined,
+  maxSalary: undefined,
+  skillIds: [],
+  location: "",
+  categoryId: undefined,
+  jobType: "",
+  status: "",
 };
 
 export const useJobs = (
-  activeCategory: string,
-  metadataReady: boolean
+  activeCategory?: number,
+  metadataReady?: boolean
 ) => {
   const [jobs, setJobs] = useState<Job[]>([]);
-  const [totalJobs, setTotalJobs] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
-  const [currentPage, setCurrentPage] = useState(1);
 
-  const [filters, setFilters] = useState<JobFilters>({ ...emptyFilters });
-  const [isLoading, setIsLoading] = useState(false);
+  const [currentPage, setCurrentPage] =
+    useState(1);
 
-  //    ACTIVE COUNT (FIXED)   
+  const [totalJobs, setTotalJobs] =
+    useState(0);
+
+  const [totalPages, setTotalPages] =
+    useState(0);
+
+  const [filters, setFilters] =
+    useState<JobFilterRequest>({
+      ...emptyFilters,
+    });
+
+  const [isLoading, setIsLoading] =
+    useState(false);
+
+  // ACTIVE FILTER COUNT
   const activeCount = useMemo(() => {
-    return (
-      filters.jobTypes.length +
-      filters.experienceLevels.length +
-      filters.departments.length +
-      filters.salaryRanges.length +
-      filters.skillTags.length
-    );
+    let count = 0;
+
+    if (filters.keywords) count++;
+    if (filters.minSalary) count++;
+    if (filters.maxSalary) count++;
+    if (filters.location) count++;
+    if (filters.categoryId) count++;
+    if (filters.jobType) count++;
+    if (filters.status) count++;
+
+    count += filters.skillIds?.length || 0;
+
+    return count;
   }, [filters]);
 
-  //    FETCH JOBS   
+  // FETCH JOBS
   useEffect(() => {
-    if (!metadataReady) return;
+    if (metadataReady === false) return;
 
-    const getJobs = async () => {
+    const fetchJobs = async () => {
       setIsLoading(true);
 
       try {
-        // sanitize filters (VERY IMPORTANT)
-        const cleanFilters: JobFilters | undefined =
-          activeCount > 0
-            ? {
-                jobTypes: filters.jobTypes,
-                experienceLevels: filters.experienceLevels,
-                departments: filters.departments,
-                salaryRanges: filters.salaryRanges,
-                skillTags: filters.skillTags,
-              }
-            : undefined;
+        const cleanFilters: JobFilterRequest = {
+          ...filters,
+        };
 
-        const res = await fetchJobsApi(
-          activeCategory,
-          currentPage,
-          JOBS_PER_PAGE,
-          cleanFilters
+        // category tab
+        if (activeCategory) {
+          cleanFilters.categoryId =
+            activeCategory;
+        }
+
+        const data =
+          activeCount > 0 || activeCategory
+            ? await jobApi.filterJobs(
+                cleanFilters
+              )
+            : await jobApi.getAllJobs();
+
+        // FRONTEND PAGINATION
+        const start =
+          (currentPage - 1) * JOBS_PER_PAGE;
+
+        const end = start + JOBS_PER_PAGE;
+
+        const paginatedJobs = data.slice(
+          start,
+          end
         );
 
-        setJobs(res.jobs);
-        setTotalJobs(res.total);
-        setTotalPages(res.totalPages);
-        setCurrentPage(res.currentPage);
+        setJobs(paginatedJobs);
+
+        setTotalJobs(data.length);
+
+        setTotalPages(
+          Math.ceil(
+            data.length / JOBS_PER_PAGE
+          )
+        );
       } catch (err) {
         console.error("Lỗi jobs:", err);
       } finally {
@@ -77,57 +112,65 @@ export const useJobs = (
       }
     };
 
-    getJobs();
-  }, [activeCategory, currentPage, activeCount, metadataReady]);
+    fetchJobs();
+  }, [
+    activeCategory,
+    currentPage,
+    activeCount,
+    metadataReady,
+  ]);
 
-  //    BOOKMARK   
-  const handleBookmark = async (id: string) => {
-    try {
-      await toggleBookmarkApi(id);
-
-      setJobs(prev =>
-        prev.map(job =>
-          job.id === id
-            ? { ...job, isBookmarked: !job.isBookmarked }
-            : job
-        )
-      );
-    } catch (err) {
-      console.error("Bookmark lỗi:", err);
-    }
-  };
-
-  //    FILTER TOGGLE   
-  const handleToggleFilter = (group: keyof JobFilters, value: string) => {
+  // TOGGLE SKILL FILTER
+  const handleToggleSkill = (
+    skillId: number
+  ) => {
     setFilters(prev => {
-      const list = prev[group] || [];
+      const list = prev.skillIds || [];
 
-      const newList = list.includes(value)
-        ? list.filter(v => v !== value)
-        : [...list, value];
+      const newList = list.includes(skillId)
+        ? list.filter(id => id !== skillId)
+        : [...list, skillId];
 
       return {
         ...prev,
-        [group]: newList,
+        skillIds: newList,
       };
     });
 
     setCurrentPage(1);
   };
 
-  //    CLEAR GROUP   
-  const handleClearGroup = (group: keyof JobFilters) => {
+  // SET JOB TYPE
+  const handleSetJobType = (
+    type: string
+  ) => {
     setFilters(prev => ({
       ...prev,
-      [group]: [],
+      jobType: prev.jobType === type ? "" : type,
     }));
 
     setCurrentPage(1);
   };
 
-  //    CLEAR ALL   
+  // SET STATUS
+  const handleSetStatus = (
+    status: string
+  ) => {
+    setFilters(prev => ({
+      ...prev,
+      status:
+        prev.status === status ? "" : status,
+    }));
+
+    setCurrentPage(1);
+  };
+
+  // CLEAR ALL FILTERS
   const handleClearAll = () => {
-    setFilters({ ...emptyFilters });
+    setFilters({
+      ...emptyFilters,
+    });
+
     setCurrentPage(1);
   };
 
@@ -137,14 +180,19 @@ export const useJobs = (
     totalPages,
     currentPage,
     setCurrentPage,
+
     isLoading,
+
     filters,
     setFilters,
-    handleBookmark,
-    handleToggleFilter,
-    handleClearGroup,
-    handleClearAll,
+
     activeCount,
+
+    handleToggleSkill,
+    handleSetJobType,
+    handleSetStatus,
+    handleClearAll,
+
     JOBS_PER_PAGE,
   };
 };

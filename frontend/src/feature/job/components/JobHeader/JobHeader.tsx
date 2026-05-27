@@ -1,9 +1,9 @@
-
 import styles from "./JobHeader.module.css";
 import { BsCash } from "react-icons/bs";
 import { FiMapPin } from "react-icons/fi";
 import { FaBookmark } from "react-icons/fa";
-import { formatSalary } from "../../../../service/jobApi";
+
+import { formatSalary } from "../../../../utils/format";
 import type { Job } from "../../../../types/job";
 
 const JobHeader = ({
@@ -19,7 +19,7 @@ const JobHeader = ({
     <div className={styles.headerCard}>
       <div className={styles.logoWrapper}>
         <img
-          src={job.logo}
+          src={job.company?.logoUrl}
           alt={job.title}
           className={styles.logoImage}
         />
@@ -27,13 +27,17 @@ const JobHeader = ({
 
       <div className={styles.headerInfo}>
         <h1 className={styles.jobTitle}>{job.title}</h1>
-        <p className={styles.jobCategory}>{job.category}</p>
+
+        <p className={styles.jobCategory}>
+          {job.category?.name}
+        </p>
 
         <div className={styles.skillsRow}>
           <span className={styles.skillsLabel}>Skills:</span>
-          {job.skills.map((skill) => (
-            <span key={skill} className={styles.skillTag}>
-              {skill}
+
+          {job.skills?.map((skill) => (
+            <span key={skill.id} className={styles.skillTag}>
+              {skill.name}
             </span>
           ))}
         </div>
@@ -41,7 +45,10 @@ const JobHeader = ({
         <div className={styles.metaRow}>
           <div className={styles.metaItem}>
             <BsCash className={styles.metaIconYellow} />
-            <span>{formatSalary(job.salary)}</span>
+            <span>
+              {formatSalary(job.salaryMin)} -{" "}
+              {formatSalary(job.salaryMax)}
+            </span>
           </div>
 
           <div className={styles.metaItem}>
@@ -53,26 +60,28 @@ const JobHeader = ({
 
       <div className={styles.headerRight}>
         <div className={styles.topRight}>
-          <span className={styles.postedAt}>{job.postedAt}</span>
+          <span className={styles.postedAt}>
+            {job.deadline}
+          </span>
 
           <button
             className={styles.bookmarkBtn}
             onClick={onBookmark}
-            title={
-              job.isBookmarked
-                ? "Remove bookmark"
-                : "Bookmark this job"
-            }
           >
             <FaBookmark
-              className={`${styles.bookmarkIcon} ${
-                job.isBookmarked ? styles.bookmarkIconActive : ""
-              }`}
+              className={
+                job.isBookmarked
+                  ? styles.bookmarkIconActive
+                  : styles.bookmarkIcon
+              }
             />
           </button>
         </div>
 
-        <button className={styles.applyBtn} onClick={onApply}>
+        <button
+          className={styles.applyBtn}
+          onClick={onApply}
+        >
           Apply Now
         </button>
       </div>

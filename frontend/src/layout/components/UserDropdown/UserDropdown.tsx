@@ -14,19 +14,19 @@ const UserDropdown = ({ user }: Props) => {
   const [open, setOpen] = useState(false);
   const boxRef = useRef<HTMLDivElement>(null);
 
+  if (!user) return null;
+
   // SAFE ROLE NORMALIZE
-  const role = user?.role?.toString().trim().toLowerCase() || "";
+  const role = (user.role || "")
+    .toString()
+    .toLowerCase()
+    .replace("role_", "")
+    .trim();
 
-  const isCandidate = role === "candidate";
-  const isAdmin = role === "admin";
-  const isRecruiter = role === "recruiter";
-
-
-  // BASE ROUTE
-  let baseRoute = "/management";
-  if (isCandidate) baseRoute = "/profile";
-
-  // LOGOUT (FIXED: Xóa sạch & Reload)
+  // ROUTES FIXED (KHÔNG LỆ THUỘC baseRoute)
+  const profileRoute = "/profile";
+  const settingsRoute = "/settings";
+  const helpRoute = "/help";
 
   const handleLogout = async () => {
     try {
@@ -34,72 +34,78 @@ const UserDropdown = ({ user }: Props) => {
     } catch (err) {
       console.error("Logout API error:", err);
     } finally {
-
       localStorage.removeItem("access_token");
       localStorage.removeItem("user");
 
       setOpen(false);
-
-
       window.location.href = "/login";
     }
   };
 
-  //      
   // OUTSIDE CLICK
-  //      
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (boxRef.current && !boxRef.current.contains(event.target as Node)) {
+      if (
+        boxRef.current &&
+        !boxRef.current.contains(event.target as Node)
+      ) {
         setOpen(false);
       }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    return () =>
+      document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  // Guard Clause
-  if (!user) return null;
 
   return (
     <div className={styles.userBox} ref={boxRef}>
       {/* USER INFO */}
-      <div className={styles.userInfo} onClick={() => setOpen(!open)}>
+      <div
+        className={styles.userInfo}
+        onClick={() => setOpen(!open)}
+      >
         👤 {user.firstName} {user.lastName}
       </div>
 
       {/* DROPDOWN */}
       {open && (
         <div className={styles.dropdown}>
+          {/* PERSONAL INFO (FIXED) */}
           <div
             onClick={() => {
-              navigate(baseRoute);
+              navigate(profileRoute);
               setOpen(false);
             }}
           >
             Personal information
           </div>
 
+          {/* SETTINGS */}
           <div
             onClick={() => {
-              navigate(`${baseRoute}/settings`);
+              navigate(settingsRoute);
               setOpen(false);
             }}
           >
             Settings
           </div>
 
+          {/* HELP */}
           <div
             onClick={() => {
-              navigate(`${baseRoute}/help`);
+              navigate(helpRoute);
               setOpen(false);
             }}
           >
             Help
           </div>
 
-          <div className={styles.logout} onClick={handleLogout}>
+          {/* LOGOUT */}
+          <div
+            className={styles.logout}
+            onClick={handleLogout}
+          >
             Logout
           </div>
         </div>

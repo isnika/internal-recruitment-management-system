@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import styles from "./RecruitmentManagement.module.css";
-import { fetchJobsApi } from "../../../../service/jobApi";
+import { jobApi } from "../../../../service/jobApi";
 import type { Job } from "../../../../types/job";
 
 import RecruitmentFilterBar from "../components/RecruitmentFilterBar/RecruitmentFilterBar";
@@ -14,12 +14,19 @@ import {
   FiFileText,
   FiBriefcase,
   FiPlus
-} from "react-icons/fi"; // Consistent Enterprise Icon Set
+} from "react-icons/fi";
 
 const normalize = (s?: string) => (s || "").toLowerCase();
 
 const RecruitmentManagement = () => {
   const [jobs, setJobs] = useState<Job[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const [page, setPage] = useState(1);
+  const [limit] = useState(10);
+  const [total, setTotal] = useState(0);
+
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -30,106 +37,120 @@ const RecruitmentManagement = () => {
   const [editingJob, setEditingJob] = useState<Job | null>(null);
   const [deletingJob, setDeletingJob] = useState<Job | null>(null);
 
-  // ── LOAD JOBS DATA STREAM ──
+  // =========================
+  // RESET PAGE WHEN FILTER CHANGE
+  // =========================
   useEffect(() => {
-    const loadJobs = async () => {
-      try {
-        const res = await fetchJobsApi("View All", 1, 100);
-        const myJobs = res.jobs.filter(
-          (job: Job) => job.createdBy === "company1"
-        );
-        setJobs(myJobs);
-      } catch (err) {
-        console.error("Failed to load jobs from internal telemetry channels", err);
-      }
-    };
-    loadJobs();
-  }, []);
+    setPage(1);
+  }, [searchQuery, status, jobType, department]);
 
-  // ── OPERATIONAL STATISTICS DECK GENERATION ──
+  // =========================
+  // LOAD JOBS (SERVER SIDE)
+  // =========================
+  const loadJobs = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const res = await jobApi.filter({
+        keywords: searchQuery || undefined,
+        status: status || undefined,
+        jobType: jobType || undefined,
+        categoryId: undefined,
+      });
+
+      setJobs(res.data || res); // tùy axios wrapper
+      setTotal((res.data || res).length);
+    } catch (err) {
+      setError("Failed to load jobs");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadJobs();
+  }, [page, searchQuery, status, jobType, department]);
+
+  // =========================
+  // STATS (FIXED STATUS LOGIC)
+  // =========================
   const stats = useMemo(() => {
-    let posted = 0;
+    let active = 0;
     let closed = 0;
     let draft = 0;
 
     jobs.forEach((job) => {
       const st = normalize(job.status);
-      if (st === "posted") posted++;
+
+      if (st === "open" || st === "active") active++;
       else if (st === "closed") closed++;
       else draft++;
     });
 
     return {
-      total: jobs.length,
-      posted,
+      total,
+      active,
       closed,
       draft
     };
-  }, [jobs]);
+  }, [jobs, total]);
 
-  // ── GRANULAR DATAGRID FILTER LOGIC ──
-  const filteredJobs = useMemo(() => {
-    const q = searchQuery.toLowerCase();
+  // =========================
+  // CREATE / UPDATE
+  // =========================
+  const handleSaveJob = async (data: Partial<Job>) => {
+    try {
+      if (editingJob) {
+        await jobApi.update(editingJob.id, data);
+      } else {
+        await jobApi.create(data);
+      }
 
-    return jobs.filter((job) => {
-      const matchSearch =
-        !q ||
-        job.title?.toLowerCase().includes(q) ||
-        job.skills?.some((s) => s.toLowerCase().includes(q));
-
-      const matchDept =
-        !department || (job.department || job.category) === department;
-
-      const matchType = !jobType || job.jobType === jobType;
-
-      const matchStatus =
-        !status || normalize(job.status) === normalize(status);
-
-      return matchSearch && matchDept && matchType && matchStatus;
-    });
-  }, [jobs, searchQuery, department, status, jobType]);
-
-  // ── HANDLERS AND MUTATIONS ──
-  const handleSaveJob = (newJob: Partial<Job>) => {
-    if (editingJob) {
-      setJobs((prev) =>
-        prev.map((j) =>
-          j.id === editingJob.id ? { ...j, ...newJob } : j
-        )
-      );
-    } else {
-      setJobs((prev) => [newJob as Job, ...prev]);
+      setIsCreateModalOpen(false);
+      setEditingJob(null);
+      loadJobs();
+    } catch (err) {
+      console.error(err);
     }
-    setIsCreateModalOpen(false); // Graceful closing state
-    setEditingJob(null);
   };
 
-  const handleEditJob = (job: Job) => {
-    setEditingJob(job);
-    setIsCreateModalOpen(true);
-  };
-
-  const handleDeleteJob = (job: Job) => {
-    setDeletingJob(job);
-  };
-
-  const handleConfirmDelete = () => {
+  // =========================
+  // DELETE
+  // =========================
+  const handleConfirmDelete = async () => {
     if (!deletingJob) return;
-    setJobs((prev) => prev.filter((j) => j.id !== deletingJob.id));
-    setDeletingJob(null);
+
+    try {
+      await jobApi.delete(deletingJob.id);
+      setDeletingJob(null);
+      loadJobs();
+    } catch (err) {
+      console.error(err);
+    }
   };
+
+  // =========================
+  // DEBUG STATUS (SAFE)
+  // =========================
+  useEffect(() => {
+    if (jobs.length > 0) {
+      console.log("RAW STATUS LIST:", jobs.map(j => j.status));
+    }
+  }, [jobs]);
 
   return (
     <div className={styles.recruitmentSection}>
 
-      {/* ATS MASTER HEADER BLOCK */}
+      {/* HEADER */}
       <header className={styles.dashboardHeader}>
         <div>
           <h1 className={styles.mainTitle}>Requisition Hub</h1>
           <p className={styles.subTitle}>
-            Author job listings, optimize talent profiles pipelines, and calibrate systemic position requisitions.
+            Manage recruitment pipeline efficiently
           </p>
         </div>
+
         <button
           className={styles.primaryActionButton}
           onClick={() => {
@@ -137,90 +158,64 @@ const RecruitmentManagement = () => {
             setIsCreateModalOpen(true);
           }}
         >
-          <FiPlus /> <span>Create New Requisition</span>
+          <FiPlus /> Create Job
         </button>
       </header>
 
-      {/* QUAD COMPASS METRICS TELEMETRY GRID */}
-      <section className={styles.statsOverviewGrid} aria-label="Job Matrix Indicators">
+      {/* LOADING / ERROR */}
+      {loading && <p>Loading jobs...</p>}
+      {error && <p style={{ color: "red" }}>{error}</p>}
 
-        {/* Card 1: Total Portfolio Pool */}
+      {/* STATS */}
+      <section className={styles.statsOverviewGrid}>
         <div className={styles.statCard}>
-          <div className={`${styles.iconWrapper} ${styles.totalAccent}`}>
-            <FiBriefcase />
-          </div>
-          <div className={styles.statInfo}>
-            <span className={styles.statTitle}>Total Requisitions</span>
-            <strong className={styles.statNumber}>{stats.total}</strong>
-            <span className={styles.cardFooterSubtext}>Systemic catalog volume</span>
-          </div>
+          <FiBriefcase />
+          <span>Total</span>
+          <strong>{stats.total}</strong>
         </div>
 
-        {/* Card 2: Active Market Openings */}
         <div className={styles.statCard}>
-          <div className={`${styles.iconWrapper} ${styles.postedAccent}`}>
-            <FiCheckCircle />
-          </div>
-          <div className={styles.statInfo}>
-            <span className={styles.statTitle}>Active Roles</span>
-            <strong className={styles.statNumber}>{stats.posted}</strong>
-            <span className={styles.cardFooterSubtext}>Live across channels</span>
-          </div>
+          <FiCheckCircle />
+          <span>Active</span>
+          <strong>{stats.active}</strong>
         </div>
 
-        {/* Card 3: Filled/Closed Requisitions */}
         <div className={styles.statCard}>
-          <div className={`${styles.iconWrapper} ${styles.closedAccent}`}>
-            <FiXCircle />
-          </div>
-          <div className={styles.statInfo}>
-            <span className={styles.statTitle}>Archived Listings</span>
-            <strong className={styles.statNumber}>{stats.closed}</strong>
-            <span className={styles.cardFooterSubtext}>Hiring parameters finalized</span>
-          </div>
+          <FiXCircle />
+          <span>Closed</span>
+          <strong>{stats.closed}</strong>
         </div>
 
-        {/* Card 4: Draft Sandbox Profiles */}
         <div className={styles.statCard}>
-          <div className={`${styles.iconWrapper} ${styles.draftAccent}`}>
-            <FiFileText />
-          </div>
-          <div className={styles.statInfo}>
-            <span className={styles.statTitle}>Draft / Pre-approval</span>
-            <strong className={styles.statNumber}>{stats.draft}</strong>
-            <span className={styles.cardFooterSubtext}>Pending review states</span>
-          </div>
+          <FiFileText />
+          <span>Draft</span>
+          <strong>{stats.draft}</strong>
         </div>
-
       </section>
 
-      {/* CONTROL DESK FILTER BAR */}
-      <div className={styles.filterSectionCard}>
-        <RecruitmentFilterBar
-          onSearch={setSearchQuery}
-          onDepartmentChange={setDepartment}
-          onStatusChange={setStatus}
-          onEmploymentTypeChange={setJobType}
-          onCreateJob={() => {
-            setEditingJob(null);
-            setIsCreateModalOpen(true);
-          }}
-        />
-        <div className={styles.infoBanner}>
-          Showing <strong>{filteredJobs.length}</strong> active open vacancy positions out of <strong>{stats.total}</strong> portfolios.
-        </div>
-      </div>
+      {/* FILTER */}
+      <RecruitmentFilterBar
+        onSearch={setSearchQuery}
+        onDepartmentChange={setDepartment}
+        onStatusChange={setStatus}
+        onEmploymentTypeChange={setJobType}
+        onCreateJob={() => {
+          setEditingJob(null);
+          setIsCreateModalOpen(true);
+        }}
+      />
 
-      {/* COMPACT INTERACTION MATRIX TABLE DATAGRID */}
-      <main className={styles.tableCardContainer}>
-        <RecruitmentTable
-          jobs={filteredJobs}
-          onEditJob={handleEditJob}
-          onDeleteJob={handleDeleteJob}
-        />
-      </main>
+      {/* TABLE */}
+      <RecruitmentTable
+        jobs={jobs}
+        onEditJob={(job) => {
+          setEditingJob(job);
+          setIsCreateModalOpen(true);
+        }}
+        onDeleteJob={(job) => setDeletingJob(job)}
+      />
 
-      {/* OVERLAY MODAL LAYERS */}
+      {/* CREATE / EDIT MODAL */}
       <CreateJobModal
         isOpen={isCreateModalOpen}
         onClose={() => {
@@ -231,13 +226,13 @@ const RecruitmentManagement = () => {
         initialData={editingJob}
       />
 
+      {/* DELETE MODAL */}
       <DeleteJobModal
         isOpen={!!deletingJob}
         jobTitle={deletingJob?.title || ""}
         onClose={() => setDeletingJob(null)}
         onConfirm={handleConfirmDelete}
       />
-
     </div>
   );
 };

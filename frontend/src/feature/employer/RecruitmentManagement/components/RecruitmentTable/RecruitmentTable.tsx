@@ -6,10 +6,21 @@ import {
   FiTrash2,
   FiUser,
   FiCalendar,
-  FiDollarSign
+  FiDollarSign,
 } from "react-icons/fi";
-import { formatSalary } from "../../../../../service/jobApi";
+
 import type { Job } from "../../../../../types/job";
+import { formatSalary } from "../../../../../utils/format"; // FIX đúng utils
+
+// STATUS CONFIG (match backend)
+const STATUS_CONFIG: Record<
+  string,
+  { label: string; className: string }
+> = {
+  OPEN: { label: "Open", className: styles.statusActive },
+  DRAFT: { label: "Draft", className: styles.statusDraft },
+  CLOSED: { label: "Closed", className: styles.statusClosed },
+};
 
 interface RecruitmentTableProps {
   jobs: Job[];
@@ -22,30 +33,15 @@ const RecruitmentTable: React.FC<RecruitmentTableProps> = ({
   jobs,
   onEditJob,
   onDeleteJob,
-  onViewJob
+  onViewJob,
 }) => {
   const renderStatus = (status: string) => {
-    const normalized = status?.toLowerCase();
-
-    if (normalized === "draft") {
-      return (
-        <span className={`${styles.statusBadge} ${styles.statusDraft}`}>
-          Draft
-        </span>
-      );
-    }
-
-    if (normalized === "closed") {
-      return (
-        <span className={`${styles.statusBadge} ${styles.statusClosed}`}>
-          Closed
-        </span>
-      );
-    }
+    const config =
+      STATUS_CONFIG[status?.toUpperCase()] || STATUS_CONFIG.DRAFT;
 
     return (
-      <span className={`${styles.statusBadge} ${styles.statusPosted}`}>
-        Posted
+      <span className={`${styles.statusBadge} ${config.className}`}>
+        {config.label}
       </span>
     );
   };
@@ -55,25 +51,23 @@ const RecruitmentTable: React.FC<RecruitmentTableProps> = ({
       <table className={styles.table}>
         <thead>
           <tr>
-            <th style={{ width: "40px" }}>
+            <th style={{ width: 40 }}>
               <input type="checkbox" className={styles.checkbox} />
             </th>
-            <th style={{ width: "50px" }}>ID</th>
-            <th>Job Position & Department</th>
-            <th>Job Details</th>
+            <th style={{ width: 60 }}>ID</th>
+            <th>Job</th>
+            <th>Company</th>
             <th>Salary</th>
             <th>Status</th>
-            <th>Created Date</th>
-            <th style={{ width: "100px", textAlign: "right" }}>
-              Actions
-            </th>
+            <th>Deadline</th>
+            <th style={{ textAlign: "right" }}>Actions</th>
           </tr>
         </thead>
 
         <tbody>
           {jobs.map((job, index) => (
-            <tr key={job.id || index} className={styles.tableRow}>
-              {/* Checkbox */}
+            <tr key={job.id} className={styles.tableRow}>
+              {/* checkbox */}
               <td>
                 <input type="checkbox" className={styles.checkbox} />
               </td>
@@ -83,73 +77,68 @@ const RecruitmentTable: React.FC<RecruitmentTableProps> = ({
                 {(index + 1).toString().padStart(2, "0")}
               </td>
 
-              {/* Title + Department */}
+              {/* JOB TITLE + CATEGORY */}
               <td>
                 <div className={styles.jobMainInfo}>
-                  <span className={styles.jobTitle}>{job.title}</span>
+                  <span className={styles.jobTitle}>
+                    {job.title}
+                  </span>
+
                   <span className={styles.jobDepartment}>
-                    {job.department || job.category || "General"}
+                    {job.category?.name || "General"}
                   </span>
                 </div>
               </td>
 
-              {/* Job details */}
+              {/* COMPANY */}
               <td>
-                <div className={styles.metaDataBlock}>
-                  <span className={styles.typeTag}>{job.jobType}</span>
-
-                  <div className={styles.creatorFlex}>
-                    <FiUser className={styles.miniIcon} />
-                    <span>{job.createdBy || "System"}</span>
-                  </div>
+                <div className={styles.creatorFlex}>
+                  <FiUser className={styles.miniIcon} />
+                  <span>{job.company?.name || "System"}</span>
                 </div>
               </td>
 
-              {/* Salary */}
+              {/* SALARY */}
               <td className={styles.salaryCell}>
                 <div className={styles.salaryFlex}>
                   <FiDollarSign className={styles.salaryIcon} />
-                  <span>{formatSalary(job.salary)}</span>
+                  <span>
+                    {formatSalary(job.salaryMin, job.salaryMax)}
+                  </span>
                 </div>
               </td>
 
-              {/* Status */}
-              <td>{renderStatus(job.status || "Posted")}</td>
+              {/* STATUS */}
+              <td>{renderStatus(job.status)}</td>
 
-              {/* Date */}
+              {/* DEADLINE */}
               <td className={styles.dateCell}>
                 <div className={styles.dateFlex}>
                   <FiCalendar className={styles.miniIcon} />
-                  <span>{job.postedAt || "N/A"}</span>
+                  <span>{job.deadline || "N/A"}</span>
                 </div>
               </td>
 
-              {/* Actions */}
+              {/* ACTIONS */}
               <td>
                 <div className={styles.actionIcons}>
                   <button
-                    type="button"
                     className={`${styles.actionBtn} ${styles.viewBtn}`}
                     onClick={() => onViewJob?.(job)}
-                    title="View details"
                   >
                     <FiEye />
                   </button>
 
                   <button
-                    type="button"
                     className={`${styles.actionBtn} ${styles.editBtn}`}
                     onClick={() => onEditJob(job)}
-                    title="Edit job"
                   >
                     <FiEdit2 />
                   </button>
 
                   <button
-                    type="button"
                     className={`${styles.actionBtn} ${styles.deleteBtn}`}
                     onClick={() => onDeleteJob(job)}
-                    title="Delete job"
                   >
                     <FiTrash2 />
                   </button>
@@ -157,17 +146,6 @@ const RecruitmentTable: React.FC<RecruitmentTableProps> = ({
               </td>
             </tr>
           ))}
-
-          {/* Empty state */}
-          {jobs.length === 0 && (
-            <tr>
-              <td colSpan={8} className={styles.emptyRow}>
-                <div className={styles.emptyContainer}>
-                  <p>No job postings match your current filters.</p>
-                </div>
-              </td>
-            </tr>
-          )}
         </tbody>
       </table>
     </div>
