@@ -6,8 +6,8 @@ import type { Job } from "../../../../types/job";
 interface JobTableProps {
   filteredJobs: Job[];
   onViewDetails: (job: Job) => void;
-  onApprove: (id: string) => void;
-  onReject: (id: string) => void;
+  onApprove: (job: Job) => void;
+  onReject: (job: Job) => void;
 }
 
 const JobTable: React.FC<JobTableProps> = ({
@@ -27,16 +27,29 @@ const JobTable: React.FC<JobTableProps> = ({
             <th>Salary Range</th>
             <th>Location</th>
             <th>Status</th>
-            <th style={{ textAlign: "right", paddingRight: "24px" }}>Actions</th>
+
+            <th
+              style={{
+                textAlign: "right",
+                paddingRight: "24px",
+              }}
+            >
+              Actions
+            </th>
           </tr>
         </thead>
+
         <tbody>
           {filteredJobs.map((job) => (
             <tr key={job.id}>
+              {/* JOB */}
               <td className={styles.jobTitleCell}>
                 <div className={styles.jobWrapper}>
                   <img
-                    src={job.logo || "https://images.unsplash.com/photo-1549923746-c502d488f3aa?w=64"}
+                    src={
+                      job.company?.logoUrl ||
+                      "https://images.unsplash.com/photo-1549923746-c502d488f3aa?w=64"
+                    }
                     alt={job.title}
                     className={styles.companyLogo}
                     onError={(e) => {
@@ -44,56 +57,75 @@ const JobTable: React.FC<JobTableProps> = ({
                         "https://images.unsplash.com/photo-1549923746-c502d488f3aa?w=64";
                     }}
                   />
+
                   <div className={styles.jobMeta}>
-                    <span className={styles.jobTitle}>{job.title}</span>
+                    <span className={styles.jobTitle}>
+                      {job.title}
+                    </span>
+
                     <span className={styles.jobDepartment}>
-                      {job.department} · {job.jobType}
+                      {job.category?.name || "No Category"} ·{" "}
+                      {job.type || "Unknown"}
                     </span>
                   </div>
                 </div>
               </td>
-              <td className={styles.companyName}>{job.company?.name || "Unknown"}</td>
-              <td>{job.category}</td>
-              <td>
-                {job.salary.min.toLocaleString()} - {job.salary.max.toLocaleString()}{" "}
-                {job.salary.currency}
+
+              {/* COMPANY */}
+              <td className={styles.companyName}>
+                {job.company?.name || "Unknown"}
               </td>
+
+              {/* CATEGORY */}
+              <td>
+                {job.category?.name || "No Category"}
+              </td>
+
+              {/* SALARY */}
+              <td>
+                {job.salaryMin?.toLocaleString()} -{" "}
+                {job.salaryMax?.toLocaleString()} VND
+              </td>
+
+              {/* LOCATION */}
               <td>{job.location}</td>
+
+              {/* STATUS */}
               <td>
                 <span
                   className={`${styles.statusBadge} ${
-                    styles[job.status || "pending"]
+                    styles[
+                      job.status?.toLowerCase() || "draft"
+                    ]
                   }`}
                 >
-                  {job.status || "Pending"}
+                  {job.status}
                 </span>
               </td>
+
+              {/* ACTIONS */}
               <td>
                 <div className={styles.actions}>
                   <button
                     className={styles.actionBtnBlue}
-                    title="View Details"
                     onClick={() => onViewDetails(job)}
-                    aria-label={`View details for ${job.title}`}
                   >
                     <FiEye /> View
                   </button>
-                  {job.status?.toLowerCase() !== "active" && (
+
+                  {job.status !== "ACTIVE" && (
                     <button
                       className={styles.actionBtnGreen}
-                      title="Approve Job"
-                      onClick={() => onApprove(job.id)}
-                      aria-label={`Approve ${job.title}`}
+                      onClick={() => onApprove(job)}
                     >
                       <FiCheck /> Approve
                     </button>
                   )}
-                  {job.status?.toLowerCase() !== "closed" && (
+
+                  {job.status !== "CLOSED" && (
                     <button
                       className={styles.actionBtnRed}
-                      title="Reject Job"
-                      onClick={() => onReject(job.id)}
-                      aria-label={`Reject ${job.title}`}
+                      onClick={() => onReject(job)}
                     >
                       <FiX /> Reject
                     </button>
@@ -102,9 +134,13 @@ const JobTable: React.FC<JobTableProps> = ({
               </td>
             </tr>
           ))}
+
           {filteredJobs.length === 0 && (
             <tr>
-              <td colSpan={7} className={styles.empty}>
+              <td
+                colSpan={7}
+                className={styles.empty}
+              >
                 No jobs found matching criteria.
               </td>
             </tr>

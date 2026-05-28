@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { FiX } from "react-icons/fi";
+
 import styles from "./JobApproval.module.css";
 
 import type { Job } from "../../../../types/job";
+
 import JobFilters from "../components/JobFilters";
 import JobTable from "../components/JobTable";
 import JobDetailModal from "../components/JobDetailModal";
@@ -11,24 +13,40 @@ import { jobApi } from "../../../../service/jobApi";
 import { useToast } from "../../../../components/Toast";
 
 const JobApproval: React.FC = () => {
+  // =========================
+  // STATE
+  // =========================
   const [jobs, setJobs] = useState<Job[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [isProcessing, setIsProcessing] =
+    useState(false);
+
+  const [error, setError] = useState<
+    string | null
+  >(null);
 
   const toast = useToast();
 
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("");
+  // FILTERS
+  const [searchTerm, setSearchTerm] =
+    useState("");
 
-  const [selectedJob, setSelectedJob] = useState<Job | null>(null);
+  // mặc định hiện job chờ duyệt
+  const [statusFilter, setStatusFilter] =
+    useState<string>("DRAFT");
 
-  const [rejectingJob, setRejectingJob] = useState<Job | null>(null);
-  const [rejectReason, setRejectReason] = useState("");
+  // MODALS
+  const [selectedJob, setSelectedJob] =
+    useState<Job | null>(null);
 
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [rejectingJob, setRejectingJob] =
+    useState<Job | null>(null);
+
+  const [rejectReason, setRejectReason] =
+    useState("");
 
   // =========================
-  // LOAD JOBS (SERVER SIDE)
+  // LOAD JOBS
   // =========================
   const loadJobs = async () => {
     try {
@@ -36,14 +54,22 @@ const JobApproval: React.FC = () => {
       setError(null);
 
       const data = await jobApi.filter({
-        keywords: searchTerm || undefined,
-        status: statusFilter || undefined,
+        keywords:
+          searchTerm.trim() || undefined,
+
+        status:
+          statusFilter || undefined,
       });
 
-      setJobs(data);
+      setJobs(data || []);
     } catch (err: any) {
+      console.log(err);
+
+      setError(
+        err?.message || "Failed to load jobs"
+      );
+
       toast.error("Failed to fetch jobs");
-      setError(err?.message || "Load failed");
     } finally {
       setIsLoading(false);
     }
@@ -54,20 +80,70 @@ const JobApproval: React.FC = () => {
   }, [searchTerm, statusFilter]);
 
   // =========================
-  // APPROVE JOB (FIXED)
+  // BUILD UPDATE PAYLOAD
+  // =========================
+  const buildUpdatePayload = (
+    job: Job,
+    status:
+      | "DRAFT"
+      | "ACTIVE"
+      | "PAUSED"
+      | "CLOSED",
+    customDescription?: string
+  ) => {
+    return {
+      title: job.title,
+      description:
+        customDescription || job.description,
+
+      requirements: job.requirements,
+      benefits: job.benefits,
+
+      salaryMin: job.salaryMin,
+      salaryMax: job.salaryMax,
+
+      location: job.location,
+      type: job.type,
+
+      deadline: job.deadline?.includes("T")
+        ? job.deadline.split("T")[0]
+        : job.deadline,
+
+      status,
+
+      companyId: job.company.id,
+
+      categoryId: job.category.id,
+
+      experienceLevelId:
+        job.experienceLevel.id,
+
+      skillIds:
+        job.skills?.map((s) => s.id) || [],
+    };
+  };
+
+  // =========================
+  // APPROVE JOB
   // =========================
   const onApprove = async (job: Job) => {
     try {
       setIsProcessing(true);
 
-      await jobApi.update(job.id, {
-        status: "ACTIVE", // ❌ FIX: KHÔNG CÒN OPEN
-      });
+      await jobApi.update(
+        job.id,
+        buildUpdatePayload(job, "ACTIVE")
+      );
 
       toast.success("Job approved");
 
-      loadJobs();
+      // close detail modal
+      setSelectedJob(null);
+
+      await loadJobs();
     } catch (err) {
+      console.log(err);
+
       toast.error("Approve failed");
     } finally {
       setIsProcessing(false);
@@ -77,19 +153,37 @@ const JobApproval: React.FC = () => {
   // =========================
   // REJECT JOB
   // =========================
-  const onReject = async (job: Job, reason: string) => {
+  const onReject = async (
+    job: Job,
+    reason: string
+  ) => {
     try {
       setIsProcessing(true);
 
-      await jobApi.update(job.id, {
-        status: "CLOSED",
-        description: job.description + `\n\nREJECTED: ${reason}`,
-      });
+      await jobApi.update(
+        job.id,
+        buildUpdatePayload(
+          job,
+          "CLOSED",
+          `${job.description}
+
+REJECTED REASON:
+${reason}`
+        )
+      );
 
       toast.success("Job rejected");
 
-      loadJobs();
+      // reset modal
+      setRejectingJob(null);
+      setRejectReason("");
+
+      setSelectedJob(null);
+
+      await loadJobs();
     } catch (err) {
+      console.log(err);
+
       toast.error("Reject failed");
     } finally {
       setIsProcessing(false);
@@ -97,16 +191,24 @@ const JobApproval: React.FC = () => {
   };
 
   // =========================
-  // CLIENT FILTER (OPTIONAL - FIXED SAFE)
+  // CLIENT FILTER
   // =========================
   const filteredJobs = useMemo(() => {
     return jobs.filter((job) => {
+      const keyword =
+        searchTerm.toLowerCase();
+
       const matchSearch =
-        job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        job.company?.name?.toLowerCase().includes(searchTerm.toLowerCase());
+        job.title
+          ?.toLowerCase()
+          .includes(keyword) ||
+        job.company?.name
+          ?.toLowerCase()
+          .includes(keyword);
 
       const matchStatus =
-        !statusFilter || job.status === statusFilter;
+        !statusFilter ||
+        job.status === statusFilter;
 
       return matchSearch && matchStatus;
     });
@@ -117,18 +219,29 @@ const JobApproval: React.FC = () => {
   // =========================
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Job Approval System</h1>
+      <h1 className={styles.title}>
+        Job Approval System
+      </h1>
 
       {/* ERROR */}
       {error && (
         <div className={styles.errorBanner}>
-          {error}
-          <button onClick={() => setError(null)}>×</button>
+          <span>{error}</span>
+
+          <button
+            onClick={() => setError(null)}
+          >
+            ×
+          </button>
         </div>
       )}
 
       {/* LOADING */}
-      {isLoading && <p>Loading jobs...</p>}
+      {isLoading && (
+        <p className={styles.loading}>
+          Loading jobs...
+        </p>
+      )}
 
       {/* FILTERS */}
       <JobFilters
@@ -143,54 +256,89 @@ const JobApproval: React.FC = () => {
         filteredJobs={filteredJobs}
         onViewDetails={setSelectedJob}
         onApprove={onApprove}
-        onReject={(job: Job) => setRejectingJob(job)}
+        onReject={(job: Job) =>
+          setRejectingJob(job)
+        }
       />
 
       {/* DETAIL MODAL */}
       {selectedJob && (
         <JobDetailModal
           selectedJob={selectedJob}
-          onClose={() => setSelectedJob(null)}
+          onClose={() =>
+            setSelectedJob(null)
+          }
           onApprove={onApprove}
-          onReject={(job: Job) => setRejectingJob(job)}
+          onReject={(job: Job) =>
+            setRejectingJob(job)
+          }
         />
       )}
 
       {/* REJECT MODAL */}
       {rejectingJob && (
         <div className={styles.modalOverlay}>
-          <div className={styles.modalContentSmall}>
+          <div
+            className={
+              styles.modalContentSmall
+            }
+          >
+            {/* HEADER */}
             <div className={styles.modalHeader}>
               <h3>Reject Job</h3>
-              <button onClick={() => setRejectingJob(null)}>
-                <FiX />
-              </button>
-            </div>
 
-            <div className={styles.modalBody}>
-              <textarea
-                value={rejectReason}
-                onChange={(e) => setRejectReason(e.target.value)}
-                placeholder="Reason..."
-              />
-            </div>
-
-            <div className={styles.modalFooter}>
               <button
-                disabled={!rejectReason || isProcessing}
                 onClick={() => {
-                  if (!rejectingJob) return;
-
-                  onReject(rejectingJob, rejectReason);
-
                   setRejectingJob(null);
                   setRejectReason("");
                 }}
               >
-                Confirm Reject
+                <FiX />
+              </button>
+            </div>
+
+            {/* BODY */}
+            <div className={styles.modalBody}>
+              <textarea
+                value={rejectReason}
+                onChange={(e) =>
+                  setRejectReason(
+                    e.target.value
+                  )
+                }
+                placeholder="Enter reject reason..."
+              />
+            </div>
+
+            {/* FOOTER */}
+            <div
+              className={styles.modalFooter}
+            >
+              <button
+                disabled={
+                  !rejectReason.trim() ||
+                  isProcessing
+                }
+                onClick={() => {
+                  if (!rejectingJob) return;
+
+                  onReject(
+                    rejectingJob,
+                    rejectReason
+                  );
+                }}
+              >
+                {isProcessing
+                  ? "Rejecting..."
+                  : "Confirm Reject"}
               </button>
 
-              <button onClick={() => setRejectingJob(null)}>
+              <button
+                onClick={() => {
+                  setRejectingJob(null);
+                  setRejectReason("");
+                }}
+              >
                 Cancel
               </button>
             </div>
@@ -201,4 +349,4 @@ const JobApproval: React.FC = () => {
   );
 };
 
-export default JobApproval;
+export default React.memo(JobApproval);

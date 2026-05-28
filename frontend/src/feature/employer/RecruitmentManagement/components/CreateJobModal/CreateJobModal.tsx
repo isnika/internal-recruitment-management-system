@@ -177,14 +177,22 @@ const CreateJobModal: React.FC<Props> = ({
       formData.benefits.trim() !== "" &&
       formData.location.trim() !== "" &&
       formData.type.trim() !== "" &&
+
       formData.salaryMin !== "" &&
       formData.salaryMax !== "" &&
+
+      Number(formData.salaryMin) > 0 &&
+      Number(formData.salaryMax) > 0 &&
+
       Number(formData.salaryMax) >=
         Number(formData.salaryMin) &&
+
       formData.categoryId !== "" &&
       formData.experienceLevelId !== "" &&
       formData.companyId !== "" &&
+
       formData.deadline !== "" &&
+
       formData.skillIds.length > 0
     );
   }, [formData]);
@@ -212,15 +220,94 @@ const CreateJobModal: React.FC<Props> = ({
      
   // SUBMIT
      
+  // =========================
+  // SUBMIT
+  // =========================
   const handleSubmit = async () => {
-    if (!isValid) return;
+    if (!isValid || submitting) return;
 
     try {
       setSubmitting(true);
 
-    console.log(buildPayload());
+      // VALIDATE DATE
+      const today = new Date().toISOString().split("T")[0];
 
-      await onSubmit(buildPayload(), initialData?.id);
+      if (formData.deadline < today) {
+        alert("Deadline must be greater than today");
+        return;
+      }
+
+      // VALIDATE SALARY
+      if (
+        Number(formData.salaryMin) <= 0 ||
+        Number(formData.salaryMax) <= 0
+      ) {
+        alert("Salary must be greater than 0");
+        return;
+      }
+
+      if (
+        Number(formData.salaryMax) <
+        Number(formData.salaryMin)
+      ) {
+        alert(
+          "Maximum salary must be greater than minimum salary"
+        );
+        return;
+      }
+
+      const payload: CreateJobRequest = {
+        title: formData.title.trim(),
+        description: formData.description.trim(),
+        requirements: formData.requirements.trim(),
+        benefits: formData.benefits.trim(),
+
+        location: formData.location.trim(),
+
+        type: formData.type,
+
+        salaryMin: Number(formData.salaryMin),
+        salaryMax: Number(formData.salaryMax),
+
+        deadline: formData.deadline,
+
+        // ALWAYS DRAFT WHEN CREATE
+        status: initialData
+          ? formData.status
+          : "DRAFT",
+
+        companyId: Number(formData.companyId),
+        categoryId: Number(formData.categoryId),
+        experienceLevelId: Number(
+          formData.experienceLevelId
+        ),
+
+        skillIds: formData.skillIds,
+      };
+
+      console.log("PAYLOAD:", payload);
+
+      await onSubmit(payload, initialData?.id);
+
+      // SUCCESS
+      alert(
+        initialData
+          ? "Update job successfully"
+          : "Create job successfully"
+      );
+
+      // RESET FORM
+      setFormData(DEFAULT_FORM);
+
+      // CLOSE MODAL
+      onClose();
+    } catch (error: any) {
+      console.error(error);
+
+      alert(
+        error?.response?.data?.message ||
+          "Submit failed"
+      );
     } finally {
       setSubmitting(false);
     }

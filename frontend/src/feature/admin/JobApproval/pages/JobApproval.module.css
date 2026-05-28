@@ -441,3 +441,43 @@
   margin: 8px 0;
   font-weight: 500;
 }
+
+.detailGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.detailItem {
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 14px;
+}
+
+.detailItem h4 {
+  margin-bottom: 6px;
+  font-size: 14px;
+  color: #64748b;
+}
+
+.detailItem p {
+  font-size: 15px;
+  font-weight: 500;
+  color: #0f172a;
+}
+
+.skillsWrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.skillBadge {
+  padding: 6px 12px;
+  background: #dbeafe;
+  color: #1d4ed8;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+}
