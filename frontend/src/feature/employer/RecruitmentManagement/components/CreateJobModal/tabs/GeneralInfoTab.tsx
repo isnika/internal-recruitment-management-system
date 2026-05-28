@@ -71,6 +71,9 @@ const GeneralInfoTab: React.FC<GeneralInfoTabProps> = ({
   // SELECTED SKILL DISPLAY
   // =========================
   const selectedSkills = useMemo(() => {
+    console.log("METADATA:", metadata);
+    console.log("SKILLS:", metadata?.skills);
+
     return (
       metadata?.skills
         ?.filter((s) => formData.skillIds.includes(s.id))
@@ -84,6 +87,8 @@ const GeneralInfoTab: React.FC<GeneralInfoTabProps> = ({
         (selectedSkills.length > 3 ? "..." : "")
       : "Select Skills";
 
+
+
   return (
     <div className={styles.formGrid}>
       {/* TITLE */}
@@ -96,13 +101,41 @@ const GeneralInfoTab: React.FC<GeneralInfoTabProps> = ({
         />
       </div>
 
+      {/* COMPANY */}
+      <div className={styles.formGroup}>
+        <label>Company</label>
+
+        <select
+          className={styles.select}
+          value={formData.companyId}
+          onChange={(e) =>
+            handleChange("companyId", e.target.value)
+          }
+        >
+          <option value="">Select Company</option>
+
+          {metadata?.companies?.map((company) => (
+            <option
+              key={company.id}
+              value={company.id}
+            >
+              {company.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
       {/* LOCATION */}
       <div className={styles.formGroup}>
         <label>Work Location</label>
+
         <input
           className={styles.input}
           value={formData.location}
-          onChange={(e) => handleChange("location", e.target.value)}
+          onChange={(e) =>
+            handleChange("location", e.target.value)
+          }
+          placeholder="Enter location"
         />
       </div>
 
@@ -199,22 +232,30 @@ const GeneralInfoTab: React.FC<GeneralInfoTabProps> = ({
       <div className={styles.formGroup}>
         <label>Skills</label>
 
-        <div className={styles.multiSelectContainer} ref={dropdownRef}>
+        <div
+          className={styles.multiSelectContainer}
+          ref={dropdownRef}
+        >
           {/* TRIGGER */}
-          <div
+          <button
+            type="button"
             className={styles.multiSelectTrigger}
             onClick={() =>
               setIsSkillsDropdownOpen((prev) => !prev)
             }
           >
-            <span className={styles.selectedText}>{displayText}</span>
+            <span className={styles.selectedText}>
+              {displayText}
+            </span>
+
             <FiChevronDown />
-          </div>
+          </button>
 
           {/* DROPDOWN */}
           {isSkillsDropdownOpen && (
             <div className={styles.multiSelectDropdown}>
-              {metadata?.skills?.length ? (
+              {metadata?.skills &&
+              metadata.skills.length > 0 ? (
                 metadata.skills.map((skill) => (
                   <label
                     key={skill.id}
@@ -222,11 +263,15 @@ const GeneralInfoTab: React.FC<GeneralInfoTabProps> = ({
                   >
                     <input
                       type="checkbox"
-                      className={styles.checkbox}
-                      checked={formData.skillIds.includes(skill.id)}
-                      onChange={() => toggleSkill(skill.id)}
+                      checked={formData.skillIds.includes(
+                        skill.id
+                      )}
+                      onChange={() =>
+                        toggleSkill(skill.id)
+                      }
                     />
-                    {skill.name}
+
+                    <span>{skill.name}</span>
                   </label>
                 ))
               ) : (

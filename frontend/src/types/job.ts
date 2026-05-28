@@ -1,6 +1,6 @@
-// =========================
+  
 // ENUMS
-// =========================
+  
 
 export enum JobStatus {
   DRAFT = "DRAFT",
@@ -16,9 +16,9 @@ export enum JobType {
   REMOTE = "REMOTE",
 }
 
-// =========================
+  
 // COMMON TYPES
-// =========================
+  
 
 export interface Company {
   id: number;
@@ -45,9 +45,18 @@ export interface Skill {
   name: string;
 }
 
-// =========================
+export interface Company {
+  id: number;
+  name: string;
+  description: string;
+  address: string;
+  website: string;
+  logoUrl?: string;
+  status: string;
+  verified?: boolean;
+}
+
 // JOB RESPONSE
-// =========================
 
 export interface Job {
   id: number;
@@ -68,9 +77,8 @@ export interface Job {
   skills: Skill[];
 }
 
-// =========================
+
 // REQUEST TYPES
-// =========================
 
 export interface CreateJobRequest {
   title: string;
@@ -106,4 +114,11 @@ export interface JobFilters {
 
   jobType?: string;
   status?: JobStatus | "";
+}
+
+export interface HomeMetadata {
+  categories: Category[];
+  skills: Skill[];
+  experienceLevels: ExperienceLevel[];
+  companies: Company[];
 }

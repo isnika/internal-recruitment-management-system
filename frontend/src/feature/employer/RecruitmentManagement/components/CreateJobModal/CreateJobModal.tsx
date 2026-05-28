@@ -22,9 +22,9 @@ import RequirementsTab from "./tabs/RequirementsTab";
 import BenefitsTab from "./tabs/BenefitsTab";
 import StatusTab from "./tabs/StatusTab";
 
-// =========================
+      
 // TYPES
-// =========================
+      
 interface Props {
   isOpen: boolean;
   onClose: () => void;
@@ -52,9 +52,9 @@ type FormState = {
   status: JobStatus;
 };
 
-// =========================
+      
 // CONSTANTS
-// =========================
+      
 const TABS = [
   "General Information",
   "Description",
@@ -86,19 +86,18 @@ const CreateJobModal: React.FC<Props> = ({
   onSubmit,
   initialData,
 }) => {
-  // =========================
+     
   // STATE
-  // =========================
+     
   const [activeTab, setActiveTab] = useState(TABS[0]);
   const [formData, setFormData] = useState<FormState>(DEFAULT_FORM);
   const [submitting, setSubmitting] = useState(false);
 
-  // ✅ metadata hook (NON-BLOCKING)
+  //  metadata hook (NON-BLOCKING)
   const { metadata } = useJobMetadata();
 
-  // =========================
   // INIT FORM
-  // =========================
+     
   useEffect(() => {
     if (!isOpen) return;
 
@@ -117,7 +116,9 @@ const CreateJobModal: React.FC<Props> = ({
         ),
         companyId: String(initialData.company?.id || ""),
         skillIds: initialData.skills?.map((s) => s.id) || [],
-        deadline: initialData.deadline || "",
+        deadline: initialData.deadline
+          ? initialData.deadline.split("T")[0]
+          : "",
         description: initialData.description || "",
         requirements: initialData.requirements || "",
         benefits: initialData.benefits || "",
@@ -128,9 +129,9 @@ const CreateJobModal: React.FC<Props> = ({
     }
   }, [isOpen, initialData]);
 
-  // =========================
+     
   // HANDLE CHANGE
-  // =========================
+     
   const handleChange = <K extends keyof FormState>(
     field: K,
     value: FormState[K]
@@ -141,9 +142,9 @@ const CreateJobModal: React.FC<Props> = ({
     }));
   };
 
-  // =========================
+     
   // BULLET INPUT
-  // =========================
+     
   const handleKeyDown = (
     e: KeyboardEvent<HTMLTextAreaElement>
   ) => {
@@ -165,27 +166,32 @@ const CreateJobModal: React.FC<Props> = ({
     );
   };
 
-  // =========================
+     
   // VALIDATION
-  // =========================
+     
   const isValid = useMemo(() => {
     return (
-      formData.title.trim() &&
-      formData.location.trim() &&
-      formData.type.trim() &&
-      formData.salaryMin &&
-      formData.salaryMax &&
-      Number(formData.salaryMax) >= Number(formData.salaryMin) &&
-      formData.categoryId &&
-      formData.experienceLevelId &&
-      formData.companyId &&
-      formData.deadline
+      formData.title.trim() !== "" &&
+      formData.description.trim() !== "" &&
+      formData.requirements.trim() !== "" &&
+      formData.benefits.trim() !== "" &&
+      formData.location.trim() !== "" &&
+      formData.type.trim() !== "" &&
+      formData.salaryMin !== "" &&
+      formData.salaryMax !== "" &&
+      Number(formData.salaryMax) >=
+        Number(formData.salaryMin) &&
+      formData.categoryId !== "" &&
+      formData.experienceLevelId !== "" &&
+      formData.companyId !== "" &&
+      formData.deadline !== "" &&
+      formData.skillIds.length > 0
     );
   }, [formData]);
 
-  // =========================
+     
   // PAYLOAD
-  // =========================
+     
   const buildPayload = (): CreateJobRequest => ({
     title: formData.title.trim(),
     location: formData.location.trim(),
@@ -203,23 +209,26 @@ const CreateJobModal: React.FC<Props> = ({
     status: formData.status,
   });
 
-  // =========================
+     
   // SUBMIT
-  // =========================
+     
   const handleSubmit = async () => {
     if (!isValid) return;
 
     try {
       setSubmitting(true);
+
+    console.log(buildPayload());
+
       await onSubmit(buildPayload(), initialData?.id);
     } finally {
       setSubmitting(false);
     }
   };
 
-  // =========================
+     
   // RENDER TAB
-  // =========================
+     
   const renderTab = () => {
     switch (activeTab) {
       case "General Information":
@@ -228,6 +237,9 @@ const CreateJobModal: React.FC<Props> = ({
             formData={formData}
             handleChange={handleChange}
             metadata={metadata}
+            isSkillsDropdownOpen={isSkillsDropdownOpen}
+            setIsSkillsDropdownOpen={setIsSkillsDropdownOpen}
+            toggleSkill={toggleSkill}
           />
         );
 
@@ -271,9 +283,24 @@ const CreateJobModal: React.FC<Props> = ({
     }
   };
 
-  // =========================
+
+  //Skill
+  const [isSkillsDropdownOpen, setIsSkillsDropdownOpen] =
+    useState(false);
+
+  const toggleSkill = (skillId: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      skillIds: prev.skillIds.includes(skillId)
+        ? prev.skillIds.filter((id) => id !== skillId)
+        : [...prev.skillIds, skillId],
+    }));
+  };
+     
+
+     
   // UI
-  // =========================
+     
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <div className={styles.modalWrapper}>

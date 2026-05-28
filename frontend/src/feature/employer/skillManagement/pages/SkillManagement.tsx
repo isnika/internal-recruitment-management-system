@@ -13,7 +13,7 @@ import {
 import { skillApi } from "../../../../service/skillApi";
 import type { Skill } from "../../../../types/skill";
 
-const LIMIT = 7;
+const LIMIT = 10;
 
 const SkillManagement = () => {
   const [skills, setSkills] = useState<Skill[]>([]);

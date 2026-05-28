@@ -1,39 +1,47 @@
 import { useEffect, useState } from "react";
 import { skillApi } from "../service/skillApi";
-{/*}import { departmentApi } from "../service/departmentApi";*/}
 import { experienceLevelApi } from "../service/experienceLevelApi";
+import { departmentApi } from "../service/departmentApi";
+import { companyApi } from "../service/companyApi";
 
 export const useJobMetadata = () => {
   const [metadata, setMetadata] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetch = async () => {
-      try {
-        setLoading(true);
-
-        const [skills, categories, experienceLevels] =
-          await Promise.all([
-            skillApi.getAll(),
-            departmentApi.getAll(),
-            experienceLevelApi.getAll(),
-          ]);
-
-        setMetadata({
-          skills,
-          categories,
-          experienceLevels,
-        });
-      } catch (e: any) {
-        setError(e.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetch();
+    fetchMetadata();
   }, []);
 
-  return { metadata, loading, error };
+  const fetchMetadata = async () => {
+    try {
+      const [
+        skills,
+        experienceLevels,
+        categories,
+        companies,
+      ] = await Promise.all([
+        skillApi.getAll(),
+        experienceLevelApi.getAll(),
+        departmentApi.getAll(),
+        companyApi.getAll(),
+      ]);
+
+      setMetadata({
+        skills,
+        experienceLevels,
+        categories,
+        companies,
+      });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return {
+    metadata,
+    loading,
+    refetchMetadata: fetchMetadata,
+  };
 };

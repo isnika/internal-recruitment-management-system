@@ -29,7 +29,7 @@ axiosClient.interceptors.request.use(
   (error: AxiosError) => Promise.reject(error)
 );
 
-// RESPONSE INTERCEPTOR
+// RESPONSE INTERCEPTOR trả thẳng data
 axiosClient.interceptors.response.use(
   (response: AxiosResponse) => response.data,
   async (error: AxiosError<any>) => {
