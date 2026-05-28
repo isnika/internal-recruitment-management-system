@@ -9,6 +9,7 @@ const menus = [
   { label: "Job Management", path: "recruitmentManagement" },
   { label: "Applications / Candidates", path: "applyManagement" },
   { label: "Interview Management", path: "interviewManagement" },
+  { label: "Company Management", path: "companyManagementEmployer"},
   { label: "Skill Management", path: "skillManagement"},
   { label: "Department Management", path: "departmentManagement"},
   { label: "Experience Level Management", path: "experienceLevelManagement"},

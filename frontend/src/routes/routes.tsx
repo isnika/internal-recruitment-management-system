@@ -36,6 +36,7 @@ import SettingManagement from "../feature/employer/settingManagement/pages/setti
 import ExperienceLevelManagement from "../feature/employer/ExperienceLevelManagement/pages/ExperienceLevelManagement";
 import DepartmentManagement from "../feature/employer/DepartmentManagement/pages/DepartmentManagement";
 import SkillManagement from "../feature/employer/skillManagement/pages/SkillManagement";
+import CompanyManagementEmployer from "../feature/employer/CompanyManagement/pages/CompanyManagement";
 
 /* admin */
 import HomeAdmin from "../feature/admin/home/pages/HomeAdmin/homeAdmin";
@@ -103,6 +104,7 @@ export default function AppRoutes() {
           <Route path="skillManagement" element={<SkillManagement/>} />
           <Route path="departmentManagement" element={<DepartmentManagement/>} />
           <Route path="experienceLevelManagement" element={<ExperienceLevelManagement/>} />
+          <Route path="companyManagementEmployer" element={<CompanyManagementEmployer/>}/>
 
         </Route>
 

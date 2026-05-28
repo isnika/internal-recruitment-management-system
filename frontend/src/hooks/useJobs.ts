@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import jobApi from "../service/jobApi";
 import type { Job, JobFilterRequest } from "../types/job";
 
-export const JOBS_PER_PAGE = 5;
+export const JOBS_PER_PAGE = 10;
 
 const initialFilters: JobFilterRequest = {
   keywords: "",
@@ -24,7 +24,7 @@ export const useJobs = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
 
-  // 🔥 COUNT FILTERS
+  //  COUNT FILTERS
   const activeCount = useMemo(() => {
     let count = 0;
 
@@ -43,7 +43,7 @@ export const useJobs = () => {
     return count;
   }, [filters]);
 
-  // 🔥 FETCH JOBS
+  //  FETCH JOBS
   useEffect(() => {
     const fetchJobs = async () => {
       try {
@@ -72,7 +72,7 @@ export const useJobs = () => {
 
         setJobs(data);
       } catch (err) {
-        console.error("❌ FETCH JOBS ERROR:", err);
+        console.error(" FETCH JOBS ERROR:", err);
         setJobs([]);
       } finally {
         setIsLoading(false);

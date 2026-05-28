@@ -4,7 +4,22 @@ export interface Company {
   description: string;
   address: string;
   website: string;
-  logoUrl?: string;
-  status: string;
-  verified?: boolean;
+  logoUrl: string;
+  status: "ACTIVE" | "INACTIVE";
+}
+
+export interface CreateCompanyRequest {
+  name: string;
+  description: string;
+  address: string;
+  website: string;
+  status: "ACTIVE" | "INACTIVE";
+}
+
+export interface UpdateCompanyRequest {
+  name: string;
+  description: string;
+  address: string;
+  website: string;
+  status: "ACTIVE" | "INACTIVE";
 }

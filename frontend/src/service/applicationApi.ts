@@ -1,179 +1,8 @@
 import { request } from "./axiosClient";
 
-// ======================
+// =========================
 // TYPES
-// ======================
-
-// ---- Time Series ----
-export interface TimeSeriesItem {
-  label: string;
-  applications: number;
-  hires: number;
-  interviews: number;
-}
-
-export interface TimeSeriesReport {
-  period: string;
-  data: TimeSeriesItem[];
-}
-
-// ---- Recruiter Report ----
-export interface RecruiterReport {
-  recruiterId: number;
-  recruiterName: string;
-  totalJobsManaged: number;
-  totalCandidatesHandled: number;
-  totalHired: number;
-  avgTimeToFillDays: number;
-  successRate: number;
-}
-
-// ---- Pipeline ----
-export interface PipelineReport {
-  applied: number;
-  screening: number;
-  interview: number;
-  test: number;
-  offer: number;
-  hired: number;
-  rejected: number;
-}
-
-// ---- Overview ----
-export interface OverviewReport {
-  totalOpenJobs: number;
-  totalClosedJobs: number;
-  totalCandidates: number;
-  totalApplications: number;
-  conversionApplyToInterview: number;
-  conversionInterviewToHired: number;
-  totalSuccessfulHires: number;
-}
-
-// ---- New Candidates ----
-export interface NewCandidatesItem {
-  label: string;
-  count: number;
-}
-
-export interface NewCandidatesReport {
-  period: string;
-  data: NewCandidatesItem[];
-}
-
-// ---- Job Report ----
-export interface JobReport {
-  jobId: number;
-  jobTitle: string;
-  totalApplied: number;
-  totalCvPassed: number;
-  totalInterviewed: number;
-  totalOffered: number;
-  totalHired: number;
-  avgTimeToHireDays: number;
-}
-
-// ---- Department Report ----
-export interface DepartmentReport {
-  departmentName: string;
-  totalJobs: number;
-  totalCandidates: number;
-  totalHired: number;
-  avgTimeToHireDays: number;
-  openHeadcount: number;
-}
-
-// ---- Candidate Report ----
-export interface CandidateReport {
-  totalCandidates: number;
-  bySource: Record<string, number>;
-  byStatus: Record<string, number>;
-  topSkills: {
-    skillName: string;
-    count: number;
-  }[];
-  byLevel: Record<string, number>;
-}
-
-// ======================
-// API
-// ======================
-
-const ENDPOINT = "/api/reports";
-
-export const reportApi = {
-  // TIME SERIES
-  getTimeSeries: (params?: {
-    period?: "day" | "month" | "year";
-    from?: string;
-    to?: string;
-  }): Promise<TimeSeriesReport> => {
-    return request.get<TimeSeriesReport>(
-      `${ENDPOINT}/time-series`,
-      { params }
-    );
-  },
-
-  // RECRUITERS
-  getRecruiters: (): Promise<RecruiterReport[]> => {
-    return request.get<RecruiterReport[]>(
-      `${ENDPOINT}/recruiters`
-    );
-  },
-
-  // PIPELINE
-  getPipeline: (): Promise<PipelineReport> => {
-    return request.get<PipelineReport>(
-      `${ENDPOINT}/pipeline`
-    );
-  },
-
-  // OVERVIEW
-  getOverview: (): Promise<OverviewReport> => {
-    return request.get<OverviewReport>(
-      `${ENDPOINT}/overview`
-    );
-  },
-
-  // NEW CANDIDATES
-  getNewCandidates: (params?: {
-    period?: "day" | "month" | "year";
-    from?: string;
-    to?: string;
-  }): Promise<NewCandidatesReport> => {
-    return request.get<NewCandidatesReport>(
-      `${ENDPOINT}/new-candidates`,
-      { params }
-    );
-  },
-
-  // JOBS REPORT
-  getJobs: (): Promise<JobReport[]> => {
-    return request.get<JobReport[]>(
-      `${ENDPOINT}/jobs`
-    );
-  },
-
-  // DEPARTMENTS
-  getDepartments: (): Promise<DepartmentReport[]> => {
-    return request.get<DepartmentReport[]>(
-      `${ENDPOINT}/departments`
-    );
-  },
-
-  // CANDIDATES ANALYTICS
-  getCandidates: (): Promise<CandidateReport> => {
-    return request.get<CandidateReport>(
-      `${ENDPOINT}/candidates`
-    );
-  },
-};
-
-export default reportApi;
-
-// ======================
-// TYPES
-// ======================
+// =========================
 
 export interface ApplicationUser {
   id: number;
@@ -183,6 +12,31 @@ export interface ApplicationUser {
   avatarUrl?: string;
   role?: string;
   status?: string;
+}
+
+export interface ApplicationCompany {
+  id: number;
+  name: string;
+  description: string;
+  address: string;
+  website: string;
+  logoUrl: string;
+  status: string;
+}
+
+export interface ApplicationCategory {
+  id: number;
+  name: string;
+}
+
+export interface ApplicationExperienceLevel {
+  id: number;
+  name: string;
+}
+
+export interface ApplicationSkill {
+  id: number;
+  name: string;
 }
 
 export interface ApplicationJob {
@@ -198,30 +52,10 @@ export interface ApplicationJob {
   status: string;
   deadline: string;
 
-  company: {
-    id: number;
-    name: string;
-    description: string;
-    address: string;
-    website: string;
-    logoUrl: string;
-    status: string;
-  };
-
-  category: {
-    id: number;
-    name: string;
-  };
-
-  experienceLevel: {
-    id: number;
-    name: string;
-  };
-
-  skills: {
-    id: number;
-    name: string;
-  }[];
+  company: ApplicationCompany;
+  category: ApplicationCategory;
+  experienceLevel: ApplicationExperienceLevel;
+  skills: ApplicationSkill[];
 }
 
 export interface ApplicationCV {
@@ -240,27 +74,41 @@ export interface Application {
   cv: ApplicationCV;
 }
 
-// ======================
-// REQUEST TYPES
-// ======================
+// =========================
+// REQUEST TYPE
+// =========================
 
 export interface CreateApplicationRequest {
   jobId: number;
   cvId: number;
 }
 
-// ======================
+// =========================
 // API
-// ======================
+// =========================
 
 const ENDPOINT = "/api/applications";
 
 export const applicationApi = {
-  // APPLY JOB
-  create: (
-    body: CreateApplicationRequest
-  ): Promise<Application> => {
+  /**
+   * Apply job
+   */
+  create: (body: CreateApplicationRequest) => {
     return request.post<Application>(ENDPOINT, body);
+  },
+
+  /**
+   * Get all applications (optional use)
+   */
+  getAll: () => {
+    return request.get<Application[]>(ENDPOINT);
+  },
+
+  /**
+   * Get application by id (optional use)
+   */
+  getById: (id: number) => {
+    return request.get<Application>(`${ENDPOINT}/${id}`);
   },
 };
 

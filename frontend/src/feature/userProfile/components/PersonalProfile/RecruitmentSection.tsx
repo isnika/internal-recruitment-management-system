@@ -21,6 +21,7 @@ export default function RecruitmentSection({
     gender: "",
     phone: "",
     email: "",
+    address: "",
     taxCode: "",
     citizenId: "",
     bankAccountName: "",
@@ -51,6 +52,7 @@ export default function RecruitmentSection({
       email: user.email || "",
       phone: user.phone || "",
       gender: user.gender || "",
+      address: user.address || "",
       taxCode: user.taxCode || "",
       citizenId: user.citizenId || "",
       bankAccountName:
@@ -137,10 +139,10 @@ export default function RecruitmentSection({
         phone: formData.phone,
         taxCode: formData.taxCode,
         citizenId: formData.citizenId,
-        bankAccountName:
-          formData.bankAccountName,
+        bankAccountName: formData.bankAccountName,
         socialLink: formData.socialLink,
         dateOfBirth: formattedDob,
+        address: formData.address,
       });
 
       setEdit(false);
@@ -315,6 +317,19 @@ export default function RecruitmentSection({
               </select>
             </div>
           </div>
+
+          <div className={styles.formGroup}>
+            <label>Address</label>
+
+            <input
+              disabled={!edit}
+              value={formData.address}
+              onChange={(e) =>
+                updateField("address", e.target.value)
+              }
+            />
+          </div>
+
         </div>
 
         {/* RIGHT */}

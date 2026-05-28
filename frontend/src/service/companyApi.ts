@@ -1,105 +1,85 @@
 import { request } from "./axiosClient";
+import type {
+  Company,
+  CreateCompanyRequest,
+  UpdateCompanyRequest,
+} from "../types/company";
+
+const ENDPOINT = "/api/companies";
 
 // =========================
 // TYPES
 // =========================
 
-export interface Company {
-  id: number;
-  name: string;
-  description: string;
-  address: string;
-  website: string;
-  logoUrl: string;
-  status: string;
-}
-
-export interface CreateCompanyRequest {
-  name: string;
-  description: string;
-  address: string;
-  website: string;
-  status: string;
-}
-
-export interface UpdateCompanyRequest {
-  name: string;
-  description: string;
-  address: string;
-  website: string;
-  status: string;
-}
+type CompanyListParams = {
+  keyword?: string;
+  status?: string;
+};
 
 // =========================
 // API
 // =========================
 
-const ENDPOINT = "/api/companies";
-
-export const companyApi = {
-  // GET ALL (with filters)
-  getAll: (params?: {
-    keyword?: string;
-    status?: string;
-  }): Promise<Company[]> => {
-    return request.get<Company[]>(ENDPOINT, {
-      params,
-    });
+const companyApi = {
+  /**
+   * GET /api/companies
+   */
+  getAll: (params?: CompanyListParams): Promise<Company[]> => {
+    return request.get(ENDPOINT, { params });
   },
 
-  // GET BY ID
+  /**
+   * GET /api/companies/{id}
+   */
   getById: (id: number): Promise<Company> => {
-    return request.get<Company>(
-      `${ENDPOINT}/${id}`
-    );
+    return request.get(`${ENDPOINT}/${id}`);
   },
 
-  // CREATE
-  create: (
-    data: CreateCompanyRequest
-  ): Promise<Company> => {
-    return request.post<Company>(
-      ENDPOINT,
-      data
-    );
+  /**
+   * POST /api/companies
+   */
+  create: (data: CreateCompanyRequest): Promise<Company> => {
+    return request.post(ENDPOINT, data);
   },
 
-  // UPDATE
-  update: (
-    id: number,
-    data: UpdateCompanyRequest
-  ): Promise<Company> => {
-    return request.put<Company>(
-      `${ENDPOINT}/${id}`,
-      data
-    );
+  /**
+   * PUT /api/companies/{id}
+   */
+  update: (id: number, data: UpdateCompanyRequest): Promise<Company> => {
+    return request.put(`${ENDPOINT}/${id}`, data);
   },
 
-  // DELETE
+  /**
+   * DELETE /api/companies/{id}
+   */
   delete: (id: number): Promise<void> => {
-    return request.delete<void>(
-      `${ENDPOINT}/${id}`
-    );
+    return request.delete(`${ENDPOINT}/${id}`);
   },
 
-  // UPLOAD LOGO (multipart/form-data)
-  uploadLogo: (
-    id: number,
-    file: File
-  ): Promise<Company> => {
+  // =========================
+  // LOGO UPLOAD
+  // =========================
+
+  /**
+   * POST /api/companies/{id}/logo
+   * (upload mới)
+   */
+  uploadLogo: (id: number, file: File): Promise<Company> => {
     const formData = new FormData();
     formData.append("file", file);
 
-    return request.post<Company>(
-      `${ENDPOINT}/${id}/logo`,
-      formData,
-      {
-        headers: {
-          "Content-Type":
-            "multipart/form-data",
-        },
-      }
-    );
+    return request.post(`${ENDPOINT}/${id}/logo`, formData);
+  },
+
+  /**
+   * PATCH /api/companies/{id}/logo
+   * (update logo)
+   */
+  updateLogo: (id: number, file: File): Promise<Company> => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    return request.patch(`${ENDPOINT}/${id}/logo`, formData);
   },
 };
 

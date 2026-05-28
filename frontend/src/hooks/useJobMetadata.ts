@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { skillApi } from "../service/skillApi";
 import { experienceLevelApi } from "../service/experienceLevelApi";
 import { departmentApi } from "../service/departmentApi";
-import { companyApi } from "../service/companyApi";
+import companyApi from "../service/companyApi";
 
 export const useJobMetadata = () => {
   const [metadata, setMetadata] = useState<any>(null);

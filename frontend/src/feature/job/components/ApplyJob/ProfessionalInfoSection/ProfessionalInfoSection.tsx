@@ -4,98 +4,87 @@ import styles from "./ProfessionalInfoSection.module.css";
 
 type Props = {
   jobTitle?: string;
+  onChange?: (data: {
+    intro: string;
+    salary: string;
+    startDate: string;
+    cvFile: File | null;
+  }) => void;
 };
 
-const ProfessionalInfoSection = ({ jobTitle }: Props) => {
+const ProfessionalInfoSection = ({ jobTitle, onChange }: Props) => {
   const [fileName, setFileName] = useState<string | null>(null);
+
+  const [form, setForm] = useState({
+    intro: "",
+    salary: "",
+    startDate: "",
+    cvFile: null as File | null,
+  });
+
+  const updateField = (key: keyof typeof form, value: string) => {
+    const newForm = { ...form, [key]: value };
+    setForm(newForm);
+    onChange?.(newForm);
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-
     if (!file) return;
 
-    // validate PDF
     if (file.type !== "application/pdf") {
       alert("Only PDF allowed");
       return;
     }
 
     setFileName(file.name);
+
+    const newForm = { ...form, cvFile: file };
+    setForm(newForm);
+    onChange?.(newForm);
   };
 
   return (
     <div className={styles.section}>
       <div className={styles.columns}>
-        {/* Left */}
         <div className={styles.leftCol}>
-          <div className={styles.field}>
-            <label className={styles.label}>
-              Self-Introduction (Strengths and Weaknesses)
-            </label>
-            <textarea
-              className={styles.textarea}
-              placeholder="Self-Introduction"
-              rows={3}
-            />
-          </div>
+          <textarea
+            className={styles.textarea}
+            value={form.intro}
+            onChange={(e) => updateField("intro", e.target.value)}
+            placeholder="Self-Introduction"
+            rows={3}
+          />
 
-          <div className={styles.field}>
-            <label className={styles.label}>Job Title</label>
-            <input
-              type="text"
-              className={styles.input}
-              value={jobTitle || ""}
-              readOnly
-            />
-          </div>
+          <input
+            className={styles.input}
+            value={jobTitle || ""}
+            readOnly
+          />
 
-          <div className={styles.field}>
-            <label className={styles.label}>Desired Salary</label>
-            <input
-              type="text"
-              className={styles.input}
-              placeholder="Desired Salary"
-            />
-          </div>
+          <input
+            className={styles.input}
+            value={form.salary}
+            onChange={(e) => updateField("salary", e.target.value)}
+            placeholder="Desired Salary"
+          />
 
-          <div className={styles.field}>
-            <label className={styles.label}>Start Date</label>
-            <input
-              type="text"
-              className={styles.input}
-              placeholder="Start Date"
-            />
-          </div>
+          <input
+            className={styles.input}
+            value={form.startDate}
+            onChange={(e) => updateField("startDate", e.target.value)}
+            placeholder="Start Date"
+          />
         </div>
 
-        {/* Right */}
         <div className={styles.rightCol}>
-          <div className={styles.field}>
-            <label className={styles.label}>
-              File CV{" "}
-              <span className={styles.labelHint}>
-                (PDF: phoneNameDOB.pdf)
-              </span>
-            </label>
+          <label className={styles.uploadBox}>
+            <FiPlus />
+            <input type="file" accept=".pdf" onChange={handleFileChange} />
+          </label>
 
-            <div className={styles.uploadArea}>
-              <label className={styles.uploadBox}>
-                <FiPlus className={styles.uploadIcon} />
-                <input
-                  type="file"
-                  className={styles.fileInput}
-                  accept=".pdf"
-                  onChange={handleFileChange}
-                />
-              </label>
-            </div>
-
-            <div className={styles.fileInfo}>
-              <span className={styles.fileLabel}>numberphoneName</span>
-              <span className={styles.fileName}>
-                {fileName || "DateOfBirth.pdf"}
-              </span>
-            </div>
+          <div className={styles.fileName}>
+            {fileName || "No file selected"}
           </div>
         </div>
       </div>
