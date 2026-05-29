@@ -1,8 +1,8 @@
 -- MySQL dump 10.13  Distrib 8.0.44, for Win64 (x86_64)
 --
--- Host: localhost    Database: recruitment_db1
+-- Host: 127.0.0.1    Database: recruitment_db1
 -- ------------------------------------------------------
--- Server version	8.2.0
+-- Server version	8.0.46
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -224,7 +224,7 @@ CREATE TABLE `flyway_schema_history` (
 
 LOCK TABLES `flyway_schema_history` WRITE;
 /*!40000 ALTER TABLE `flyway_schema_history` DISABLE KEYS */;
-INSERT INTO `flyway_schema_history` VALUES (1,'1','init','SQL','V1__init.sql',699621463,'root','2026-05-24 08:07:45',573,1);
+INSERT INTO `flyway_schema_history` VALUES (1,'1','init','SQL','V1__init.sql',699621463,'root','2026-05-24 08:07:45',573,1),(2,'1','init','SQL','V1__init.sql',529330383,'root','2026-05-27 14:42:38',2924,1);
 /*!40000 ALTER TABLE `flyway_schema_history` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -281,6 +281,7 @@ CREATE TABLE `job_skills` (
 
 LOCK TABLES `job_skills` WRITE;
 /*!40000 ALTER TABLE `job_skills` DISABLE KEYS */;
+INSERT INTO `job_skills` VALUES (49,4),(53,4),(60,4),(66,4),(71,4),(77,4),(81,4),(49,5),(54,5),(60,5),(67,5),(71,5),(77,5),(82,5),(49,6),(54,6),(61,6),(67,6),(72,6),(78,6),(82,6),(50,7),(55,7),(61,7),(68,7),(73,7),(78,7),(83,7),(50,8),(56,8),(62,8),(68,8),(73,8),(78,8),(83,8),(50,9),(57,9),(63,9),(69,9),(74,9),(79,9),(51,10),(57,10),(64,10),(69,10),(74,10),(79,10),(51,11),(58,11),(64,11),(70,11),(75,11),(79,11),(52,22),(58,22),(65,22),(71,22),(75,22),(80,22),(52,23),(59,23),(65,23),(76,23),(80,23),(53,24),(59,24),(66,24),(76,24),(81,24);
 /*!40000 ALTER TABLE `job_skills` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -301,7 +302,7 @@ CREATE TABLE `jobs` (
   `salary_max` double DEFAULT NULL,
   `location` varchar(255) DEFAULT NULL,
   `type` varchar(255) DEFAULT NULL,
-  `status` varchar(255) DEFAULT NULL,
+  `status` enum('DRAFT','ACTIVE','PAUSED','CLOSED') DEFAULT NULL,
   `deadline` date DEFAULT NULL,
   `company_id` bigint DEFAULT NULL,
   `category_id` bigint DEFAULT NULL,
@@ -429,7 +430,7 @@ CREATE TABLE `users` (
   `last_name` varchar(255) DEFAULT NULL,
   `avatar_url` varchar(255) DEFAULT NULL,
   `role` enum('ADMIN','RECRUITER','CANDIDATE') DEFAULT NULL,
-  `status` varchar(255) DEFAULT NULL,
+  `status` enum('ACTIVE','BLOCKED') DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `company_id` bigint DEFAULT NULL,
@@ -487,4 +488,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-05-24 15:41:47
+-- Dump completed on 2026-05-27 21:54:45

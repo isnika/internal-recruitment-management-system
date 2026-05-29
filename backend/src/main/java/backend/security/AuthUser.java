@@ -28,7 +28,7 @@ public class AuthUser implements UserDetails {
         .id(user.getId())
         .email(user.getEmail())
         .password(user.getPassword())
-        .status(user.getStatus())
+        .status(user.getStatus() != null ? user.getStatus().name() : null)
         .authorities(buildAuthorities(user))
         .build();
   }

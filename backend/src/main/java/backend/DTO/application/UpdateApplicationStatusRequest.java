@@ -1,4 +1,4 @@
-package backend.DTO.company;
+package backend.DTO.application;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -10,11 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CreateCompanyRequest {
-  @NotBlank(message = "Name khong duoc de trong")
-  private String name;
-  private String description;
-  private String address;
-  private String website;
+public class UpdateApplicationStatusRequest {
+
+  @NotBlank(message = "Status is required")
   private String status;
 }
