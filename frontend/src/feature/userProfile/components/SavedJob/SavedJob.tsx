@@ -1,79 +1,160 @@
-import React, { useState } from "react";
+import React, {
+  useEffect,
+  useState,
+} from "react";
+
 import JobCard from "../../../job/components/JobCard/JobCard";
+
 import styles from "./SavedJob.module.css";
-import type { Job } from "../../../../service/jobApi";
 
+import type { Job } from "../../../../types/job";
 
-const INITIAL_SAVED_JOBS: Job[] = [
-  {
-    id: "job-1",
-    title: "Senior Frontend Developer (ReactJS)",
-    category: "Development / IT",
-    logo: "https://via.placeholder.com/150",
-    skills: ["React", "TypeScript", "CSS Modules", "Next.js", "Redux"],
-    salary: { min: 30000000, max: 50000000, currency: "VND" },
-    location: "Ho Chi Minh City",
-    postedAt: "2 days ago",
-    isBookmarked: true,
-  },
-  {
-    id: "job-2",
-    title: "UI/UX Product Designer",
-    category: "Design / Creative",
-    logo: "https://via.placeholder.com/150",
-    skills: ["Figma", "Wireframing", "Prototyping"],
-    salary: { min: 20000000, max: 35000000, currency: "VND" },
-    location: "Ha Noi City (Hybrid)",
-    postedAt: "1 week ago",
-    isBookmarked: true,
-  },
-];
+import savedJobApi from "../../../../service/savedJobApi";
 
-export default function SavedJobs() {
-  const [jobs, setJobs] = useState<Job[]>(INITIAL_SAVED_JOBS);
+const SavedJobs: React.FC = () => {
+  const [jobs, setJobs] = useState<Job[]>(
+    []
+  );
 
+  const [loading, setLoading] =
+    useState(false);
 
-  const handleBookmark = (id: string) => {
-    setJobs((prevJobs) =>
-      prevJobs.map((job) =>
-        job.id === id ? { ...job, isBookmarked: !job.isBookmarked } : job
-      )
-    );
-    // Note: Khi kết nối API thật, bạn sẽ gọi một hàm dispatch hoặc hàm API xóa tại đây
+  // FETCH SAVED JOBS
+  const fetchSavedJobs = async () => {
+    try {
+      setLoading(true);
+
+      const res =
+        await savedJobApi.getAll();
+
+      // Gắn isSaved để đồng bộ UI
+      const jobsWithSaved = res.map(
+        (job: Job) => ({
+          ...job,
+          isSaved: true,
+        })
+      );
+
+      setJobs(jobsWithSaved);
+    } catch (error) {
+      console.error(
+        "Fetch saved jobs failed:",
+        error
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
+  useEffect(() => {
+    fetchSavedJobs();
+  }, []);
 
-  const activeSavedJobs = jobs.filter((job) => job.isBookmarked);
+  // BOOKMARK / UNBOOKMARK
+  const handleBookmark = async (
+    id: number,
+    saved: boolean
+  ) => {
+    try {
+      // Optimistic UI
+      setJobs((prevJobs) =>
+        prevJobs.map((job) =>
+          job.id === id
+            ? {
+                ...job,
+                isSaved: !saved,
+              }
+            : job
+        )
+      );
+
+      if (saved) {
+        await savedJobApi.remove(id);
+
+        // Remove khỏi danh sách saved
+        setJobs((prevJobs) =>
+          prevJobs.filter(
+            (job) => job.id !== id
+          )
+        );
+      } else {
+        await savedJobApi.save(id);
+      }
+    } catch (error) {
+      console.error(
+        "Bookmark action failed:",
+        error
+      );
+
+      // rollback nếu lỗi
+      setJobs((prevJobs) =>
+        prevJobs.map((job) =>
+          job.id === id
+            ? {
+                ...job,
+                isSaved: saved,
+              }
+            : job
+        )
+      );
+    }
+  };
 
   return (
     <div className={styles.container}>
-      {/* Khối Header */}
+      {/* HEADER */}
       <div className={styles.header}>
         <div className={styles.titleGroup}>
-          <h2 className={styles.pageTitle}>Saved Jobs</h2>
+          <h2 className={styles.pageTitle}>
+            Saved Jobs
+          </h2>
+
           <span className={styles.jobCount}>
-            {activeSavedJobs.length} positions
+            {jobs.length} positions
           </span>
         </div>
+
         <p className={styles.subtitle}>
-          Manage and apply to the career opportunities you have saved.
+          Manage and apply to the career
+          opportunities you have saved.
         </p>
       </div>
 
-      {/* Danh sách JobCard tái sử dụng UI của bạn */}
-      {activeSavedJobs.length > 0 ? (
+      {/* LOADING */}
+      {loading ? (
+        <div className={styles.loadingState}>
+          Loading saved jobs...
+        </div>
+      ) : jobs.length > 0 ? (
+        /* JOB LIST */
         <div className={styles.jobList}>
-          {activeSavedJobs.map((job) => (
-            <JobCard key={job.id} job={job} onBookmark={handleBookmark} />
+          {jobs.map((job) => (
+            <JobCard
+              key={job.id}
+              job={job}
+              onBookmark={
+                handleBookmark
+              }
+            />
           ))}
         </div>
       ) : (
+        /* EMPTY STATE */
         <div className={styles.emptyState}>
-          <div className={styles.emptyIcon}>📂</div>
+          <div className={styles.emptyIcon}>
+            📂
+          </div>
+
           <h3>No saved jobs yet</h3>
-          <p>Explore openings and bookmark them to view them here later.</p>
+
+          <p>
+            Explore openings and bookmark
+            them to view them here later.
+          </p>
         </div>
       )}
     </div>
   );
-}
+};
+
+export default SavedJobs;

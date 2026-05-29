@@ -3,36 +3,55 @@ import { useNavigate } from "react-router-dom";
 
 import styles from "./JobCard.module.css";
 
-import { FiMapPin, FiBookmark } from "react-icons/fi";
+import {
+  FiMapPin,
+  FiBookmark,
+} from "react-icons/fi";
+
 import { BsCash } from "react-icons/bs";
+
 import { FaBookmark } from "react-icons/fa";
 
 import type { Job } from "../../../../types/job";
 
+// =========================
 // FORMAT SALARY
-const formatMoney = (value?: number) => {
-  if (!value) return "Thoả thuận";
+// =========================
 
-  return new Intl.NumberFormat("vi-VN").format(
-    value
-  );
-};
-
-const formatSalary = (job: Job) => {
-  if (!job.salaryMin && !job.salaryMax) {
+const formatMoney = (
+  value?: number | null
+) => {
+  if (value == null) {
     return "Thoả thuận";
   }
 
-  return `$${formatMoney(
+  return new Intl.NumberFormat(
+    "vi-VN"
+  ).format(value);
+};
+
+const formatSalary = (job: Job) => {
+  if (
+    job.salaryMin == null &&
+    job.salaryMax == null
+  ) {
+    return "Thoả thuận";
+  }
+
+  return `${formatMoney(
     job.salaryMin
-  )} - $${formatMoney(
+  )} - ${formatMoney(
     job.salaryMax
-  )}`;
+  )} VND`;
 };
 
 interface JobCardProps {
   job: Job;
-  onBookmark: (id: number) => void;
+
+  onBookmark: (
+    id: number,
+    saved: boolean
+  ) => void;
 }
 
 const JobCard: React.FC<JobCardProps> = ({
@@ -71,7 +90,8 @@ const JobCard: React.FC<JobCardProps> = ({
             Skills:
           </span>
 
-          {job.skills?.slice(0, 3)
+          {job.skills
+            ?.slice(0, 3)
             .map((skill) => (
               <span
                 key={skill.id}
@@ -81,9 +101,16 @@ const JobCard: React.FC<JobCardProps> = ({
               </span>
             ))}
 
-          {(job.skills?.length || 0) > 3 && (
-            <span className={styles.moreSkill}>
-              +{job.skills.length - 3}
+          {(job.skills?.length || 0) >
+            3 && (
+            <span
+              className={
+                styles.moreSkill
+              }
+            >
+              +
+              {job.skills.length -
+                3}
             </span>
           )}
         </div>
@@ -92,20 +119,32 @@ const JobCard: React.FC<JobCardProps> = ({
         <div className={styles.jobMetaList}>
           <div className={styles.metaItem}>
             <BsCash
-              className={styles.metaIconYellow}
+              className={
+                styles.metaIconYellow
+              }
             />
 
-            <span className={styles.metaBold}>
+            <span
+              className={
+                styles.metaBold
+              }
+            >
               {formatSalary(job)}
             </span>
           </div>
 
           <div className={styles.metaItem}>
             <FiMapPin
-              className={styles.metaIconRed}
+              className={
+                styles.metaIconRed
+              }
             />
 
-            <span className={styles.metaText}>
+            <span
+              className={
+                styles.metaText
+              }
+            >
               {job.location}
             </span>
           </div>
@@ -115,46 +154,83 @@ const JobCard: React.FC<JobCardProps> = ({
       {/* ACTION */}
       <div className={styles.jobActionCol}>
         <div className={styles.jobTopRight}>
-          <span className={styles.jobPostedAt}>
+          <span
+            className={
+              styles.jobPostedAt
+            }
+          >
             {job.deadline}
           </span>
 
           <button
-            className={styles.bookmarkBtn}
-            onClick={() => onBookmark(job.id)}
+            type="button"
+            className={
+              styles.bookmarkBtn
+            }
+            onClick={(e) => {
+              e.stopPropagation();
+
+              onBookmark(
+                job.id,
+                !!job.isSaved
+              );
+            }}
           >
-            {job.isBookmarked ? (
+            {job.isSaved ? (
               <FaBookmark
                 className={`${styles.bookmarkIcon} ${styles.bookmarkIconActive}`}
               />
             ) : (
               <FiBookmark
-                className={styles.bookmarkIcon}
+                className={
+                  styles.bookmarkIcon
+                }
               />
             )}
           </button>
         </div>
 
-        <div className={styles.actionButtons}>
+        <div
+          className={
+            styles.actionButtons
+          }
+        >
           <button
-            className={styles.viewDetailsBtn}
+            className={
+              styles.viewDetailsBtn
+            }
             onClick={() => {
-              navigate(`/jobs/${job.id}`);
+              navigate(
+                `/jobs/${job.id}`
+              );
 
-              window.scrollTo(0, 0);
+              window.scrollTo(
+                0,
+                0
+              );
             }}
           >
             View Details
           </button>
 
           <button
-            className={styles.applyBtn}
+            className={
+              styles.applyBtn
+            }
             onClick={() => {
-              navigate(`/jobs/${job.id}`, {
-                state: { autoApply: true },
-              });
+              navigate(
+                `/jobs/${job.id}`,
+                {
+                  state: {
+                    autoApply: true,
+                  },
+                }
+              );
 
-              window.scrollTo(0, 0);
+              window.scrollTo(
+                0,
+                0
+              );
             }}
           >
             Apply Now

@@ -1,6 +1,8 @@
-  
+// src/types/job.ts
+
+ 
 // ENUMS
-  
+ 
 
 export enum JobStatus {
   DRAFT = "DRAFT",
@@ -16,18 +18,26 @@ export enum JobType {
   REMOTE = "REMOTE",
 }
 
-  
+ 
 // COMMON TYPES
-  
+ 
 
 export interface Company {
   id: number;
+
   name: string;
+
   description: string;
+
   address: string;
+
   website: string;
-  logoUrl: string;
+
+  logoUrl?: string;
+
   status: string;
+
+  verified?: boolean;
 }
 
 export interface Category {
@@ -45,56 +55,77 @@ export interface Skill {
   name: string;
 }
 
-export interface Company {
-  id: number;
-  name: string;
-  description: string;
-  address: string;
-  website: string;
-  logoUrl?: string;
-  status: string;
-  verified?: boolean;
-}
-
+ 
 // JOB RESPONSE
+ 
 
 export interface Job {
   id: number;
+
   title: string;
+
   description: string;
+
   requirements: string;
+
   benefits: string;
-  salaryMin: number;
-  salaryMax: number;
+
+  salaryMin?: number | null;
+
+  salaryMax?: number | null;
+
   location: string;
-  type: string;
+
+  type: JobType;
+
   status: JobStatus;
+
+  // ISO DATE STRING
   deadline: string;
 
   company: Company;
+
   category: Category;
+
   experienceLevel: ExperienceLevel;
+
   skills: Skill[];
+
+  // FRONTEND ONLY
+  isSaved?: boolean;
 }
 
-
+ 
 // REQUEST TYPES
+ 
 
 export interface CreateJobRequest {
   title: string;
+
   description: string;
+
   requirements: string;
+
   benefits: string;
-  salaryMin: number;
-  salaryMax: number;
+
+  salaryMin?: number | null;
+
+  salaryMax?: number | null;
+
   location: string;
-  type: string;
+
+  type: JobType;
+
   deadline: string;
+
   status: JobStatus;
 
   companyId: number;
+
   categoryId: number;
+
   experienceLevelId: number;
+
   skillIds: number[];
 }
 
@@ -103,22 +134,32 @@ export interface UpdateJobRequest
 
 export interface JobFilters {
   keywords?: string;
+
   minSalary?: number;
+
   maxSalary?: number;
 
-  skillIds: number[];
+  skillIds?: number[];
+
   location?: string;
 
   categoryId?: number | null;
-  experienceLevelId?: number | null;
 
-  jobType?: string;
+  experienceLevelId?:
+    | number
+    | null;
+
+  jobType?: JobType | "";
+
   status?: JobStatus | "";
 }
 
 export interface HomeMetadata {
   categories: Category[];
+
   skills: Skill[];
+
   experienceLevels: ExperienceLevel[];
+
   companies: Company[];
 }

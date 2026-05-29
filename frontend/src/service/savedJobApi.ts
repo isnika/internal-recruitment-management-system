@@ -1,4 +1,8 @@
+// src/service/savedJobApi.ts
+
 import { request } from "./axiosClient";
+
+import type { Job } from "../types/job";
 
 // =========================
 // TYPES
@@ -9,46 +13,6 @@ export interface SavedJobStatus {
   saved: boolean;
 }
 
-// Job response (reuse từ jobApi nếu bạn đã có)
-export interface Job {
-  id: number;
-  title: string;
-  description: string;
-  requirements: string;
-  benefits: string;
-  salaryMin: number;
-  salaryMax: number;
-  location: string;
-  type: string;
-  status: string;
-  deadline: string;
-
-  company: {
-    id: number;
-    name: string;
-    description: string;
-    address: string;
-    website: string;
-    logoUrl: string;
-    status: string;
-  };
-
-  category: {
-    id: number;
-    name: string;
-  };
-
-  experienceLevel: {
-    id: number;
-    name: string;
-  };
-
-  skills: {
-    id: number;
-    name: string;
-  }[];
-}
-
 // =========================
 // API
 // =========================
@@ -56,28 +20,34 @@ export interface Job {
 const ENDPOINT = "/api/saved-jobs";
 
 export const savedJobApi = {
-  // SAVE JOB (toggle save)
-  save: (jobId: number): Promise<SavedJobStatus> => {
-    return request.post<SavedJobStatus>(
+  // SAVE JOB
+  save: (
+    jobId: number
+  ): Promise<SavedJobStatus> => {
+    return request.post(
       `${ENDPOINT}/${jobId}`
     );
   },
 
   // REMOVE SAVED JOB
-  remove: (jobId: number): Promise<SavedJobStatus> => {
-    return request.delete<SavedJobStatus>(
+  remove: (
+    jobId: number
+  ): Promise<SavedJobStatus> => {
+    return request.delete(
       `${ENDPOINT}/${jobId}`
     );
   },
 
   // GET ALL SAVED JOBS
   getAll: (): Promise<Job[]> => {
-    return request.get<Job[]>(ENDPOINT);
+    return request.get(ENDPOINT);
   },
 
   // CHECK SAVED STATUS
-  getStatus: (jobId: number): Promise<SavedJobStatus> => {
-    return request.get<SavedJobStatus>(
+  getStatus: (
+    jobId: number
+  ): Promise<SavedJobStatus> => {
+    return request.get(
       `${ENDPOINT}/${jobId}/status`
     );
   },
