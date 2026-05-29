@@ -1,16 +1,11 @@
 import React from "react";
 import type { User } from "../../../../types/user";
-import { FiShield, FiLock, FiUnlock, FiKey, FiTrash2 } from "react-icons/fi";
+import { FiLock, FiUnlock, FiKey, FiTrash2 } from "react-icons/fi";
 import styles from "../pages/UserManagement.module.css";
 
 interface UserTableProps {
   filteredUsers: User[];
   totalCount: number;
-  editingId: number | null;
-  editRole: string;
-  setEditRole: (val: string) => void;
-  onStartEditRole: (user: User) => void;
-  onSaveRole: (id: number) => void;
   onToggleStatus: (id: number) => void;
   onResetPassword: (id: number) => void;
   onDeleteUser: (id: number) => void;
@@ -19,11 +14,6 @@ interface UserTableProps {
 const UserTable: React.FC<UserTableProps> = ({
   filteredUsers,
   totalCount,
-  editingId,
-  editRole,
-  setEditRole,
-  onStartEditRole,
-  onSaveRole,
   onToggleStatus,
   onResetPassword,
   onDeleteUser,
@@ -86,29 +76,9 @@ const UserTable: React.FC<UserTableProps> = ({
                   <td className={styles.cellEmail}>{user.email}</td>
                   <td>{user.phone || "—"}</td>
                   <td>
-                    {editingId === user.id ? (
-                      <div className={styles.roleEdit}>
-                        <select
-                          value={editRole}
-                          onChange={(e) => setEditRole(e.target.value)}
-                          className={styles.roleSelect}
-                        >
-                          <option value="CANDIDATE">Candidate</option>
-                          <option value="RECRUITER">Employer</option>
-                          <option value="ADMIN">Admin</option>
-                        </select>
-                        <button
-                          className={styles.btnSave}
-                          onClick={() => onSaveRole(user.id)}
-                        >
-                          Save
-                        </button>
-                      </div>
-                    ) : (
-                      <span className={`${styles.roleBadge} ${getRoleBadge(user.role)}`}>
-                        {getRoleLabel(user.role)}
-                      </span>
-                    )}
+                    <span className={`${styles.roleBadge} ${getRoleBadge(user.role)}`}>
+                      {getRoleLabel(user.role)}
+                    </span>
                   </td>
                   <td>
                     <span
@@ -123,14 +93,6 @@ const UserTable: React.FC<UserTableProps> = ({
                   </td>
                   <td>
                     <div className={styles.actions}>
-                      <button
-                        className={styles.actionBtn}
-                        title="Change Role"
-                        onClick={() => onStartEditRole(user)}
-                        aria-label={`Change role for ${user.firstName} ${user.lastName}`}
-                      >
-                        <FiShield />
-                      </button>
                       <button
                         className={styles.actionBtn}
                         title={
@@ -149,9 +111,9 @@ const UserTable: React.FC<UserTableProps> = ({
                         }
                       >
                         {(user.status || "Active").toLowerCase() === "active" ? (
-                          <FiUnlock />
-                        ) : (
                           <FiLock />
+                        ) : (
+                          <FiUnlock />
                         )}
                       </button>
                       <button

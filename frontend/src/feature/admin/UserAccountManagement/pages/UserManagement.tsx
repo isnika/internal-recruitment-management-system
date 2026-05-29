@@ -30,12 +30,20 @@ const UserManagement: React.FC = () => {
     try {
       const userToUpdate = usersList.find(u => u.id === id);
       if (!userToUpdate) return;
-      const newStatus = userToUpdate.status === "ACTIVE" ? "INACTIVE" : "ACTIVE";
-      await userApi.updateUser(id, { status: newStatus });
+      const currentStatus = (userToUpdate.status || "ACTIVE").toUpperCase();
+      const newStatus = currentStatus === "ACTIVE" ? "BLOCKED" : "ACTIVE";
+      const actionText = newStatus === "BLOCKED" ? "block" : "unblock";
+      
+      if (!window.confirm(`Are you sure you want to ${actionText} this account?`)) {
+        return;
+      }
+
+      await userApi.updateUserStatus(id, newStatus as any);
       setUsersList(prev => prev.map(u => u.id === id ? { ...u, status: newStatus } : u));
       toast.success("Toggled status successfully");
-    } catch (error) {
-      toast.error("Failed to toggle status");
+    } catch (error: any) {
+      console.error("Toggle status error:", error.response?.data || error.message || error);
+      toast.error(`Failed to toggle status: ${error.response?.data?.message || error.message || 'Unknown'}`);
     }
   }, [usersList, toast]);
 
@@ -62,26 +70,21 @@ const UserManagement: React.FC = () => {
     }
   }, [toast]);
 
-  const onSaveRole = useCallback(async (id: number, newRole: string) => {
-    try {
-      await userApi.updateUser(id, { role: newRole });
-      setUsersList(prev => prev.map(u => u.id === id ? { ...u, role: newRole } : u));
-      toast.success("Role updated successfully");
-    } catch (error) {
-      toast.error("Failed to update role");
-    }
-  }, [toast]);
-
   const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [editRole, setEditRole] = useState<string>("");
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 5; // Hoặc 10 tùy ý
 
   const handleSearch = useCallback(() => {
     setSearch(searchInput);
   }, [searchInput]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, roleFilter, statusFilter]);
 
   const filtered = useMemo(() => {
     return usersList.filter((u) => {
@@ -96,15 +99,12 @@ const UserManagement: React.FC = () => {
     });
   }, [usersList, search, roleFilter, statusFilter]);
 
-  const handleStartEditRole = useCallback((user: User) => {
-    setEditingId(user.id);
-    setEditRole(user.role);
-  }, []);
+  const paginatedUsers = useMemo(() => {
+    const startIndex = (currentPage - 1) * pageSize;
+    return filtered.slice(startIndex, startIndex + pageSize);
+  }, [filtered, currentPage, pageSize]);
 
-  const handleSaveRole = useCallback((id: number) => {
-    onSaveRole(id, editRole);
-    setEditingId(null);
-  }, [editRole, onSaveRole]);
+  const totalPages = Math.ceil(filtered.length / pageSize);
 
   return (
     <div className={styles.page}>
@@ -128,17 +128,35 @@ const UserManagement: React.FC = () => {
 
       {/* TABLE */}
       <UserTable
-        filteredUsers={filtered}
-        totalCount={usersList.length}
-        editingId={editingId}
-        editRole={editRole}
-        setEditRole={setEditRole}
-        onStartEditRole={handleStartEditRole}
-        onSaveRole={handleSaveRole}
+        filteredUsers={paginatedUsers}
+        totalCount={filtered.length}
         onToggleStatus={onToggleStatus}
         onResetPassword={onResetPassword}
         onDeleteUser={onDeleteUser}
       />
+
+      {/* PAGINATION */}
+      {totalPages > 1 && (
+        <div className={styles.pagination}>
+          <button 
+            className={styles.pageBtn}
+            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+          >
+            Previous
+          </button>
+          <span className={styles.pageInfo}>
+            Page {currentPage} of {totalPages}
+          </span>
+          <button 
+            className={styles.pageBtn}
+            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </button>
+        </div>
+      )}
     </div>
   );
 };

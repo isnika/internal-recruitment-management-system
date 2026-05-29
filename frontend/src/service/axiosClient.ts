@@ -6,7 +6,7 @@ interface CustomRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
 }
 
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
+const BASE_URL = import.meta.env.VITE_API_URL || "";
 
 const axiosClient = axios.create({
   baseURL: IS_MOCK ? "" : BASE_URL,
@@ -51,7 +51,7 @@ axiosClient.interceptors.response.use(
       const refreshToken = localStorage.getItem("refreshToken");
       if (!refreshToken) throw new Error("No refresh token");
 
-      const res = await axiosNoAuth.post("/auth/refresh", { refreshToken });
+      const res = await axiosNoAuth.post("/api/auth/refresh", { refreshToken });
       const newToken = res.data?.accessToken;
 
       if (!newToken) throw new Error("No access token");

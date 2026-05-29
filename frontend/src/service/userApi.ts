@@ -14,6 +14,9 @@ export const createUser = (data: any) =>
 export const updateUser = (id: number, data: any) =>
   request.put(`/api/users/${id}`, data);
 
+export const updateUserStatus = (id: number, status: "ACTIVE" | "BLOCKED") =>
+  request.patch(`/api/users/${id}/status`, { status });
+
 export const deleteUser = (id: number) =>
   request.delete(`/api/users/${id}`);
 
