@@ -8,9 +8,9 @@ type Props = {
 
 const FILTERS: (InterviewStatus | "ALL")[] = [
   "ALL",
-  "SCHEDULED",
-  "DONE",
-  "CANCELLED",
+  "PENDING",
+  "ACCEPTED",
+  "REJECTED",
 ];
 
 export default function InterviewHeader({
@@ -30,10 +30,26 @@ export default function InterviewHeader({
             }`}
             onClick={() => setStatusFilter(s)}
           >
-            {s}
+            {formatLabel(s)}
           </button>
         ))}
       </div>
     </div>
   );
+}
+
+// optional: UI đẹp hơn thay vì uppercase raw string
+function formatLabel(status: InterviewStatus | "ALL") {
+  switch (status) {
+    case "ALL":
+      return "All";
+    case "PENDING":
+      return "Pending";
+    case "ACCEPTED":
+      return "Accepted";
+    case "REJECTED":
+      return "Rejected";
+    default:
+      return status;
+  }
 }

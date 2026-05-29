@@ -1,50 +1,133 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./CVManagement.module.css";
+import cvApi from "../../../../service/cvApi";
+import type { CV } from "../../../../types/cv";
 
 export default function CVManagement() {
-  // Thay string đơn thuần bằng object để có cả tên và link
-  const [cvData, setCvData] = useState<{ name: string; url: string } | null>({
-    name: "my_resume_v2.pdf",
-    url: "/path/to/your/my_resume_v2.pdf" // Thay bằng link thật từ server hoặc Cloudinary/S3
-  });
+  // list CV thật từ backend
+  const [cvs, setCvs] = useState<CV[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
-  const handleViewCV = () => {
-    if (cvData?.url) {
-      // Mở file trong tab mới
-      window.open(cvData.url, "_blank", "noopener,noreferrer");
+  // ======================
+  // FETCH CVS
+  // ======================
+  const fetchCVs = async () => {
+    try {
+      setLoading(true);
+      const data = await cvApi.getMyCvs();
+      setCvs(data);
+    } catch (err) {
+      console.error("Fetch CV error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCVs();
+  }, []);
+
+  // ======================
+  // UPLOAD CV
+  // ======================
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setUploading(true);
+      await cvApi.upload(file);
+
+      // reload list
+      await fetchCVs();
+    } catch (err) {
+      console.error("Upload error:", err);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  // ======================
+  // VIEW CV
+  // ======================
+  const handleViewCV = (url: string) => {
+    if (url) {
+      window.open(url, "_blank", "noopener,noreferrer");
+    }
+  };
+
+  // ======================
+  // DELETE CV
+  // ======================
+  const handleDelete = async (id: number) => {
+    try {
+      await cvApi.delete(id);
+      await fetchCVs();
+    } catch (err) {
+      console.error("Delete error:", err);
     }
   };
 
   return (
     <div className={styles.container}>
       <h2 className={styles.pageTitle}>Manage CV</h2>
-      <p className={styles.subtitle}>Upload and manage your professional CV.</p>
+      <p className={styles.subtitle}>
+        Upload and manage your professional CV.
+      </p>
 
-      {/* Upload Section giữ nguyên... */}
+      {/* ======================
+          UPLOAD SECTION
+      ====================== */}
       <div className={styles.uploadSection}>
-         {/* ... code input file của bạn ... */}
+        <input type="file" accept=".pdf,.doc,.docx" onChange={handleUpload} />
+
+        {uploading && <p>Uploading...</p>}
       </div>
 
-      {/* Current CV List */}
+      {/* ======================
+          CV LIST
+      ====================== */}
       <div className={styles.cvList}>
-        <h3 className={styles.sectionTitle}>Current CV</h3>
-        {cvData ? (
-          <div className={styles.cvCard}>
-            <div className={styles.cvInfo}>
-              <span className={styles.fileIcon}>📄</span>
-              <div>
-                <p className={styles.fileName}>{cvData.name}</p>
-                <p className={styles.fileMeta}>Uploaded on May 22, 2026 • 1.2 MB</p>
+        <h3 className={styles.sectionTitle}>My CVs</h3>
+
+        {loading ? (
+          <p>Loading...</p>
+        ) : cvs.length > 0 ? (
+          cvs.map((cv) => (
+            <div key={cv.id} className={styles.cvCard}>
+              <div className={styles.cvInfo}>
+                <span className={styles.fileIcon}>📄</span>
+
+                <div>
+                  <p className={styles.fileName}>
+                    CV #{cv.id}
+                  </p>
+
+                  <p className={styles.fileMeta}>
+                    Uploaded on{" "}
+                    {new Date(cv.createdAt).toLocaleDateString()}
+                  </p>
+                </div>
+              </div>
+
+              <div className={styles.cvActions}>
+                <button
+                  className={styles.viewBtn}
+                  onClick={() => handleViewCV(cv.fileUrl)}
+                >
+                  View
+                </button>
+
+                <button
+                  className={styles.deleteBtn}
+                  onClick={() => handleDelete(cv.id)}
+                >
+                  Delete
+                </button>
               </div>
             </div>
-            <div className={styles.cvActions}>
-              {/* Gọi hàm handleViewCV */}
-              <button className={styles.viewBtn} onClick={handleViewCV}>
-                View
-              </button>
-              <button className={styles.deleteBtn}>Delete</button>
-            </div>
-          </div>
+          ))
         ) : (
           <p className={styles.emptyText}>No CV uploaded yet.</p>
         )}

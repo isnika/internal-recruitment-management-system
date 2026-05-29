@@ -71,8 +71,7 @@ const JobCard: React.FC<JobCardProps> = ({
             Skills:
           </span>
 
-          {job.skills
-            ?.slice(0, 3)
+          {job.skills?.slice(0, 3)
             .map((skill) => (
               <span
                 key={skill.id}

@@ -1,40 +1,47 @@
 import { request } from "./axiosClient";
 
-//  
-// USER APIs
-//  
-export const getAllUsers = () => request.get("/api/users");
+// USER API
 
+// GET all users
+export const getAllUsers = () =>
+  request.get("/api/users");
+
+// GET user by id
 export const getUserById = (id: number) =>
   request.get(`/api/users/${id}`);
 
+// CREATE user
 export const createUser = (data: any) =>
   request.post("/api/users", data);
 
+// UPDATE user
 export const updateUser = (id: number, data: any) =>
   request.put(`/api/users/${id}`, data);
 
+// DELETE user
 export const deleteUser = (id: number) =>
   request.delete(`/api/users/${id}`);
 
 
-//  
-// CANDIDATE PROFILE APIs
-//  
+//
+     
+// CANDIDATE PROFILE API
+     
+//
 
-// GET /api/candidates/profile
+// GET my profile
 export const getMyCandidateProfile = () =>
   request.get("/api/candidates/profile");
 
-// POST /api/candidates/profile
+// CREATE profile
 export const createCandidateProfile = (data: any) =>
   request.post("/api/candidates/profile", data);
 
-// PUT /api/candidates/profile
+// UPDATE profile
 export const updateCandidateProfile = (data: any) =>
   request.put("/api/candidates/profile", data);
 
-// PATCH /api/candidates/profile/avatar
+// UPDATE avatar
 export const updateCandidateAvatar = (file: File) => {
   const formData = new FormData();
   formData.append("file", file);
@@ -46,28 +53,29 @@ export const updateCandidateAvatar = (file: File) => {
   });
 };
 
-// GET /api/candidates/profiles
+// GET all candidate profiles
 export const getAllCandidateProfiles = () =>
   request.get("/api/candidates/profiles");
 
-// GET /api/candidates/profiles/{userId}
+// GET candidate profile by userId
 export const getCandidateProfileByUserId = (userId: number) =>
   request.get(`/api/candidates/profiles/${userId}`);
 
 
-//  
-// COMPANY APIs
-//  
+     
+// COMPANY API
+
+
 export const getAllCompanies = () =>
   request.get("/api/companies");
 
 export const updateCompany = (id: number, data: any) =>
   request.put(`/api/companies/${id}`, data);
 
+     
+// JOB API
 
-//  
-// JOB APIs
-//  
+
 export const getAllJobs = () =>
   request.get("/api/jobs");
 

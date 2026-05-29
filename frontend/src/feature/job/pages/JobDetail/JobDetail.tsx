@@ -5,8 +5,7 @@ import {
   useMemo,
   useCallback,
 } from "react";
-import { useParams, useLocation } from "react-router-dom";
-import { FiChevronDown } from "react-icons/fi";
+import { useParams, useNavigate } from "react-router-dom";
 
 import styles from "./JobDetail.module.css";
 
@@ -20,45 +19,37 @@ import JobTabs from "../../components/JobTabs/JobTabs";
 import JobSections from "../../components/JobSections/JobSections";
 import JobSidebar from "../../components/JobSidebar/JobSidebar";
 import RelatedJobs from "../../components/RelatedJobs/RelatedJobs";
-import ApplyJobForm from "../../components/ApplyJob/ApplyJobForm/ApplyJobForm";
-import SubmitSuccessMessage from "../../components/ApplyJob/SubmitSuccessMessage/SubmitSuccessMessage";
 
-//   
+// =========================
 // TYPES
-//   
+// =========================
 type JobWithBookmark = Job & {
   isBookmarked: boolean;
 };
 
-//   
+// =========================
 // SAVED JOB API
-//   
+// =========================
 const savedJobApi = {
   toggle: (jobId: number): Promise<void> =>
     request.post(`/api/saved-jobs/${jobId}`),
 
   getStatus: (jobId: number): Promise<boolean> =>
-    request.get<boolean>(
-      `/api/saved-jobs/${jobId}/status`
-    ),
+    request.get<boolean>(`/api/saved-jobs/${jobId}/status`),
 };
 
 const JobDetail = () => {
   const { id } = useParams<{ id: string }>();
-  const location = useLocation();
+  const navigate = useNavigate();
 
   const [job, setJob] = useState<JobWithBookmark | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("Description");
   const [bookmarkLoading, setBookmarkLoading] = useState(false);
-  const [isApplying, setIsApplying] = useState<boolean>(
-    location.state?.autoApply || false
-  );
-  const [isSubmitted, setIsSubmitted] = useState(false);
 
-  //
-  // REFS
-  //
+   
+  // REFS (tabs scroll)
+   
   const descriptionRef = useRef<HTMLDivElement>(null);
   const requirementsRef = useRef<HTMLDivElement>(null);
   const benefitsRef = useRef<HTMLDivElement>(null);
@@ -74,9 +65,9 @@ const JobDetail = () => {
     []
   );
 
-  //
-  // HELPERS
-  //
+   
+  // SCROLL TOP
+   
   const scrollTop = () => {
     window.scrollTo({
       top: 0,
@@ -84,27 +75,24 @@ const JobDetail = () => {
     });
   };
 
-  //
-  // FETCH JOB DATA
-  //
+   
+  // FETCH JOB DETAIL
+   
   const fetchJobData = useCallback(async () => {
     if (!id) return;
 
     try {
       setIsLoading(true);
-      const jobId = Number(id);
 
-      // LOAD JOB DETAIL
+      const jobId = Number(id);
       const jobData = await jobApi.getById(jobId);
 
-      // DEFAULT BOOKMARK
       let bookmarked = false;
 
-      // LOAD BOOKMARK STATUS
       try {
         bookmarked = await savedJobApi.getStatus(jobId);
-      } catch (bookmarkErr) {
-        console.warn("Cannot load bookmark status:", bookmarkErr);
+      } catch (err) {
+        console.warn("Bookmark status error:", err);
       }
 
       setJob({
@@ -112,7 +100,6 @@ const JobDetail = () => {
         isBookmarked: bookmarked,
       });
     } catch (err) {
-      // ✅ ĐÃ FIX: Thêm dấu nháy kép mở đầu chuỗi string hợp lệ
       console.error("Failed to load job detail:", err);
       setJob(null);
     } finally {
@@ -124,37 +111,28 @@ const JobDetail = () => {
     fetchJobData();
   }, [fetchJobData]);
 
-  //
+   
   // BOOKMARK
-  //
+   
   const handleBookmark = async () => {
     if (!job || bookmarkLoading) return;
 
     try {
       setBookmarkLoading(true);
 
-      // Optimistic UI
       setJob((prev) =>
         prev
-          ? {
-              ...prev,
-              isBookmarked: !prev.isBookmarked,
-            }
+          ? { ...prev, isBookmarked: !prev.isBookmarked }
           : null
       );
 
       await savedJobApi.toggle(job.id);
     } catch (err) {
-      // ✅ ĐÃ FIX: Thêm dấu nháy kép mở đầu chuỗi string hợp lệ
-      console.error("Failed to bookmark job:", err);
+      console.error("Bookmark failed:", err);
 
-      // Rollback nếu gọi API lỗi
       setJob((prev) =>
         prev
-          ? {
-              ...prev,
-              isBookmarked: !prev.isBookmarked,
-            }
+          ? { ...prev, isBookmarked: !prev.isBookmarked }
           : null
       );
     } finally {
@@ -162,27 +140,24 @@ const JobDetail = () => {
     }
   };
 
-  //
-  // APPLY ACTIONS
-  //
+   
+  // APPLY → NAVIGATE PAGE
+   
   const handleApply = () => {
-    setIsApplying(true);
-    setIsSubmitted(false);
+    if (!job) return;
+
+    navigate(`/apply-job/${job.id}`, {
+      state: {
+        job,
+      },
+    });
+
     scrollTop();
   };
 
-  const handleCancelApply = () => {
-    setIsApplying(false);
-  };
-
-  const handleSubmitSuccess = () => {
-    setIsSubmitted(true);
-    scrollTop();
-  };
-
-  //
-  // LOADING STATE
-  //
+   
+  // LOADING
+   
   if (isLoading) {
     return (
       <div className={styles.wrapper}>
@@ -194,9 +169,9 @@ const JobDetail = () => {
     );
   }
 
-  //
-  // EMPTY STATE
-  //
+   
+  // EMPTY
+   
   if (!job) {
     return (
       <div className={styles.wrapper}>
@@ -207,16 +182,12 @@ const JobDetail = () => {
     );
   }
 
-  //
-  // RENDER
-  //
+   
+  // UI
+   
   return (
     <div className={styles.wrapper}>
-      {/* TOP LAYOUT */}
-      <div
-        className={styles.contentLayout}
-        style={isApplying ? {} : { alignItems: "flex-start" }}
-      >
+      <div className={styles.contentLayout}>
         {/* LEFT */}
         <div className={styles.leftCol}>
           <div className={styles.headerCard}>
@@ -232,74 +203,24 @@ const JobDetail = () => {
               tabRefs={tabRefs}
             />
 
-            {/* APPLY MODE */}
-            {isApplying && (
-              <>
-                <div
-                  className={styles.seeMore}
-                  onClick={handleCancelApply}
-                >
-                  View job details
-                </div>
-
-                <div
-                  className={styles.collapseIcon}
-                  onClick={handleCancelApply}
-                >
-                  <FiChevronDown
-                    style={{
-                      transform: "rotate(180deg)",
-                    }}
-                  />
-                </div>
-              </>
-            )}
-
-            {/* JOB CONTENT */}
-            {!isApplying && (
-              <div className={styles.sectionsContainer}>
-                <JobSections
-                  job={job}
-                  refs={tabRefs}
-                  onApply={handleApply}
-                />
-              </div>
-            )}
+            <div className={styles.sectionsContainer}>
+              <JobSections
+                job={job}
+                refs={tabRefs}
+                onApply={handleApply}
+              />
+            </div>
           </div>
         </div>
 
         {/* RIGHT */}
         <div className={styles.rightCol}>
-          <JobSidebar
-            job={job}
-            isApplying={isApplying}
-          />
+          <JobSidebar job={job} />
         </div>
       </div>
 
-      {/* APPLY FORM */}
-      {isApplying && (
-        <div className={styles.contentLayout}>
-          <div className={styles.leftCol}>
-            {isSubmitted ? (
-              <SubmitSuccessMessage />
-            ) : (
-              <ApplyJobForm
-                job={job}
-                onSubmitSuccess={handleSubmitSuccess}
-                onCancel={handleCancelApply}
-              />
-            )}
-          </div>
-
-          <div className={styles.rightCol} />
-        </div>
-      )}
-
       {/* RELATED JOBS */}
-      {!isApplying && (
-        <RelatedJobs job={job} />
-      )}
+      <RelatedJobs job={job} />
     </div>
   );
 };

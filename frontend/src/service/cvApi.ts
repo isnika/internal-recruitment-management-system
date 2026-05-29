@@ -1,52 +1,30 @@
 import { request } from "./axiosClient";
+import type { CV } from "../types/cv";
 
-// ======================
-// TYPES
-// ======================
-
-export interface CV {
-  id: number;
-  fileUrl: string;
-  createdAt: string;
+export interface ApiMessageResponse {
+  message: string;
 }
-
-export interface ApiResponse<T> {
-  status?: number;
-  message?: string;
-  data?: T;
-}
-
-// ======================
-// API
-// ======================
 
 const ENDPOINT = "/api/cvs";
 
-export const cvApi = {
-  // UPLOAD CV (multipart/form-data)
-  upload: (file: File): Promise<CV> => {
+const cvApi = {
+  upload: (file: File) => {
     const formData = new FormData();
     formData.append("file", file);
 
-    return request.post<CV>(
-      `${ENDPOINT}/upload`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
+    return request.post("/api/cvs/upload", formData);
   },
 
-  // GET MY CVS
   getMyCvs: (): Promise<CV[]> => {
     return request.get<CV[]>(`${ENDPOINT}/myCvs`);
   },
 
-  // DELETE CV
-  delete: (cvId: number): Promise<void> => {
-    return request.delete<void>(`${ENDPOINT}/${cvId}`);
+  getById: (cvId: number): Promise<CV> => {
+      return request.get<CV>(`${ENDPOINT}/${cvId}`);
+    },
+
+  delete: (cvId: number): Promise<ApiMessageResponse> => {
+    return request.delete(`${ENDPOINT}/${cvId}`);
   },
 };
 

@@ -21,14 +21,13 @@ import ManageCV from "../feature/userProfile/components/CVManagement/CVManagemen
 import SavedJobs from "../feature/userProfile/components/SavedJob/SavedJob";
 import AppliedJobs from "../feature/userProfile/components/AppliedJob/AppliedJob";
 import Settings from "../feature/userProfile/components/Settings/Settings";
-
+import ApplyJobPage from "../feature/apply-job/ApplyJobPage";
 import SearchPage from "../feature/Search/pages/SearchPage/SearchPage";
 
 /* management */
 import HomeEmployer from "../feature/employer/home/pages/HomeEmployer/homeEmployer";
 
 import RecruitmentPage from "../feature/employer/RecruitmentManagement/pages/recruitmentManagement";
-import CandidatesPage from "../feature/admin/CandidateManagement/pages/candidatesManagement";
 import InterviewPage from "../feature/employer/InterviewManagement/pages/interviewManagement";
 import ApplyManagement from "../feature/employer/applyManagement/pages/ApplyManagement";
 import DashboardPage from "../feature/employer/dashBoardManagement/pages/dashboardPage";
@@ -42,7 +41,6 @@ import CompanyManagementEmployer from "../feature/employer/CompanyManagement/pag
 import HomeAdmin from "../feature/admin/home/pages/HomeAdmin/homeAdmin";
 import Dashboard from "../feature/admin/Dashboard/pages/Dashboard";
 import UserManagement from "../feature/admin/UserAccountManagement/pages/UserManagement";
-import CandidateManagement from "../feature/admin/CandidateManagement/pages/candidatesManagement";
 import JobApproval from "../feature/admin/JobApproval/pages/JobApproval";
 import CompanyManagement from "../feature/admin/CompanyManagement/pages/CompanyManagement";
 import ApplicationMonitoring from "../feature/admin/ApplicationMonitoring/pages/ApplicationMonitoring";
@@ -67,6 +65,7 @@ export default function AppRoutes() {
         <Route path="jobs/:id" element={<JobDetail />} />
         <Route path="search" element={<SearchPage />} />
         <Route path="jobPage" element={<JobPage />} />
+        <Route path="/apply-job/:jobId" element ={<ApplyJobPage/>} />
         <Route path="companies" element={<Companies/>} />
         <Route path="salary-guide" element={<SalaryGuidePage/>} />
         <Route path="blog" element={<BlogPage/>} />
@@ -98,7 +97,6 @@ export default function AppRoutes() {
           <Route path="dashboardManagement" element={<DashboardPage/>} />
           <Route path="recruitmentManagement" element={<RecruitmentPage />} />
           <Route path="applyManagement" element={<ApplyManagement />} />
-          <Route path="candidatesManagement" element={<CandidatesPage />} />
           <Route path="interviewManagement" element={<InterviewPage />} />
           <Route path="settingManagement" element={<SettingManagement/>} />
           <Route path="skillManagement" element={<SkillManagement/>} />
@@ -113,7 +111,6 @@ export default function AppRoutes() {
           <Route index element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="users" element={<UserManagement />} />
-          <Route path="candidates" element={<CandidateManagement />} />
           <Route path="job-approval" element={<JobApproval />} />
           <Route path="companies" element={<CompanyManagement />} />
           <Route path="applications" element={<ApplicationMonitoring />} />

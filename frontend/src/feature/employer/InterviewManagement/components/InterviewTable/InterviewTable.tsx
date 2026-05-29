@@ -1,5 +1,5 @@
 import styles from "./InterviewTable.module.css";
-import type  { Interview } from "../../types/types";
+import type { Interview } from "../../types/types";
 import InterviewRow from "../InterviewRow/InterviewRow";
 
 type Props = {
@@ -15,6 +15,14 @@ export default function InterviewTable({
   onReschedule,
   onUpdate,
 }: Props) {
+  if (!data.length) {
+    return (
+      <div className={styles.emptyState}>
+        No interviews found.
+      </div>
+    );
+  }
+
   return (
     <div className={styles.tableWrapper}>
       <table className={styles.table}>
@@ -22,9 +30,8 @@ export default function InterviewTable({
           <tr>
             <th>Candidate</th>
             <th>Job</th>
-            <th>Interviewer</th>
-            <th>Date</th>
-            <th>Time</th>
+            <th>Location</th>
+            <th>Schedule</th>
             <th>Status</th>
             <th>Action</th>
           </tr>

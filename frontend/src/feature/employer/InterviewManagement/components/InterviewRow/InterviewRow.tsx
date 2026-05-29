@@ -1,5 +1,5 @@
 import styles from "../InterviewRow/InterviewRow.module.css";
-import type  { Interview } from "../../types/types";
+import type { Interview } from "../../types/types";
 
 type Props = {
   item: Interview;
@@ -16,22 +16,36 @@ export default function InterviewRow({
 }: Props) {
   const getStatusClass = (status: Interview["status"]) => {
     switch (status) {
-      case "SCHEDULED":
-        return styles.scheduled;
-      case "DONE":
-        return styles.done;
-      case "CANCELLED":
-        return styles.cancelled;
+      case "PENDING":
+        return styles.pending;
+      case "ACCEPTED":
+        return styles.accepted;
+      case "REJECTED":
+        return styles.rejected;
+      default:
+        return "";
     }
   };
 
+  const candidateName =
+    `${item.application.user.firstName} ${item.application.user.lastName}`;
+
+  const jobTitle = item.application.job.title;
+
+  const scheduleDate = new Date(item.scheduleTime).toLocaleDateString();
+  const scheduleTime = new Date(item.scheduleTime).toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
   return (
     <tr>
-      <td>{item.candidateName}</td>
-      <td>{item.jobTitle}</td>
-      <td>{item.interviewer}</td>
-      <td>{item.date}</td>
-      <td>{item.time}</td>
+      <td>{candidateName}</td>
+      <td>{jobTitle}</td>
+      <td>{item.location}</td>
+
+      <td>{scheduleDate}</td>
+      <td>{scheduleTime}</td>
 
       <td>
         <span className={`${styles.status} ${getStatusClass(item.status)}`}>

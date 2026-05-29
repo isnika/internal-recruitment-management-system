@@ -1,43 +1,69 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import Modal from "../BaseModal/Modal";
+
+import type { Interview } from "../../types/types";
 
 type Props = {
   open: boolean;
   onClose: () => void;
-  data: any;
-  onSave: (updated: any) => void;
+  data: Interview | null;
+  onSave: (updated: {
+    id: number;
+    result: string;
+    note?: string;
+  }) => void;
 };
 
-const UpdateResultModal = ({ open, onClose, data, onSave }: Props) => {
-  const [status, setStatus] = useState(data?.status || "DONE");
+export default function UpdateResultModal({
+  open,
+  onClose,
+  data,
+  onSave,
+}: Props) {
+  const [result, setResult] = useState("");
   const [note, setNote] = useState("");
 
+  // sync data khi mở modal
+  useEffect(() => {
+    if (data) {
+      setResult(data.result || "");
+      setNote(data.note || "");
+    }
+  }, [data, open]);
+
   const handleSave = () => {
+    if (!data) return;
+
     onSave({
-      ...data,
-      status,
+      id: data.id,
+      result,
       note,
     });
+
     onClose();
   };
 
   return (
     <Modal open={open} onClose={onClose} title="Update Interview Result">
       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-        <label>Status</label>
-        <select value={status} onChange={(e) => setStatus(e.target.value)}>
-          <option value="PASS">PASS</option>
-          <option value="FAIL">FAIL</option>
-          <option value="DONE">DONE</option>
-        </select>
+        <label>Result</label>
+        <textarea
+          value={result}
+          onChange={(e) => setResult(e.target.value)}
+          placeholder="Enter interview result..."
+        />
 
         <label>Note</label>
-        <textarea value={note} onChange={(e) => setNote(e.target.value)} />
+        <textarea
+          value={note}
+          onChange={(e) => setNote(e.target.value)}
+          placeholder="Optional note..."
+        />
 
-        <button onClick={handleSave}>Update</button>
+        <button onClick={handleSave}>
+          Update
+        </button>
       </div>
     </Modal>
   );
-};
-
-export default UpdateResultModal;
+}

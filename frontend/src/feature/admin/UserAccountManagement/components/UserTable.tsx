@@ -1,19 +1,33 @@
 import React from "react";
-import type { User } from "../../../../types/user";
-import { FiShield, FiLock, FiUnlock, FiKey, FiTrash2 } from "react-icons/fi";
+import { FiEye, FiShield, FiLock, FiUnlock, FiKey, FiTrash2 } from "react-icons/fi";
 import styles from "../pages/UserManagement.module.css";
 
+export type UserRow = {
+  id: number;
+  email: string;
+  role?: string;
+  status?: string;
+
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+};
+
 interface UserTableProps {
-  filteredUsers: User[];
+  filteredUsers: UserRow[];
   totalCount: number;
+
   editingId: number | null;
   editRole: string;
   setEditRole: (val: string) => void;
-  onStartEditRole: (user: User) => void;
+
+  onStartEditRole: (user: UserRow) => void;
   onSaveRole: (id: number) => void;
+
   onToggleStatus: (id: number) => void;
   onResetPassword: (id: number) => void;
   onDeleteUser: (id: number) => void;
+  onViewUser: (user: UserRow) => void;
 }
 
 const UserTable: React.FC<UserTableProps> = ({
@@ -27,157 +41,159 @@ const UserTable: React.FC<UserTableProps> = ({
   onToggleStatus,
   onResetPassword,
   onDeleteUser,
+  onViewUser,
 }) => {
-  const getRoleBadge = (role: string) => {
-    const map: Record<string, string> = {
-      admin: styles.roleAdmin,
-      candidate: styles.roleCandidate,
-      recruiter: styles.roleCompany,
-    };
-    return map[role?.toLowerCase()] || styles.roleCandidate;
+
+  // ================= STATUS =================
+  const isActive = (status?: string) =>
+    (status || "").toUpperCase() === "ACTIVE";
+
+  // ================= ROLE LABEL =================
+  const getRoleLabel = (role?: string) => {
+    switch ((role || "").toUpperCase()) {
+      case "ADMIN":
+        return "Admin";
+      case "RECRUITER":
+        return "Employer";
+      default:
+        return "Candidate";
+    }
   };
 
-  const getRoleLabel = (role: string) => {
-    const map: Record<string, string> = {
-      admin: "Admin",
-      candidate: "Candidate",
-      recruiter: "Employer",
-    };
-    return map[role?.toLowerCase()] || role;
+  // ================= ROLE STYLE =================
+  const getRoleClass = (role?: string) => {
+    switch ((role || "").toUpperCase()) {
+      case "ADMIN":
+        return styles.roleAdmin;
+      case "RECRUITER":
+        return styles.roleCompany;
+      default:
+        return styles.roleCandidate;
+    }
   };
+
 
   return (
     <>
+      {/* ================= HEADER ================= */}
       <div className={styles.resultBanner}>
         <span className={styles.resultCount}>
           Showing {filteredUsers.length} of {totalCount} accounts
         </span>
       </div>
 
+      {/* ================= TABLE ================= */}
       <div className={styles.tableCard}>
         <div className={styles.tableWrapper}>
           <table className={styles.table}>
             <thead>
               <tr>
-                <th style={{ width: "40px", paddingLeft: "24px" }}>
-                  <input type="checkbox" className={styles.checkbox} />
-                </th>
-                <th style={{ width: "60px" }}>#</th>
+                <th>#</th>
                 <th>Full Name</th>
                 <th>Email</th>
                 <th>Phone</th>
                 <th>Role</th>
                 <th>Status</th>
-                <th style={{ textAlign: "right", paddingRight: "24px" }}>Actions</th>
+                <th style={{ textAlign: "right" }}>Actions</th>
               </tr>
             </thead>
+
             <tbody>
               {filteredUsers.map((user, index) => (
                 <tr key={user.id}>
-                  <td style={{ paddingLeft: "24px" }}>
-                    <input type="checkbox" className={styles.checkbox} />
-                  </td>
-                  <td className={styles.cellId}>{index + 1}</td>
+                  {/* INDEX */}
+                  <td>{index + 1}</td>
+
+                  {/* NAME */}
                   <td>
-                    <div className={styles.userCell}>
-                      <span className={styles.userName}>{`${user.firstName || ''} ${user.lastName || ''}`.trim()}</span>
-                    </div>
+                    {`${user.firstName || ""} ${user.lastName || ""}`.trim() || "—"}
                   </td>
-                  <td className={styles.cellEmail}>{user.email}</td>
+
+                  {/* EMAIL */}
+                  <td>{user.email}</td>
+
+                  {/* PHONE */}
                   <td>{user.phone || "—"}</td>
+
+                  {/* ROLE */}
                   <td>
                     {editingId === user.id ? (
-                      <div className={styles.roleEdit}>
+                      <div style={{ display: "flex", gap: 8 }}>
                         <select
                           value={editRole}
                           onChange={(e) => setEditRole(e.target.value)}
-                          className={styles.roleSelect}
                         >
                           <option value="CANDIDATE">Candidate</option>
                           <option value="RECRUITER">Employer</option>
                           <option value="ADMIN">Admin</option>
                         </select>
-                        <button
-                          className={styles.btnSave}
-                          onClick={() => onSaveRole(user.id)}
-                        >
+
+                        <button onClick={() => onSaveRole(user.id)}>
                           Save
                         </button>
                       </div>
                     ) : (
-                      <span className={`${styles.roleBadge} ${getRoleBadge(user.role)}`}>
+                      <span className={getRoleClass(user.role)}>
                         {getRoleLabel(user.role)}
                       </span>
                     )}
                   </td>
+
+                  {/* STATUS */}
                   <td>
                     <span
-                      className={`${styles.statusBadge} ${
-                        (user.status || "Active").toLowerCase() === "active"
+                      className={
+                        isActive(user.status)
                           ? styles.statusActive
                           : styles.statusInactive
-                      }`}
+                      }
                     >
-                      {user.status || "Active"}
+                      {(user.status || "ACTIVE").toUpperCase()}
                     </span>
                   </td>
-                  <td>
-                    <div className={styles.actions}>
-                      <button
-                        className={styles.actionBtn}
-                        title="Change Role"
-                        onClick={() => onStartEditRole(user)}
-                        aria-label={`Change role for ${user.firstName} ${user.lastName}`}
-                      >
-                        <FiShield />
-                      </button>
-                      <button
-                        className={styles.actionBtn}
-                        title={
-                          (user.status || "Active").toLowerCase() === "active"
-                            ? "Block Account"
-                            : "Unlock Account"
-                        }
-                        onClick={() => onToggleStatus(user.id)}
-                        style={{
-                          color: (user.status || "Active").toLowerCase() === "active" ? "#64748b" : "#ef4444",
-                        }}
-                        aria-label={
-                          (user.status || "Active").toLowerCase() === "active"
-                            ? `Block ${user.firstName} ${user.lastName}`
-                            : `Unlock ${user.firstName} ${user.lastName}`
-                        }
-                      >
-                        {(user.status || "Active").toLowerCase() === "active" ? (
-                          <FiUnlock />
-                        ) : (
-                          <FiLock />
-                        )}
-                      </button>
-                      <button
-                        className={styles.actionBtn}
-                        title="Reset Password"
-                        onClick={() => onResetPassword(user.id)}
-                        aria-label={`Reset password for ${user.firstName} ${user.lastName}`}
-                      >
-                        <FiKey />
-                      </button>
-                      <button
-                        className={styles.actionBtn}
-                        title="Delete User"
-                        onClick={() => onDeleteUser(user.id)}
-                        style={{ color: "#ef4444" }}
-                        aria-label={`Delete ${user.firstName} ${user.lastName}`}
-                      >
-                        <FiTrash2 />
-                      </button>
-                    </div>
+
+                  {/* ACTIONS */}
+                  <td style={{ textAlign: "right" }}>
+                    <button onClick={() => onViewUser(user)} title="View">
+                      <FiEye />
+                    </button>
+
+                    <button
+                      onClick={() => onStartEditRole(user)}
+                      title="Edit Role"
+                    >
+                      <FiShield />
+                    </button>
+
+                    <button
+                      onClick={() => onToggleStatus(user.id)}
+                      title="Toggle Status"
+                    >
+                      {isActive(user.status) ? <FiUnlock /> : <FiLock />}
+                    </button>
+
+                    <button
+                      onClick={() => onResetPassword(user.id)}
+                      title="Reset Password"
+                    >
+                      <FiKey />
+                    </button>
+
+                    <button
+                      onClick={() => onDeleteUser(user.id)}
+                      title="Delete"
+                      style={{ color: "red" }}
+                    >
+                      <FiTrash2 />
+                    </button>
                   </td>
                 </tr>
               ))}
+
+              {/* EMPTY STATE */}
               {filteredUsers.length === 0 && (
                 <tr>
-                  <td colSpan={8} className={styles.empty}>
+                  <td colSpan={7} style={{ textAlign: "center" }}>
                     No accounts found
                   </td>
                 </tr>

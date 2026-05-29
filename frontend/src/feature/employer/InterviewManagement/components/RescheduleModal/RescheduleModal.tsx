@@ -1,24 +1,44 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import Modal from "../BaseModal/Modal";
 import styles from "./RescheduleModal.module.css";
+
+import type { Interview } from "../../types/types";
 
 type Props = {
   open: boolean;
   onClose: () => void;
-  data: any;
-  onSave: (updated: any) => void;
+  data: Interview | null;
+  onSave: (updated: { id: number; scheduleTime: string }) => void;
 };
 
-const RescheduleModal = ({ open, onClose, data, onSave }: Props) => {
-  const [date, setDate] = useState(data?.date || "");
-  const [time, setTime] = useState(data?.time || "");
+export default function RescheduleModal({
+  open,
+  onClose,
+  data,
+  onSave,
+}: Props) {
+  const [scheduleTime, setScheduleTime] = useState("");
+
+  // sync mỗi khi mở modal
+  useEffect(() => {
+    if (data?.scheduleTime) {
+      const dt = new Date(data.scheduleTime);
+
+      const datePart = dt.toISOString().split("T")[0];
+      const timePart = dt.toTimeString().slice(0, 5);
+
+      setScheduleTime(`${datePart}T${timePart}`);
+    }
+  }, [data, open]);
 
   const handleSave = () => {
+    if (!data) return;
+
     onSave({
-      ...data,
-      date,
-      time,
+      id: data.id,
+      scheduleTime,
     });
+
     onClose();
   };
 
@@ -26,35 +46,22 @@ const RescheduleModal = ({ open, onClose, data, onSave }: Props) => {
     <Modal open={open} onClose={onClose} title="Reschedule Interview">
       <div className={styles.container}>
         <div className={styles.wrapper}>
-
           <div className={styles.formGroup}>
-            <label className={styles.label}>Date</label>
+            <label className={styles.label}>Schedule Date & Time</label>
+
             <input
               className={styles.input}
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-            />
-          </div>
-
-          <div className={styles.formGroup}>
-            <label className={styles.label}>Time</label>
-            <input
-              className={styles.input}
-              type="time"
-              value={time}
-              onChange={(e) => setTime(e.target.value)}
+              type="datetime-local"
+              value={scheduleTime}
+              onChange={(e) => setScheduleTime(e.target.value)}
             />
           </div>
 
           <button className={styles.button} onClick={handleSave}>
             Save
           </button>
-
         </div>
       </div>
     </Modal>
   );
-};
-
-export default RescheduleModal;
+}
