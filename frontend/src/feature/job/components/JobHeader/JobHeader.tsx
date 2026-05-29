@@ -15,9 +15,7 @@ import type { Job } from "../../../../types/job";
 
 interface JobHeaderProps {
   job: Job;
-
   onBookmark: () => void;
-
   onApply: () => void;
 }
 

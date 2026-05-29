@@ -43,9 +43,9 @@ const JobDetail = () => {
   const [bookmarkLoading, setBookmarkLoading] =
     useState(false);
 
-  // =========================
+ 
   // REFS
-  // =========================
+ 
 
   const descriptionRef =
     useRef<HTMLDivElement>(null);
@@ -73,9 +73,9 @@ const JobDetail = () => {
     []
   );
 
-  // =========================
+ 
   // SCROLL TOP
-  // =========================
+ 
 
   const scrollTop = () => {
     window.scrollTo({
@@ -85,9 +85,9 @@ const JobDetail = () => {
     });
   };
 
-  // =========================
+ 
   // FETCH JOB DETAIL
-  // =========================
+ 
 
   const fetchJobData =
     useCallback(async () => {
@@ -143,9 +143,9 @@ const JobDetail = () => {
     fetchJobData();
   }, [fetchJobData]);
 
-  // =========================
+ 
   // BOOKMARK
-  // =========================
+ 
 
   const handleBookmark =
     async () => {
@@ -202,28 +202,21 @@ const JobDetail = () => {
       }
     };
 
-  // =========================
+ 
   // APPLY
-  // =========================
+ 
 
   const handleApply = () => {
     if (!job) return;
 
-    navigate(
-      `/jobs/${job.id}`,
-      {
-        state: {
-          autoApply: true,
-        },
-      }
-    );
+    navigate(`/apply-job/${job.id}`);
 
     scrollTop();
   };
 
-  // =========================
+ 
   // LOADING
-  // =========================
+ 
 
   if (isLoading) {
     return (
@@ -245,9 +238,9 @@ const JobDetail = () => {
     );
   }
 
-  // =========================
+ 
   // NOT FOUND
-  // =========================
+ 
 
   if (!job) {
     return (
@@ -263,9 +256,9 @@ const JobDetail = () => {
     );
   }
 
-  // =========================
+ 
   // UI
-  // =========================
+ 
 
   return (
     <div className={styles.wrapper}>

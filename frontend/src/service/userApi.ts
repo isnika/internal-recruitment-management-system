@@ -44,13 +44,13 @@ export const updateCandidateProfile = (data: any) =>
 // UPDATE avatar
 export const updateCandidateAvatar = (file: File) => {
   const formData = new FormData();
+
   formData.append("file", file);
 
-  return request.patch("/api/candidates/profile/avatar", formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
+  return request.patch(
+    "/api/candidates/profile/avatar",
+    formData
+  );
 };
 
 // GET all candidate profiles
