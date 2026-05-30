@@ -3,6 +3,7 @@ package backend.repository;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import backend.Enum.JobStatus;
 
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.domain.Specification;
@@ -25,7 +26,7 @@ public interface JobRepository extends JpaRepository<Job, Long>, JpaSpecificatio
   @EntityGraph(attributePaths = { "company", "category", "experienceLevel", "skills" })
   List<Job> findAll(Specification<Job> spec);
 
-  List<Job> findByStatus(String status);
+  List<Job> findByStatus(JobStatus status);
 
   List<Job> findByCompanyId(Long companyId);
 

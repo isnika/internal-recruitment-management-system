@@ -9,7 +9,7 @@ import backend.repository.*;
 import backend.service.ReportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
+import backend.Enum.JobStatus;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -32,8 +32,8 @@ public class ReportServiceImpl implements ReportService {
         // ─────────────────────────────────────────────────────────────
         @Override
         public ReportDTO.OverviewResponse getOverview() {
-                long openJobs = jobRepository.findByStatus("OPEN").size();
-                long closedJobs = jobRepository.findByStatus("CLOSED").size();
+                long openJobs = jobRepository.findByStatus(JobStatus.ACTIVE).size();
+                long closedJobs = jobRepository.findByStatus(JobStatus.CLOSED).size();
                 long totalCandidates = reportRepository.countDistinctCandidates();
 
                 List<Application> all = applicationRepository.findAll();
@@ -212,7 +212,7 @@ public class ReportServiceImpl implements ReportService {
 
                         // Open headcount = so job co status OPEN trong dept nay
                         long openHeadcount = apps.stream()
-                                        .filter(a -> "OPEN".equals(a.getJob().getStatus()))
+                                .filter(a -> JobStatus.ACTIVE.equals(a.getJob().getStatus()))
                                         .map(a -> a.getJob().getId()).distinct().count();
 
                         OptionalDouble avg = apps.stream()
