@@ -1,122 +1,148 @@
-import React from "react";
-import { FiUsers, FiBriefcase, FiFileText, FiDownload, FiTrendingUp, FiAward } from "react-icons/fi";
+import React, { useState, useEffect } from "react";
+import { FiDownload } from "react-icons/fi";
 import styles from "./StatisticalReport.module.css";
-import StatCard from "../components/StatCard";
-import MonthlyBreakdownTable from "../components/MonthlyBreakdownTable";
-import TopCompaniesList from "../components/TopCompaniesList";
-import type { User } from "../../../../types/user";
-import type { Job } from "../../../../types/job";
-import type { ApplicationMock } from "../../../../dataMock/adminMock";
+import reportApi from "../../../../service/reportApi";
+import type { 
+  RecruiterReport, 
+  DepartmentReport, 
+  JobReport,
+  NewCandidatesReport,
+  CandidateReport
+} from "../../../../service/reportApi";
 
-import { users as initialUsers } from "../../../../dataMock/User";
-import { jobs as initialJobs } from "../../../../dataMock/Job";
-import { initialApplications } from "../../../../dataMock/adminMock";
+import RecruitersPerformance from "../components/RecruitersPerformance";
+import DepartmentsOverview from "../components/DepartmentsOverview";
+import JobsAnalytics from "../components/JobsAnalytics";
+import CandidateAnalytics from "../components/CandidateAnalytics";
 
 const StatisticalReport: React.FC = () => {
-  const users = initialUsers;
-  const jobs = initialJobs;
-  const applications = initialApplications;
-  const totalJobs = jobs.length;
-  const totalUsers = users.length;
-  const totalApplications = applications.length;
+  const [loading, setLoading] = useState(true);
+  const [recruiters, setRecruiters] = useState<RecruiterReport[]>([]);
+  const [departments, setDepartments] = useState<DepartmentReport[]>([]);
+  const [jobs, setJobs] = useState<JobReport[]>([]);
+  const [newCandidates, setNewCandidates] = useState<NewCandidatesReport | null>(null);
+  const [candidateAnalytics, setCandidateAnalytics] = useState<CandidateReport | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<"recruiters" | "departments" | "jobs" | "candidates">("recruiters");
 
-  // Top companies (derived from jobs mock)
-  const companyCounts: Record<string, number> = {};
-  jobs.forEach((j) => {
-    const name = j.company?.name || "Unknown";
-    companyCounts[name] = (companyCounts[name] || 0) + 1;
-  });
-  const topCompanies = Object.entries(companyCounts)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 5);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        // Using allSettled to ensure that if one API fails, the rest still load
+        const results = await Promise.allSettled([
+          reportApi.getRecruiters(),
+          reportApi.getDepartments(),
+          reportApi.getJobs(),
+          reportApi.getNewCandidates({ period: "month" }),
+          reportApi.getCandidates()
+        ]);
+        
+        // Extract .result if it's wrapped in ApiResponse, fallback to null if rejected
+        const extractData = (promiseResult: PromiseSettledResult<any>) => {
+          if (promiseResult.status === 'fulfilled') {
+            const res = promiseResult.value;
+            if (res && typeof res === 'object' && 'result' in res) {
+              return res.result;
+            }
+            return res;
+          }
+          return null; // or empty array depending on usage, handled below
+        };
 
-  // Conversion rate: applications / total users
-  const conversionRate =
-    totalUsers > 0 ? ((totalApplications / totalUsers) * 100).toFixed(1) : "0";
+        setRecruiters(extractData(results[0]) || []);
+        setDepartments(extractData(results[1]) || []);
+        setJobs(extractData(results[2]) || []);
+        setNewCandidates(extractData(results[3]) || null);
+        setCandidateAnalytics(extractData(results[4]) || null);
+        
+        // If ALL of them failed, then we show an error
+        if (results.every(r => r.status === 'rejected')) {
+          setError("Failed to load all statistical reports from the backend.");
+        } else if (results.some(r => r.status === 'rejected')) {
+          // Just log a warning, partial data will be shown
+          console.warn("Some report APIs failed to load.");
+        }
+        
+      } catch (err) {
+        console.error("Report error:", err);
+        setError("An unexpected error occurred while loading reports.");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // Monthly jobs data - calculate based on current totals
-  const monthlyData = [
-    { month: "Jan", jobs: Math.floor(totalJobs * 0.3), candidates: Math.floor(totalUsers * 0.3), applications: Math.floor(totalApplications * 0.3) },
-    { month: "Feb", jobs: Math.floor(totalJobs * 0.45), candidates: Math.floor(totalUsers * 0.45), applications: Math.floor(totalApplications * 0.45) },
-    { month: "Mar", jobs: Math.floor(totalJobs * 0.65), candidates: Math.floor(totalUsers * 0.65), applications: Math.floor(totalApplications * 0.65) },
-    { month: "Apr", jobs: Math.floor(totalJobs * 0.85), candidates: Math.floor(totalUsers * 0.85), applications: Math.floor(totalApplications * 0.85) },
-    { month: "May", jobs: totalJobs, candidates: totalUsers, applications: totalApplications },
-  ];
+    fetchData();
+  }, []);
 
+  if (loading) {
+    return (
+      <div className={styles.page} style={{ minHeight: '50vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <h2>Loading statistical reports...</h2>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className={styles.page} style={{ minHeight: '50vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ padding: '20px', background: '#fee2e2', color: '#b91c1c', borderRadius: '8px', border: '1px solid #ef4444' }}>
+          <h3>Report Error</h3>
+          <p>{error}</p>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className={styles.page}>
       <div className={styles.pageHeader}>
         <div>
           <h1 className={styles.pageTitle}>Statistics & Reports</h1>
           <p className={styles.pageSub}>
-            Monthly performance metrics, top companies, and conversion analytics.
+            Detailed analytics for Recruiters, Departments, and Jobs.
           </p>
         </div>
         <button
           className={styles.btnExport}
           onClick={() => {
-            // Simulate export functionality
-            const data = {
-              totalJobs,
-              totalUsers,
-              totalApplications,
-              conversionRate,
-              monthlyData,
-              topCompanies,
-              exportDate: new Date().toISOString(),
-            };
-            console.log("Exporting report:", data);
-            // In production, this would trigger actual file download
-            alert("Report export feature will be implemented with backend integration.");
+            alert("Export functionality will trigger a CSV/Excel download from backend.");
           }}
         >
-          <FiDownload /> Export Report
+          <FiDownload /> Export Reports
         </button>
       </div>
 
-      {/* SUMMARY GRID */}
-      <div className={styles.summaryGrid}>
-        <StatCard
-          title="Total Jobs"
-          value={totalJobs}
-          trend="+12% this month"
-          icon={<FiBriefcase />}
-          bgColor="#e6f4ff"
-          iconColor="#1677ff"
-        />
-        <StatCard
-          title="Total Users"
-          value={totalUsers}
-          trend="+8% this month"
-          icon={<FiUsers />}
-          bgColor="#f6ffed"
-          iconColor="#52c41a"
-        />
-        <StatCard
-          title="Applications"
-          value={totalApplications}
-          trend="+24% this month"
-          icon={<FiFileText />}
-          bgColor="#fff7e6"
-          iconColor="#faad14"
-        />
-        <StatCard
-          title="Conversion Rate"
-          value={`${conversionRate}%`}
-          trend="Candidates → Applications"
-          icon={<FiTrendingUp />}
-          bgColor="#f9f0ff"
-          iconColor="#722ed1"
-        />
+      <div className={styles.tabContainer}>
+        <button 
+          className={`${styles.tabItem} ${activeTab === 'recruiters' ? styles.tabItemActive : ''}`}
+          onClick={() => setActiveTab('recruiters')}
+        >
+          Recruiters Performance
+        </button>
+        <button 
+          className={`${styles.tabItem} ${activeTab === 'departments' ? styles.tabItemActive : ''}`}
+          onClick={() => setActiveTab('departments')}
+        >
+          Departments Overview
+        </button>
+        <button 
+          className={`${styles.tabItem} ${activeTab === 'jobs' ? styles.tabItemActive : ''}`}
+          onClick={() => setActiveTab('jobs')}
+        >
+          Jobs Analytics
+        </button>
+        <button 
+          className={`${styles.tabItem} ${activeTab === 'candidates' ? styles.tabItemActive : ''}`}
+          onClick={() => setActiveTab('candidates')}
+        >
+          Candidate Pool
+        </button>
       </div>
 
-      {/* MONTHLY BREAKDOWN TABLE */}
-      <MonthlyBreakdownTable data={monthlyData} />
-
-      {/* TOP COMPANIES */}
-      <div className={styles.bottomGrid}>
-        <TopCompaniesList companies={topCompanies as [string, number][]} />
-      </div>
+      {activeTab === 'recruiters' && <RecruitersPerformance recruiters={recruiters} />}
+      {activeTab === 'departments' && <DepartmentsOverview departments={departments} />}
+      {activeTab === 'jobs' && <JobsAnalytics jobs={jobs} />}
+      {activeTab === 'candidates' && <CandidateAnalytics candidateAnalytics={candidateAnalytics} newCandidates={newCandidates} />}
     </div>
   );
 };
