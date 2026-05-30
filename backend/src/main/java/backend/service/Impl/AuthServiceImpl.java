@@ -118,8 +118,7 @@ public class AuthServiceImpl implements AuthService {
         candidateProfileRepository.save(CandidateProfile.builder().user(user).build());
         verificationCodeRepository.deleteByEmail(request.getEmail());
 
-        return RegisterResponse.builder().status(201).message("Register successfully")
-                .user(toUserResponse(user)).build();
+        return RegisterResponse.builder().user(toUserResponse(user)).build();
     }
 
     // ══════════════════════════════════════════════════════════════

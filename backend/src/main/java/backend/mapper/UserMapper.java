@@ -35,7 +35,6 @@ public final class UserMapper {
             .email(user.getEmail())
             .firstName(user.getFirstName())
             .lastName(user.getLastName())
-            .phone(user.getPhone())
             .gender(user.getGender())
             .dateOfBirth(user.getDateOfBirth())
             .role(user.getRole() != null ? user.getRole().name() : null)
