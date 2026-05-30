@@ -4,5 +4,9 @@ public enum InterviewStatus {
     PENDING,
     ACCEPTED,
     REJECTED,
-    SCHEDULED
+    SCHEDULED,
+    IN_PROGRESS,
+    COMPLETED,
+    CANCELLED,
+    NO_SHOW
 }

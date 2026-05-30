@@ -3,6 +3,7 @@ package backend.controller;
 import backend.DTO.ApiResponse;
 import backend.DTO.interview.CreateInterviewRequest;
 import backend.DTO.interview.UpdateInterviewResultRequest;
+import backend.DTO.interview.UpdateInterviewStatusRequest;
 import backend.entity.Interview;
 import backend.service.InterviewService;
 import lombok.RequiredArgsConstructor;
@@ -76,6 +77,19 @@ public class InterviewController {
                 wrap(interviewService.createInterview(request),
                         "Create interview success",
                         201)
+        );
+    }
+
+    @PatchMapping("/{id}/status")
+    @PreAuthorize("hasAnyRole('RECRUITER', 'ADMIN')")
+    public ResponseEntity<ApiResponse<Interview>> updateInterviewStatus(
+            @PathVariable Long id,
+            @RequestBody UpdateInterviewStatusRequest request
+    ) {
+        return ResponseEntity.ok(
+                wrap(interviewService.updateInterviewStatus(id, request),
+                        "Update interview status success",
+                        200)
         );
     }
 

@@ -2,6 +2,7 @@ package backend.service.Impl;
 
 import backend.DTO.interview.CreateInterviewRequest;
 import backend.DTO.interview.UpdateInterviewResultRequest;
+import backend.DTO.interview.UpdateInterviewStatusRequest;
 import backend.Enum.InterviewStatus;
 import backend.Enum.NotificationType;
 import backend.Enum.UserRole;
@@ -257,6 +258,69 @@ public class InterviewServiceImpl implements InterviewService {
 
     @Transactional
     @Override
+    public Interview updateInterviewStatus(Long id, UpdateInterviewStatusRequest request) {
+
+        User user = getCurrentUser();
+        checkRole(user, UserRole.RECRUITER, UserRole.ADMIN);
+
+        Interview interview = interviewRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy interview"));
+
+        if (user.getRole() == UserRole.RECRUITER) {
+            if (!interview.getApplication().getJob().getCompany().getId()
+                    .equals(user.getCompany().getId())) {
+                throw new BadRequestException("Không có quyền cập nhật interview này");
+            }
+        }
+
+        if (request.getStatus() == null || request.getStatus().isBlank()) {
+            throw new BadRequestException("Status không được để trống");
+        }
+
+        InterviewStatus newStatus;
+        try {
+            newStatus = InterviewStatus.valueOf(request.getStatus().toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException("Status không hợp lệ: " + request.getStatus()
+                    + ". Các giá trị hợp lệ: scheduled, in_progress, completed, cancelled, no_show");
+        }
+
+        // Chỉ cho phép các status hợp lệ qua endpoint này
+        java.util.Set<InterviewStatus> allowed = java.util.Set.of(
+                InterviewStatus.SCHEDULED,
+                InterviewStatus.IN_PROGRESS,
+                InterviewStatus.COMPLETED,
+                InterviewStatus.CANCELLED,
+                InterviewStatus.NO_SHOW
+        );
+        if (!allowed.contains(newStatus)) {
+            throw new BadRequestException("Status không được phép cập nhật qua endpoint này");
+        }
+
+        interview.setStatus(newStatus);
+        Interview saved = interviewRepository.save(interview);
+
+        // Thông báo cho ứng viên khi trạng thái thay đổi đáng kể
+        if (newStatus == InterviewStatus.CANCELLED || newStatus == InterviewStatus.COMPLETED) {
+            String msg = switch (newStatus) {
+                case CANCELLED -> "Lịch phỏng vấn của bạn đã bị HỦY";
+                case COMPLETED -> "Buổi phỏng vấn của bạn đã hoàn thành";
+                default        -> "Trạng thái lịch phỏng vấn đã được cập nhật: " + newStatus;
+            };
+            notificationService.createNotification(
+                    saved.getApplication().getUser().getId(),
+                    msg,
+                    "/api/interviews/" + saved.getId(),
+                    NotificationType.INTERVIEW,
+                    true
+            );
+        }
+
+        return saved;
+    }
+
+    @Transactional
+    @Override
     public Interview updateInterviewResult(Long id, UpdateInterviewResultRequest request) {
 
         User user = getCurrentUser();
@@ -279,9 +343,6 @@ public class InterviewServiceImpl implements InterviewService {
         if (request.getNote() != null) {
             interview.setNote(request.getNote());
         }
-
-        // Đổi status sang SCHEDULED để đánh dấu đã có kết quả
-        interview.setStatus(InterviewStatus.SCHEDULED);
 
         Interview saved = interviewRepository.save(interview);
 

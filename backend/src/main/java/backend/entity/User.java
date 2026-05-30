@@ -45,6 +45,10 @@ public class User {
   private String avatarStoragePublicId;
   private String avatarStorageResourceType;
 
+  private String phone;
+  private String gender;
+  private java.time.LocalDate dateOfBirth;
+
   @Enumerated(EnumType.STRING)
   private UserRole role;
 
