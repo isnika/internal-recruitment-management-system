@@ -82,7 +82,16 @@ public class AuthServiceImpl implements AuthService {
         validateEmail(request.getEmail());
         validatePassword(request.getPassword());
 
-        if (request.getRole() == null || request.getRole() != RegisterRole.CANDIDATE) {
+        // Validate confirmPassword đồng bộ với frontend
+        if (request.getConfirmPassword() == null || !request.getConfirmPassword().equals(request.getPassword())) {
+            throw new BadRequestException("Mat khau xac nhan khong khop");
+        }
+
+        // Mặc định role là CANDIDATE nếu frontend không gửi
+        if (request.getRole() == null) {
+            request.setRole(RegisterRole.CANDIDATE);
+        }
+        if (request.getRole() != RegisterRole.CANDIDATE) {
             throw new BadRequestException("Chi duoc dang ky tai khoan CANDIDATE");
         }
 

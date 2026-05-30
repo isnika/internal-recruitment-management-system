@@ -17,12 +17,12 @@ public final class UserMapper {
     }
 
     return User.builder()
-        .email(request.getEmail())
-        .password(request.getPassword())
-        .firstName(request.getFirstName())
-        .lastName(request.getLastName())
-        .role(parseRole(request.getRole()))
-        .build();
+            .email(request.getEmail())
+            .password(request.getPassword())
+            .firstName(request.getFirstName())
+            .lastName(request.getLastName())
+            .role(parseRole(request.getRole()))
+            .build();
   }
 
   public static UserResponse toResponse(User user) {
@@ -31,14 +31,16 @@ public final class UserMapper {
     }
 
     return UserResponse.builder()
-        .id(user.getId())
-        .email(user.getEmail())
-        .firstName(user.getFirstName())
-        .lastName(user.getLastName())
-        .avatarUrl(user.getAvatarUrl())
-        .role(user.getRole() != null ? user.getRole().name() : null)
-        .status(user.getStatus() != null ? user.getStatus().name() : null)
-        .build();
+            .id(user.getId())
+            .email(user.getEmail())
+            .firstName(user.getFirstName())
+            .lastName(user.getLastName())
+            .phone(user.getPhone())
+            .gender(user.getGender())
+            .dateOfBirth(user.getDateOfBirth())
+            .role(user.getRole() != null ? user.getRole().name() : null)
+            .status(user.getStatus() != null ? user.getStatus().name() : null)
+            .build();
   }
 
   public static AuthResponse toAuthResponse(User user, String token) {
@@ -47,12 +49,12 @@ public final class UserMapper {
     }
 
     return AuthResponse.builder()
-        .token(token)
-        .type("Bearer")
-        .userId(user.getId())
-        .email(user.getEmail())
-        .role(user.getRole() != null ? user.getRole().name() : null)
-        .build();
+            .token(token)
+            .type("Bearer")
+            .userId(user.getId())
+            .email(user.getEmail())
+            .role(user.getRole() != null ? user.getRole().name() : null)
+            .build();
   }
 
   public static void updateEntity(User user, CreatUserRequest request) {

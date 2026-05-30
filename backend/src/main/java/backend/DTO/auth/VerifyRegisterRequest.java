@@ -14,13 +14,14 @@ import java.time.LocalDate;
 @Builder
 public class VerifyRegisterRequest {
 
-    private String email;
+    private String email;           
     private String password;
+    private String confirmPassword;
     private String firstName;
     private String lastName;
     private String phone;
-    private String gender;          // "MALE" | "FEMALE" | "OTHER"
-    private LocalDate dateOfBirth;  // yyyy-MM-dd
+    private String gender;
+    private LocalDate dateOfBirth;
     private String code;
 
     private RegisterRole role;
