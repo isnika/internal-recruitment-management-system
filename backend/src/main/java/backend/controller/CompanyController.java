@@ -9,6 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -21,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import backend.DTO.company.CompanyResponse;
 import backend.DTO.company.CreateCompanyRequest;
+import backend.DTO.company.UpdateCompanyRequest;
 import backend.service.CompanyService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -55,13 +57,21 @@ public class CompanyController {
   @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<CompanyResponse> updateCompany(
       @PathVariable Long id,
-      @Valid @RequestBody CreateCompanyRequest request) {
+      @Valid @RequestBody UpdateCompanyRequest request) {
     return ResponseEntity.ok(companyService.updateCompany(id, request));
   }
 
   @PostMapping(value = "/{id}/logo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<CompanyResponse> uploadCompanyLogo(
+      @PathVariable Long id,
+      @RequestPart("file") MultipartFile file) {
+    return ResponseEntity.ok(companyService.uploadCompanyLogo(id, file));
+  }
+
+  @PatchMapping(value = "/{id}/logo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @PreAuthorize("hasRole('ADMIN')")
+  public ResponseEntity<CompanyResponse> updateCompanyLogo(
       @PathVariable Long id,
       @RequestPart("file") MultipartFile file) {
     return ResponseEntity.ok(companyService.uploadCompanyLogo(id, file));

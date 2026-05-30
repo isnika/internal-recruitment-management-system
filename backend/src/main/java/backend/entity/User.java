@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import backend.Enum.UserRole;
+import backend.Enum.UserStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -52,7 +53,8 @@ public class User {
   @Enumerated(EnumType.STRING)
   private UserRole role;
 
-  private String status;
+  @Enumerated(EnumType.STRING)
+  private UserStatus status;
 
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;

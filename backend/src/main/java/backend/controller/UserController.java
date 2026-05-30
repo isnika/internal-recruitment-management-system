@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PatchMapping;import org.springframework.web.bind.annotation.PatchMapping;import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import backend.DTO.user.CreateUserRequest;
+import backend.DTO.user.UpdateUserStatusRequest;
 import backend.DTO.user.UserResponse;
 import backend.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -66,5 +67,13 @@ public class UserController {
   public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
     userService.deleteUser(id);
     return ResponseEntity.noContent().build();
+  }
+
+  @PatchMapping("/{id}/status")
+  @PreAuthorize("hasRole('ADMIN')")
+  public ResponseEntity<UserResponse> updateUserStatus(
+      @PathVariable Long id,
+      @RequestBody UpdateUserStatusRequest request) {
+    return ResponseEntity.ok(userService.updateUserStatus(id, request.getStatus()));
   }
 }

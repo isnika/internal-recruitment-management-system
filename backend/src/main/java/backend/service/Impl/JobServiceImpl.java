@@ -59,7 +59,7 @@ public class JobServiceImpl implements JobService {
     Set<Skill> skills = findSkillsByIds(request.getSkillIds());
 
     Job job = JobMapper.toEntity(request, company, category, experienceLevel, skills);
-    job.setStatus(JobStatus.ACTIVE);
+    job.setStatus(request.getStatus() != null ? request.getStatus() : JobStatus.ACTIVE);
     job.setCreatedAt(LocalDateTime.now());
     job.setUpdatedAt(LocalDateTime.now());
 
@@ -83,9 +83,6 @@ public class JobServiceImpl implements JobService {
     Set<Skill> skills = findSkillsByIds(request.getSkillIds());
 
     JobMapper.updateEntity(job, request, company, category, experienceLevel, skills);
-    if (request.getStatus() != null) {
-      job.setStatus(request.getStatus());
-    }
     job.setUpdatedAt(LocalDateTime.now());
 
     return JobMapper.toResponse(jobRepository.save(job));

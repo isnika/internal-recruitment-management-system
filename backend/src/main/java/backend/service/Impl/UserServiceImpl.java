@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import backend.DTO.user.CreateUserRequest;
 import backend.DTO.user.UserResponse;
 import backend.Enum.UserRole;
+import backend.Enum.UserStatus;
 import backend.entity.Company;
 import backend.entity.User;
 import backend.exception.BadRequestException;
@@ -65,7 +66,7 @@ public class UserServiceImpl implements UserService {
         .lastName(request.getLastName())
         .password(passwordEncoder.encode(request.getPassword()))
         .role(resolveRole(request.getRole()))
-        .status("ACTIVE")
+        .status(UserStatus.ACTIVE)
         .createdAt(LocalDateTime.now())
         .updatedAt(LocalDateTime.now())
         .build();
@@ -136,6 +137,20 @@ public class UserServiceImpl implements UserService {
 
     return userRepository.findById(authUser.getId())
         .orElseThrow(() -> new ResourceNotFoundException("Khong tim thay user hien tai"));
+  }
+
+  @Override
+  @Transactional
+  public UserResponse updateUserStatus(Long id, UserStatus status) {
+    if (status == null) {
+      throw new BadRequestException("Status khong duoc de trong");
+    }
+
+    User user = findUserById(id);
+    user.setStatus(status);
+    user.setUpdatedAt(LocalDateTime.now());
+
+    return UserMapper.toResponse(userRepository.save(user));
   }
 
   private User findUserById(Long id) {

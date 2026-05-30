@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import backend.DTO.company.CompanyResponse;
 import backend.DTO.company.CreateCompanyRequest;
+import backend.DTO.company.UpdateCompanyRequest;
 
 public interface CompanyService {
 
@@ -15,7 +16,7 @@ public interface CompanyService {
 
   CompanyResponse createCompany(CreateCompanyRequest request);
 
-  CompanyResponse updateCompany(Long id, CreateCompanyRequest request);
+  CompanyResponse updateCompany(Long id, UpdateCompanyRequest request);
 
   CompanyResponse uploadCompanyLogo(Long id, MultipartFile file);
 

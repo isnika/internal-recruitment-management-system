@@ -31,7 +31,7 @@ public final class ApplicationMapper {
 
     return ApplicationResponse.builder()
         .id(application.getId())
-        .status(application.getStatus())
+        .status(application.getStatus() != null ? application.getStatus().toValue() : null)
         .appliedAt(application.getAppliedAt())
         .user(UserMapper.toResponse(application.getUser()))
         .job(JobMapper.toResponse(application.getJob()))

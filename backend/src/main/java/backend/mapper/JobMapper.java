@@ -91,5 +91,8 @@ public final class JobMapper {
     job.setCategory(category);
     job.setExperienceLevel(experienceLevel);
     job.setSkills(skills != null ? skills : new HashSet<>());
+    if (request.getStatus() != null) {
+      job.setStatus(request.getStatus());
+    }
   }
 }

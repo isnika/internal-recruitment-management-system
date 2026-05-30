@@ -37,7 +37,7 @@ public final class UserMapper {
         .lastName(user.getLastName())
         .avatarUrl(user.getAvatarUrl())
         .role(user.getRole() != null ? user.getRole().name() : null)
-        .status(user.getStatus())
+        .status(user.getStatus() != null ? user.getStatus().name() : null)
         .build();
   }
 

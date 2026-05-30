@@ -7,6 +7,7 @@ import backend.DTO.user.UpdateRecruitmentInfoRequest;
 import backend.DTO.user.UserResponse;
 import backend.Enum.RegisterRole;
 import backend.Enum.UserRole;
+import backend.Enum.UserStatus;
 import backend.config.GoogleTokenVerifier;
 import backend.entity.CandidateProfile;
 import backend.entity.Company;
@@ -100,7 +101,7 @@ public class AuthServiceImpl implements AuthService {
                 .gender(request.getGender())
                 .dateOfBirth(request.getDateOfBirth())
                 .role(UserRole.CANDIDATE)
-                .status("ACTIVE")
+                .status(UserStatus.ACTIVE)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build());
@@ -123,6 +124,11 @@ public class AuthServiceImpl implements AuthService {
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new BadRequestException("Email khong ton tai"));
+
+        // Kiem tra tai khoan bi khoa
+        if (user.getStatus() == UserStatus.BLOCKED) {
+            throw new BadRequestException("Tai khoan da bi khoa");
+        }
 
         // Kiem tra khoa tam thoi
         LocalDateTime lockTime = lockTimeMap.get(email);
@@ -179,6 +185,10 @@ public class AuthServiceImpl implements AuthService {
 
         if (existing.isPresent()) {
             user = existing.get();
+            // Kiem tra tai khoan bi khoa
+            if (user.getStatus() == UserStatus.BLOCKED) {
+                throw new BadRequestException("Tai khoan da bi khoa");
+            }
             // Cap nhat avatar neu thay doi
             if (avatar != null && !avatar.equals(user.getAvatarUrl())) {
                 user.setAvatarUrl(avatar);
@@ -194,7 +204,7 @@ public class AuthServiceImpl implements AuthService {
                     .lastName(lastName   != null ? lastName  : "")
                     .avatarUrl(avatar)
                     .role(UserRole.CANDIDATE)
-                    .status("ACTIVE")
+                    .status(UserStatus.ACTIVE)
                     .createdAt(LocalDateTime.now())
                     .updatedAt(LocalDateTime.now())
                     .build());
