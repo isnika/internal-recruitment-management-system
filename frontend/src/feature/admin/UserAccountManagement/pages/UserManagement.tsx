@@ -192,6 +192,18 @@ const UserManagement: React.FC = () => {
     }
   };
 
+  // ================= RESET PASSWORD =================
+  const handleResetPassword = async (id: number) => {
+    if (!window.confirm("Are you sure you want to reset this user's password to '123456'?")) return;
+    try {
+      await userApi.updateUser(id, { password: "123456" });
+      toast.success("Password has been reset to 123456");
+    } catch (err: any) {
+      console.error("Reset Password Error:", err);
+      toast.error("Failed to reset password");
+    }
+  };
+
   return (
     <div className={styles.page}>
       <UserFilters
@@ -212,7 +224,7 @@ const UserManagement: React.FC = () => {
         onStartEditRole={handleStartEditRole}
         onSaveRole={handleSaveRole}
         onToggleStatus={onToggleStatus}
-        onResetPassword={() => toast.success("Mock reset")}
+        onResetPassword={handleResetPassword}
         onDeleteUser={handleDeleteUser}
         onViewUser={handleViewUser}
       />
