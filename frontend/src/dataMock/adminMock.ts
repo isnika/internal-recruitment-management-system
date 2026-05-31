@@ -34,12 +34,26 @@ export interface SystemLog {
 export interface RolePermissions {
   role: string;
   permissions: {
-    viewDashboard: boolean;
+    // Admin
+    manageSystem: boolean;
     manageUsers: boolean;
     approveJobs: boolean;
     manageCompanies: boolean;
-    viewReports: boolean;
-    editSettings: boolean;
+    viewSystemReports: boolean;
+    
+    // Employer
+    postJobs: boolean;
+    editOwnJobs: boolean;
+    manageApplications: boolean;
+    scheduleInterviews: boolean;
+    manageCompanyProfile: boolean;
+    searchCandidates: boolean;
+
+    // Candidate
+    applyForJobs: boolean;
+    manageOwnCVs: boolean;
+    trackApplications: boolean;
+    manageCandidateProfile: boolean;
   };
 }
 
@@ -156,45 +170,67 @@ export const initialRolePermissions: RolePermissions[] = [
   {
     role: "Admin",
     permissions: {
-      viewDashboard: true,
+      manageSystem: true,
       manageUsers: true,
       approveJobs: true,
       manageCompanies: true,
-      viewReports: true,
-      editSettings: true,
+      viewSystemReports: true,
+      
+      postJobs: false,
+      editOwnJobs: false,
+      manageApplications: false,
+      scheduleInterviews: false,
+      manageCompanyProfile: false,
+      searchCandidates: false,
+
+      applyForJobs: false,
+      manageOwnCVs: false,
+      trackApplications: false,
+      manageCandidateProfile: true, // Admin can usually edit profiles
     },
   },
   {
     role: "Employer",
     permissions: {
-      viewDashboard: true,
+      manageSystem: false,
       manageUsers: false,
       approveJobs: false,
       manageCompanies: false,
-      viewReports: true,
-      editSettings: false,
-    },
-  },
-  {
-    role: "HR",
-    permissions: {
-      viewDashboard: true,
-      manageUsers: true,
-      approveJobs: true,
-      manageCompanies: true,
-      viewReports: false,
-      editSettings: false,
+      viewSystemReports: false,
+      
+      postJobs: true,
+      editOwnJobs: true,
+      manageApplications: true,
+      scheduleInterviews: true,
+      manageCompanyProfile: true,
+      searchCandidates: true,
+
+      applyForJobs: false,
+      manageOwnCVs: false,
+      trackApplications: false,
+      manageCandidateProfile: false,
     },
   },
   {
     role: "Candidate",
     permissions: {
-      viewDashboard: false,
+      manageSystem: false,
       manageUsers: false,
       approveJobs: false,
       manageCompanies: false,
-      viewReports: false,
-      editSettings: false,
+      viewSystemReports: false,
+      
+      postJobs: false,
+      editOwnJobs: false,
+      manageApplications: false,
+      scheduleInterviews: false,
+      manageCompanyProfile: false,
+      searchCandidates: false,
+
+      applyForJobs: true,
+      manageOwnCVs: true,
+      trackApplications: true,
+      manageCandidateProfile: true,
     },
   },
 ];

@@ -22,6 +22,10 @@ export const updateUser = (id: number, data: any) =>
 export const deleteUser = (id: number) =>
   request.delete(`/api/users/${id}`);
 
+// UPDATE user status
+export const updateUserStatus = (id: number, status: string) =>
+  request.patch(`/api/users/${id}/status`, { status });
+
 
 //
      

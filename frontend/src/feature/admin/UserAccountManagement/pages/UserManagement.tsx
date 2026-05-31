@@ -106,16 +106,24 @@ const UserManagement: React.FC = () => {
       setLoadingUser(true);
       setOpenModal(true);
 
-      const res = await userApi.getCandidateProfileByUserId(user.id);
+      // Hiển thị thông tin cơ bản ngay lập tức
+      setSelectedUser(user);
 
-      const detail = res?.data || res;
+      try {
+        // Cố gắng tải thêm thông tin chi tiết (Candidate Profile)
+        const res = await userApi.getCandidateProfileByUserId(user.id);
+        const detail = res?.data || res;
 
-      setSelectedUser({
-        ...user,
-        ...(detail || {}),
-      });
+        setSelectedUser({
+          ...user,
+          ...(detail || {}),
+        });
+      } catch (profileErr) {
+        // Nếu user không có profile (Admin/Recruiter) thì bỏ qua
+        console.log("No detailed profile found for this user");
+      }
     } catch (err) {
-      console.error(err);
+      console.error("View User Error:", err);
       toast.error("Failed to load user detail");
     } finally {
       setLoadingUser(false);
@@ -152,9 +160,10 @@ const UserManagement: React.FC = () => {
       if (!user) return;
 
       const newStatus =
-        user.status === "ACTIVE" ? "INACTIVE" : "ACTIVE";
+        user.status === "ACTIVE" ? "BLOCKED" : "ACTIVE";
 
-      await userApi.updateUser(id, { status: newStatus });
+      // Gọi API thực tế
+      await userApi.updateUserStatus(id, newStatus);
 
       setUsersList((prev) =>
         prev.map((u) =>
@@ -162,9 +171,11 @@ const UserManagement: React.FC = () => {
         )
       );
 
-      toast.success("Status updated");
-    } catch {
-      toast.error("Failed update status");
+      toast.success("Status updated successfully");
+    } catch (err: any) {
+      const errorMsg = err.response?.data?.message || err.message || "Failed update status";
+      console.error("Toggle Status Error:", err);
+      toast.error(errorMsg);
     }
   };
 

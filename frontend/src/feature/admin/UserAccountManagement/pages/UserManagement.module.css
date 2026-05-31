@@ -24,46 +24,74 @@
 
 .filtersCard {
   background: #fff;
-  border-radius: 16px;
-  padding: 24px;
-  margin-bottom: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
   display: flex;
   flex-direction: column;
   gap: 16px;
+  border: 1px solid #e2e8f0;
 }
 
-.filterRow {
+.filterHeader {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 12px;
 }
 
 .filterLeft {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #334155;
+  color: #0f172a;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 1rem;
 }
 
-.searchBox {
+.filterIcon {
+  color: #3b82f6;
+}
+
+.filterControls {
   display: flex;
-  gap: 12px;
-  width: 100%;
-  max-width: 450px;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.searchWrapper {
+  position: relative;
+  flex: 1;
+  min-width: 250px;
+  max-width: 400px;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
 }
 
 .searchInput {
-  flex: 1;
-  padding: 10px 16px;
-  border: 1px solid #e2e8f0;
+  width: 100%;
+  padding: 10px 16px 10px 36px;
+  border: 1px solid #cbd5e1;
   border-radius: 8px;
   font-size: 0.88rem;
   outline: none;
+  background: #f8fafc;
+  transition: all 0.2s;
+}
+
+.searchInput:focus {
+  border-color: #3b82f6;
   background: #fff;
-  transition: border-color 0.2s;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 .searchInput:focus {
@@ -86,32 +114,39 @@
   background: #4096ff;
 }
 
-.actionRow {
+.dropdownsWrapper {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.dropdowns {
-  display: flex;
-  gap: 16px;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .select {
-  padding: 10px 16px;
-  border: 1px solid #e2e8f0;
+  padding: 10px 32px 10px 16px;
+  border: 1px solid #cbd5e1;
   border-radius: 8px;
-  color: #64748b;
+  color: #475569;
   outline: none;
-  min-width: 160px;
-  background: #fff;
+  min-width: 140px;
+  background-color: #f8fafc;
   font-size: 0.88rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: border-color 0.15s;
+  transition: all 0.2s;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+}
+
+.select:hover {
+  background-color: #f1f5f9;
 }
 
 .select:focus {
-  border-color: #1677ff;
+  border-color: #3b82f6;
+  background-color: #fff;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 .addUserBtn {

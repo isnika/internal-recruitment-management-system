@@ -4,18 +4,31 @@ import type { RolePermissions } from "../../../../dataMock/adminMock";
 import RolePermissionCard from "../components/RolePermissionCard";
 
 const PERMISSION_LABELS: Record<keyof RolePermissions["permissions"], string> = {
-  viewDashboard: "View Dashboard",
-  manageUsers: "Manage Users",
-  approveJobs: "Approve Jobs",
+  // Admin
+  manageSystem: "Manage System & Settings",
+  manageUsers: "Manage All Users",
+  approveJobs: "Approve / Reject Jobs",
   manageCompanies: "Manage Companies",
-  viewReports: "View Reports & Statistics",
-  editSettings: "Edit System Settings",
+  viewSystemReports: "View System Reports",
+  
+  // Employer
+  postJobs: "Post New Jobs",
+  editOwnJobs: "Edit Own Jobs",
+  manageApplications: "Review Applications",
+  scheduleInterviews: "Schedule Interviews",
+  manageCompanyProfile: "Manage Company Profile",
+  searchCandidates: "Search Candidate CVs",
+
+  // Candidate
+  applyForJobs: "Apply For Jobs",
+  manageOwnCVs: "Manage Own CVs",
+  trackApplications: "Track Applications",
+  manageCandidateProfile: "Manage Personal Profile",
 };
 
 const ROLE_COLOR: Record<string, string> = {
   Admin: styles.tagAdmin,
   Employer: styles.tagEmployer,
-  HR: styles.tagHr,
   Candidate: styles.tagCandidate,
 };
 
