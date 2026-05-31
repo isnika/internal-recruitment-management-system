@@ -91,8 +91,17 @@ public class AuthServiceImpl implements AuthService {
         if (request.getRole() == null) {
             request.setRole(RegisterRole.CANDIDATE);
         }
-        if (request.getRole() != RegisterRole.CANDIDATE) {
-            throw new BadRequestException("Chi duoc dang ky tai khoan CANDIDATE");
+
+        // Validate role hợp lệ
+        if (request.getRole() != RegisterRole.CANDIDATE && request.getRole() != RegisterRole.RECRUITER) {
+            throw new BadRequestException("Role khong hop le. Chi chap nhan CANDIDATE hoac RECRUITER");
+        }
+
+        // Nếu là RECRUITER thì companyId bắt buộc
+        if (request.getRole() == RegisterRole.RECRUITER) {
+            if (request.getCompanyId() == null) {
+                throw new BadRequestException("RECRUITER phai co companyId");
+            }
         }
 
         VerificationCode vc = verificationCodeRepository.findByEmail(request.getEmail())
@@ -100,6 +109,15 @@ public class AuthServiceImpl implements AuthService {
         if (vc.getExpireAt().isBefore(LocalDateTime.now())) throw new BadRequestException("OTP het han");
         if (!vc.getCode().equals(request.getCode()))        throw new BadRequestException("OTP sai");
         if (userRepository.existsByEmail(request.getEmail())) throw new BadRequestException("Email da ton tai");
+
+        // Resolve company nếu là RECRUITER
+        Company company = null;
+        if (request.getRole() == RegisterRole.RECRUITER) {
+            company = companyRepository.findById(request.getCompanyId())
+                    .orElseThrow(() -> new BadRequestException("Khong tim thay cong ty voi id: " + request.getCompanyId()));
+        }
+
+        UserRole userRole = request.getRole() == RegisterRole.RECRUITER ? UserRole.RECRUITER : UserRole.CANDIDATE;
 
         User user = userRepository.save(User.builder()
                 .email(request.getEmail())
@@ -109,13 +127,18 @@ public class AuthServiceImpl implements AuthService {
                 .phone(request.getPhone())
                 .gender(request.getGender())
                 .dateOfBirth(request.getDateOfBirth())
-                .role(UserRole.CANDIDATE)
+                .role(userRole)
+                .company(company)
                 .status(UserStatus.ACTIVE)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build());
 
-        candidateProfileRepository.save(CandidateProfile.builder().user(user).build());
+        // Chỉ tạo CandidateProfile cho CANDIDATE
+        if (userRole == UserRole.CANDIDATE) {
+            candidateProfileRepository.save(CandidateProfile.builder().user(user).build());
+        }
+
         verificationCodeRepository.deleteByEmail(request.getEmail());
 
         return RegisterResponse.builder().user(toUserResponse(user)).build();
