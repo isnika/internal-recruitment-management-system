@@ -43,8 +43,6 @@ public class User {
   private String lastName;
 
   private String avatarUrl;
-  private String avatarStoragePublicId;
-  private String avatarStorageResourceType;
 
   private String phone;
   private String gender;
