@@ -39,6 +39,12 @@ public class ApplicationController {
     return ResponseEntity.ok(applicationService.getMyApplications());
   }
 
+  @GetMapping
+  @PreAuthorize("hasRole('RECRUITER')")
+  public ResponseEntity<List<ApplicationResponse>> getAllApplications() {
+    return ResponseEntity.ok(applicationService.getAllApplications());
+  }
+
   @GetMapping("/job/{jobId}")
   @PreAuthorize("hasRole('RECRUITER')")
   public ResponseEntity<List<ApplicationResponse>> getApplicationsByJob(

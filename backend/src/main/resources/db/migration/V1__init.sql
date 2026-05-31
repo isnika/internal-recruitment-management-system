@@ -428,18 +428,27 @@ CREATE TABLE `users` (
   `password` varchar(255) NOT NULL,
   `first_name` varchar(255) DEFAULT NULL,
   `last_name` varchar(255) DEFAULT NULL,
+
   `avatar_url` varchar(255) DEFAULT NULL,
+  `avatar_storage_public_id` varchar(255) DEFAULT NULL,
+  `avatar_storage_resource_type` varchar(255) DEFAULT NULL,
+
+  `phone` varchar(50) DEFAULT NULL,
+  `gender` varchar(50) DEFAULT NULL,
+  `date_of_birth` date DEFAULT NULL,
+
   `role` enum('ADMIN','RECRUITER','CANDIDATE') DEFAULT NULL,
   `status` enum('ACTIVE','BLOCKED') DEFAULT NULL,
+
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `company_id` bigint DEFAULT NULL,
-  `avatar_storage_public_id` varchar(255) DEFAULT NULL,
-  `avatar_storage_resource_type` varchar(255) DEFAULT NULL,
+
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`),
   KEY `FK_users_company` (`company_id`),
-  CONSTRAINT `FK_users_company` FOREIGN KEY (`company_id`) REFERENCES `companies` (`id`)
+  CONSTRAINT `FK_users_company`
+      FOREIGN KEY (`company_id`) REFERENCES `companies` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
