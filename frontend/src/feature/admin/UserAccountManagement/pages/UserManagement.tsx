@@ -179,6 +179,19 @@ const UserManagement: React.FC = () => {
     }
   };
 
+  // ================= DELETE =================
+  const handleDeleteUser = async (id: number) => {
+    if (!window.confirm("Are you sure you want to delete this user?")) return;
+    try {
+      await userApi.deleteUser(id);
+      setUsersList((prev) => prev.filter((u) => u.id !== id));
+      toast.success("User deleted successfully");
+    } catch (err: any) {
+      console.error("Delete User Error:", err);
+      toast.error("Failed to delete user");
+    }
+  };
+
   return (
     <div className={styles.page}>
       <UserFilters
@@ -200,7 +213,7 @@ const UserManagement: React.FC = () => {
         onSaveRole={handleSaveRole}
         onToggleStatus={onToggleStatus}
         onResetPassword={() => toast.success("Mock reset")}
-        onDeleteUser={() => toast.error("Not implemented")}
+        onDeleteUser={handleDeleteUser}
         onViewUser={handleViewUser}
       />
 
