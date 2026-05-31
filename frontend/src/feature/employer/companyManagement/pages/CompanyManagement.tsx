@@ -140,7 +140,7 @@ const CompanyManagement: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.title}>Quản Lý Công Ty</h2>
+      <h2 className={styles.title}>Company Management</h2>
 
       {/* BỘ LỌC TÌM KIẾM */}
       <CompanyFilter

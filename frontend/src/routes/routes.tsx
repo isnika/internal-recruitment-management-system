@@ -29,7 +29,7 @@ import HomeEmployer from "../feature/employer/home/pages/HomeEmployer/homeEmploy
 
 import RecruitmentPage from "../feature/employer/RecruitmentManagement/pages/recruitmentManagement";
 import InterviewPage from "../feature/employer/InterviewManagement/pages/interviewManagement";
-import ApplyManagement from "../feature/employer/applyManagement/pages/ApplyManagement";
+import ApplicationsPage from "../feature/employer/applyManagement/pages/ApplicationsPage";
 import DashboardPage from "../feature/employer/dashBoardManagement/pages/dashboardPage";
 import SettingManagement from "../feature/employer/settingManagement/pages/settingManagement";
 import ExperienceLevelManagement from "../feature/employer/ExperienceLevelManagement/pages/ExperienceLevelManagement";
@@ -96,7 +96,7 @@ export default function AppRoutes() {
           <Route index element={<Navigate to="dashboardManagement" replace />} />
           <Route path="dashboardManagement" element={<DashboardPage/>} />
           <Route path="recruitmentManagement" element={<RecruitmentPage />} />
-          <Route path="applyManagement" element={<ApplyManagement />} />
+          <Route path="applyManagement" element={<ApplicationsPage />} />
           <Route path="interviewManagement" element={<InterviewPage />} />
           <Route path="settingManagement" element={<SettingManagement/>} />
           <Route path="skillManagement" element={<SkillManagement/>} />

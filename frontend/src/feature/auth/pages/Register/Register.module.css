@@ -184,3 +184,27 @@ button[type="submit"]:hover {
   color: #4f80be;
   cursor: pointer;
 }
+
+.otpRow {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.otpRow input {
+  flex: 1;
+}
+
+.otpButton {
+  padding: 10px 14px;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.otpButton:hover {
+  background: #1d4ed8;
+}

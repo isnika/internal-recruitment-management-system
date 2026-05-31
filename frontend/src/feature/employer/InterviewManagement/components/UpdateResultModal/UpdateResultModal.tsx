@@ -23,14 +23,24 @@ export default function UpdateResultModal({
   const [result, setResult] = useState("");
   const [note, setNote] = useState("");
 
-  // sync data khi mở modal
+  // ======================
+  // SYNC DATA (SAFE)
+  // ======================
   useEffect(() => {
-    if (data) {
-      setResult(data.result || "");
-      setNote(data.note || "");
+    if (open && data) {
+      setResult(data.result ?? "");
+      setNote(data.note ?? "");
+    }
+
+    if (!open) {
+      setResult("");
+      setNote("");
     }
   }, [data, open]);
 
+  // ======================
+  // SAVE
+  // ======================
   const handleSave = () => {
     if (!data) return;
 
@@ -45,7 +55,8 @@ export default function UpdateResultModal({
 
   return (
     <Modal open={open} onClose={onClose} title="Update Interview Result">
-      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        {/* RESULT */}
         <label>Result</label>
         <textarea
           value={result}
@@ -53,6 +64,7 @@ export default function UpdateResultModal({
           placeholder="Enter interview result..."
         />
 
+        {/* NOTE */}
         <label>Note</label>
         <textarea
           value={note}
@@ -60,6 +72,7 @@ export default function UpdateResultModal({
           placeholder="Optional note..."
         />
 
+        {/* ACTION */}
         <button onClick={handleSave}>
           Update
         </button>

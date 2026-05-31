@@ -1,65 +1,194 @@
-import React, { useState } from "react";
+import React, {
+  useEffect,
+  useState,
+} from "react";
+
 import styles from "./AppliedJob.module.css";
+
 import ViewDetailsAppliedJobsModal from "./ViewDetailsAppliedJobsModal/ViewDetailsAppliedJobsModal";
 
-const APPLIED_JOBS_MOCK = [
-  { id: 1, title: "Senior Frontend Developer", company: "TechVibe Solutions", appliedDate: "May 20, 2026", status: "Pending" },
-  { id: 2, title: "UI/UX Product Designer", company: "Nexus Studio", appliedDate: "May 15, 2026", status: "Accepted" },
-];
+import applicationApi from "../../../../service/applicationApi";
 
 export default function AppliedJobs() {
-  // State quản lý job đang được chọn để view chi tiết
-  const [selectedJob, setSelectedJob] = useState<any>(null);
+  const [jobs, setJobs] = useState<any[]>([]);
+  const [loading, setLoading] =
+    useState(false);
+
+  const [selectedJob, setSelectedJob] =
+    useState<any>(null);
+
+  const fetchApplications =
+    async () => {
+      try {
+        setLoading(true);
+
+        const applications =
+          await applicationApi.getMyApplications();
+
+        const mappedJobs =
+          applications.map(
+            (app: any) => ({
+              id: app.id,
+              title:
+                app.job?.title,
+              company:
+                app.job?.company
+                  ?.name,
+              appliedDate:
+                app.appliedAt,
+              status:
+                app.status,
+
+              // giữ nguyên object để modal dùng
+              application: app,
+            })
+          );
+
+        setJobs(mappedJobs);
+      } catch (error) {
+        console.error(
+          "Fetch applications failed:",
+          error
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+  useEffect(() => {
+    fetchApplications();
+  }, []);
+
+  const getStatusClass = (
+    status: string
+  ) => {
+    switch (
+      status?.toUpperCase()
+    ) {
+      case "APPROVED":
+        return styles.accepted;
+
+      case "REJECTED":
+        return styles.rejected;
+
+      case "INTERVIEW":
+        return styles.interview;
+
+      default:
+        return styles.pending;
+    }
+  };
 
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h2 className={styles.pageTitle}>Applied Jobs</h2>
-        <span className={styles.jobCount}>{APPLIED_JOBS_MOCK.length} applications</span>
-      </div>
-      <p className={styles.subtitle}>Track your application status and progress.</p>
+        <h2 className={styles.pageTitle}>
+          Applied Jobs
+        </h2>
 
-      <div className={styles.tableWrapper}>
-        <table className={styles.jobTable}>
-          <thead>
-            <tr>
-              <th>Job Title</th>
-              <th>Company</th>
-              <th>Date Applied</th>
-              <th>Status</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {APPLIED_JOBS_MOCK.map((job) => (
-              <tr key={job.id}>
-                <td><strong>{job.title}</strong></td>
-                <td>{job.company}</td>
-                <td>{job.appliedDate}</td>
-                <td>
-                  <span className={`${styles.statusBadge} ${styles[job.status.toLowerCase()]}`}>
-                    {job.status}
-                  </span>
-                </td>
-                <td>
-                  {/* Nút trigger mở Modal */}
-                  <button
-                    className={styles.viewBtn}
-                    onClick={() => setSelectedJob(job)}
-                  >
-                    View Details
-                  </button>
-                </td>
+        <span
+          className={styles.jobCount}
+        >
+          {jobs.length} applications
+        </span>
+      </div>
+
+      <p className={styles.subtitle}>
+        Track your application
+        status and progress.
+      </p>
+
+      {loading ? (
+        <div>
+          Loading applications...
+        </div>
+      ) : jobs.length > 0 ? (
+        <div
+          className={
+            styles.tableWrapper
+          }
+        >
+          <table
+            className={
+              styles.jobTable
+            }
+          >
+            <thead>
+              <tr>
+                <th>Job Title</th>
+                <th>Company</th>
+                <th>
+                  Date Applied
+                </th>
+                <th>Status</th>
+                <th>Action</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
 
-      {/* Modal hiển thị khi có job được chọn */}
+            <tbody>
+              {jobs.map((job) => (
+                <tr key={job.id}>
+                  <td>
+                    <strong>
+                      {job.title}
+                    </strong>
+                  </td>
+
+                  <td>
+                    {job.company}
+                  </td>
+
+                  <td>
+                    {new Date(
+                      job.appliedDate
+                    ).toLocaleDateString()}
+                  </td>
+
+                  <td>
+                    <span
+                      className={`${styles.statusBadge} ${getStatusClass(
+                        job.status
+                      )}`}
+                    >
+                      {job.status}
+                    </span>
+                  </td>
+
+                  <td>
+                    <button
+                      className={
+                        styles.viewBtn
+                      }
+                      onClick={() =>
+                        setSelectedJob(
+                          job.application
+                        )
+                      }
+                    >
+                      View Details
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <div
+          style={{
+            padding: "40px",
+            textAlign: "center",
+          }}
+        >
+          No applications yet
+        </div>
+      )}
+
       <ViewDetailsAppliedJobsModal
         isOpen={!!selectedJob}
-        onClose={() => setSelectedJob(null)}
+        onClose={() =>
+          setSelectedJob(null)
+        }
         job={selectedJob}
       />
     </div>

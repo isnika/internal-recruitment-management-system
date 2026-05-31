@@ -10,17 +10,25 @@ type FormData = {
   email: string;
   firstName: string;
   lastName: string;
+
   year: string;
   month: string;
   day: string;
-  gender: string;
+
+  gender: "MALE" | "FEMALE" | "OTHER" | "";
+
   password: string;
   confirmPassword: string;
+
+  role: "CANDIDATE";
+  code: string;
+  companyId: number | null;
 };
 
 const Register = () => {
   const [form, setForm] = useState<FormData>({
     email: "",
+    phone: "",
     firstName: "",
     lastName: "",
     year: "",
@@ -29,6 +37,7 @@ const Register = () => {
     gender: "",
     password: "",
     confirmPassword: "",
+    code: "",
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -44,7 +53,7 @@ const Register = () => {
     }));
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     if (form.password !== form.confirmPassword) {
@@ -52,8 +61,41 @@ const Register = () => {
       return;
     }
 
-    console.log(form);
+    const payload = {
+      email: form.email,
+      password: form.password,
+      firstName: form.firstName,
+      lastName: form.lastName,
+      phone: form.phone,
+      gender: form.gender,
+      dateOfBirth: `${form.year}-${form.month.padStart(2, "0")}-${form.day.padStart(2, "0")}`,
+      role: "CANDIDATE",
+      code: form.code,
+      companyId: null,
+    };
+
+    console.log("PAYLOAD:", payload);
+
+    // call API
+    // await authApi.register(payload);
   };
+
+const handleSendOtp = async () => {
+  if (!form.email) {
+    alert("Please enter email first");
+    return;
+  }
+
+  try {
+    // gọi API send-code
+    // await authApi.sendCode({ email: form.email });
+
+    console.log("Send OTP to:", form.email);
+    alert("OTP sent!");
+  } catch (err) {
+    console.log(err);
+  }
+};
 
   return (
     <div className={styles.wrapper}>
@@ -77,13 +119,15 @@ const Register = () => {
         {/* FORM */}
         <form className={styles.form} onSubmit={handleSubmit}>
 
-          <label>Email or phone number</label>
+          <label>Email</label>
           <input
             type="text"
             name="email"
-            placeholder="Email or phone"
+            placeholder="Email"
             onChange={handleChange}
           />
+          <label>Phone</label>
+          <input name="phone" placeholder="Phone" onChange={handleChange} />
 
           <label>Full name</label>
           <div className={styles.row}>
@@ -113,8 +157,9 @@ const Register = () => {
           <label>Gender</label>
           <select name="gender" onChange={handleChange}>
             <option value="">Select gender</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
+            <option value="MALE">Male</option>
+            <option value="FEMALE">Female</option>
+            <option value="OTHER">Other</option>
           </select>
 
           {/* Password */}
@@ -137,9 +182,27 @@ const Register = () => {
           <input
             type={showPassword ? "text" : "password"}
             name="confirmPassword"
-            placeholder="Password"
+            placeholder="Confirm Password"
             onChange={handleChange}
           />
+
+          <label>Verification Code</label>
+
+          <div className={styles.otpRow}>
+            <input
+              name="code"
+              placeholder="Enter OTP"
+              onChange={handleChange}
+            />
+
+            <button
+              type="button"
+              className={styles.otpButton}
+              onClick={handleSendOtp}
+            >
+              Get OTP
+            </button>
+          </div>
 
           <button type="submit">Sign up</button>
         </form>

@@ -18,7 +18,7 @@ export const CompanyFilter: React.FC<CompanyFilterProps> = ({
     <div className={styles.filterBox}>
       <input
         type="text"
-        placeholder="Tìm kiếm công ty theo tên, website..."
+        placeholder="Search companies by name, website..."
         value={keyword}
         onChange={(e) => setKeyword(e.target.value)}
         className={styles.input}
@@ -29,7 +29,7 @@ export const CompanyFilter: React.FC<CompanyFilterProps> = ({
         onChange={(e) => setStatusFilter(e.target.value)}
         className={styles.select}
       >
-        <option value="">TẤT CẢ TRẠNG THÁI</option>
+        <option value="">ALL STATUSES</option>
         <option value="ACTIVE">ACTIVE</option>
         <option value="INACTIVE">INACTIVE</option>
       </select>

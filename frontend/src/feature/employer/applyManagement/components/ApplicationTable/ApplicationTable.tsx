@@ -1,65 +1,51 @@
 import React from "react";
-import ApplicationRow from "../ApplicationRow/ApplicationRow";
-import type {
-  Application,
-  ApplicationStatus,
-  RecruitmentInfo,
-} from "../../types/application.types";
+import { Application } from "../../../../../service/applicationApi";
+import { ApplicationRow } from "../ApplicationRow/ApplicationRow";
 import styles from "./ApplicationTable.module.css";
 
-type Props = {
-  data: Application[];
-  onViewProfile: (data: RecruitmentInfo) => void;
-  onUpdateStatus: (id: number, status: ApplicationStatus) => void;
-  onCreateInterview: (application: Application) => void;
-  onSendInviteEmail: (application: Application) => void;
-};
+interface ApplicationTableProps {
+  applications: Application[];
+  onViewDetail: (app: Application) => void;
+  onStatusChange: (id: number, status: string) => void;
+  updatingId: number | null;
+}
 
-export default function ApplicationTable({
-  data,
-  onViewProfile,
-  onUpdateStatus,
-  onCreateInterview,
-  onSendInviteEmail,
-}: Props) {
+export const ApplicationTable: React.FC<ApplicationTableProps> = ({
+  applications,
+  onViewDetail,
+  onStatusChange,
+  updatingId,
+}) => {
+  if (applications.length === 0) {
+    return <div className={styles.empty}>Không tìm thấy ứng viên nào phù hợp.</div>;
+  }
+
   return (
-    <div className={styles.tableWorkspace}>
-      <table className={styles.customTable}>
+    <div className={styles.tableWrapper}>
+      <table className={styles.table}>
         <thead>
           <tr>
-            <th className={styles.thId}>App ID</th>
-            <th className={styles.thCandidate}>Candidate Info</th>
-            <th className={styles.thJob}>Target Position</th>
-            <th className={styles.thDate}>Applied Date</th>
-            <th className={styles.thStatus}>Pipeline Status</th>
-            <th className={styles.thStage}>Stage Update</th>
-            <th className={styles.thActions}>Quick Actions</th>
+            <th>Ứng viên</th>
+            <th>Email</th>
+            <th>Vị trí ứng tuyển</th>
+            <th>Ngày ứng tuyển</th>
+            <th>Trạng thái</th>
+            <th>Hành động</th>
+            <th>Chi tiết</th>
           </tr>
         </thead>
-
         <tbody>
-          {data.length > 0 ? (
-            data.map((item) => (
-              <ApplicationRow
-                key={item.id}
-                item={item}
-                onViewProfile={onViewProfile}
-                onUpdateStatus={onUpdateStatus}
-                onCreateInterview={onCreateInterview}
-                onSendInviteEmail={onSendInviteEmail}
-              />
-            )
-          )) : (
-            <tr>
-              <td colSpan={7} className={styles.emptyStateNotify}>
-                <div className={styles.emptyStateContainer}>
-                  <span>No candidate applications found matching the criteria.</span>
-                </div>
-              </td>
-            </tr>
-          )}
+          {applications.map((app) => (
+            <ApplicationRow
+              key={app.id}
+              application={app}
+              onViewDetail={onViewDetail}
+              onStatusChange={onStatusChange}
+              isUpdating={updatingId === app.id}
+            />
+          ))}
         </tbody>
       </table>
     </div>
   );
-}
+};

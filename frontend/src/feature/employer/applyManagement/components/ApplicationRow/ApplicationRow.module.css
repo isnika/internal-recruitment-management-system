@@ -1,178 +1,29 @@
-/* ── ROW ANIMATION INTERACTION ── */
-.rowInteract {
-  border-bottom: 1px solid #e2e8f0;
-  transition: background-color 0.15s ease;
+.row {
+  border-bottom: 1px solid #e5e7eb;
+  cursor: pointer;
+  transition: background-color 0.2s;
 }
-
-.rowInteract:hover {
-  background-color: #f8fafc;
+.row:hover {
+  background-color: #f9fafb;
 }
-
-.rowInteract td {
+.row td {
   padding: 14px 16px;
-  vertical-align: middle;
-  color: #334155;
-}
-
-/* ── CELL SPECIFIC LAYOUTS ── */
-.techIdCell {
-  font-family: 'JetBrains Mono', 'SF Mono', monospace;
-  font-weight: 600;
-  color: #64748b;
-  font-size: 13px;
-}
-
-.candidateCell {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.primaryText {
-  font-weight: 600;
-  color: #0f172a;
-}
-
-.secondaryText {
-  font-size: 12px;
-  color: #64748b;
-}
-
-.jobCell {
-  max-width: 240px;
-}
-
-.jobTitleText {
-  font-weight: 500;
-  color: #1e293b;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.dateCell {
-  font-size: 13px;
-  color: #64748b;
-}
-
-/* ── STATUS BADGE CHIPS (NEON MODERN TONES) ── */
-.statusBadge {
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 10px;
-  border-radius: 9999px; /* Rounded pill shape */
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-
-.pending {
-  background-color: #f1f5f9;
-  color: #475569;
-}
-
-.reviewing {
-  background-color: #eff6ff;
-  color: #2563eb;
-}
-
-.passed {
-  background-color: #f0fdf4;
-  color: #16a34a;
-}
-
-.failed {
-  background-color: #fef2f2;
-  color: #dc2626;
-}
-
-/* ── STAGE BACKEND EDITOR SELECT ── */
-.stageSelect {
-  padding: 6px 10px;
-  border-radius: 6px;
-  border: 1px solid #cbd5e1;
-  background-color: #ffffff;
-  color: #334155;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  outline: none;
-  transition: border-color 0.2s;
-}
-
-.stageSelect:focus {
-  border-color: #6366f1;
-}
-
-/* ── ACTION OPERATIONAL DROPDOWN STACK ── */
-.actionCell {
-  text-align: right;
-}
-
-.dropdownWrapper {
-  position: relative;
-  display: inline-block;
-}
-
-.moreActionBtn {
-  background: none;
-  border: 1px solid #e2e8f0;
-  border-radius: 6px;
-  width: 32px;
-  height: 32px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: #64748b;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.moreActionBtn:hover {
-  background-color: #f1f5f9;
-  color: #0f172a;
-  border-color: #cbd5e1;
-}
-
-.dropdownMenu {
-  position: absolute;
-  right: 0;
-  top: calc(100% + 6px);
-  z-index: 50;
-  min-width: 200px;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
-  padding: 4px;
-  display: flex;
-  flex-direction: column;
-}
-
-.dropdownMenu button {
-  background: none;
-  border: none;
-  width: 100%;
-  text-align: left;
-  padding: 8px 12px;
-  font-size: 13px;
-  font-weight: 500;
-  color: #334155;
-  cursor: pointer;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  transition: background-color 0.1s ease;
-}
-
-.dropdownMenu button:hover {
-  background-color: #f1f5f9;
-  color: #6366f1;
-}
-
-.menuIcon {
-  margin-right: 8px;
   font-size: 14px;
-  flex-shrink: 0;
+  color: #374151;
+}
+.bold {
+  font-weight: 600;
+  color: #111827;
+}
+.viewBtn {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+}
+.viewBtn:hover {
+  background-color: #2563eb;
 }

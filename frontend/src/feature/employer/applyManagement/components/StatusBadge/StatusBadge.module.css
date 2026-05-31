@@ -1,0 +1,14 @@
+.badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  display: inline-block;
+  text-align: center;
+}
+.pending { background-color: #fef3c7; color: #d97706; }
+.reviewing { background-color: #e0f2fe; color: #0284c7; }
+.interview { background-color: #f3e8ff; color: #7c3aed; }
+.accepted { background-color: #dcfce7; color: #16a34a; }
+.rejected { background-color: #fee2e2; color: #dc2626; }
+.default { background-color: #f3f4f6; color: #4b5563; }

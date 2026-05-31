@@ -1,0 +1,30 @@
+.container {
+  padding: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+.header {
+  margin-bottom: 30px;
+}
+.header h1 {
+  font-size: 28px;
+  color: #111827;
+  margin-bottom: 6px;
+}
+.header p {
+  color: #6b7280;
+  margin: 0;
+}
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  font-size: 16px;
+  color: #4b5563;
+}
+.error {
+  color: #dc2626;
+  font-weight: 500;
+}

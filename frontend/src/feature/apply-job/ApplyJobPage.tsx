@@ -2,12 +2,15 @@ import { useEffect, useState } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 
 import ApplyJobWizard from "./components/wizard/ApplyJobWizard";
+
 import { jobApi } from "../../service/jobApi";
+import cvApi from "../../service/cvApi";
 
 import type { Job } from "../../types/job";
 
 export default function ApplyJobPage() {
   const { jobId } = useParams<{ jobId: string }>();
+
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -15,74 +18,139 @@ export default function ApplyJobPage() {
     location.state?.job || null
   );
 
-  const [loading, setLoading] = useState(!job);
+  const [cvs, setCvs] = useState<any[]>([]);
+  const [selectedCvId, setSelectedCvId] = useState<number | null>(null);
 
-  
-  // FETCH JOB (fallback nếu refresh page)
+  const [loadingJob, setLoadingJob] = useState(!job);
+  const [loadingCv, setLoadingCv] = useState(true);
+
+  useEffect(() => {
+    const token = localStorage.getItem("access_token");
+
+    if (!token) {
+      navigate("/login");
+    }
+  }, [navigate]);
+
   useEffect(() => {
     const fetchJob = async () => {
-      if (job) return;
-      if (!jobId) return;
+      if (job) {
+        setLoadingJob(false);
+        return;
+      }
+
+      if (!jobId) {
+        setLoadingJob(false);
+        return;
+      }
 
       try {
-        setLoading(true);
-
-        const res = await jobApi.getById(Number(jobId));
-
-        setJob(res);
-      } catch (err) {
-        console.error("Failed to load job:", err);
+        const data = await jobApi.getById(Number(jobId));
+        setJob(data);
+      } catch (error) {
+        console.error("Failed to load job:", error);
         setJob(null);
       } finally {
-        setLoading(false);
+        setLoadingJob(false);
       }
     };
 
     fetchJob();
-  }, [jobId]);
+  }, [jobId, job]);
 
-  
-  // LOADING STATE
-  if (loading) {
+  useEffect(() => {
+    const fetchCv = async () => {
+      try {
+        const data = await cvApi.getMyCvs();
+
+        setCvs(data || []);
+
+        if (data?.length > 0) {
+          setSelectedCvId(data[0].id);
+        }
+      } catch (error) {
+        console.error("Failed to load CV:", error);
+      } finally {
+        setLoadingCv(false);
+      }
+    };
+
+    fetchCv();
+  }, []);
+
+  const selectedCv =
+    cvs.find((cv) => cv.id === selectedCvId) || null;
+
+  if (loadingJob || loadingCv) {
     return (
       <div style={{ padding: 20 }}>
         Loading apply form...
       </div>
     );
   }
-  
-  // NOT FOUND
+
   if (!job) {
     return (
       <div style={{ padding: 20 }}>
-        Job not found
+        <h3>Job not found</h3>
 
-        <button
-          onClick={() => navigate("/jobs")}
-          style={{ marginTop: 10 }}
-        >
+        <button onClick={() => navigate("/jobs")}>
           Back to jobs
         </button>
       </div>
     );
   }
 
-  
-  // CV ID (REAL PROJECT SHOULD COME FROM USER CV LIST)
-  const cvId = 1; // TODO: replace with CV selector / user CV API
+  if (cvs.length === 0) {
+    return (
+      <div style={{ padding: 20 }}>
+        <h3>You don't have any CV yet.</h3>
 
-  // APPLY WIZARD
+        <button
+          onClick={() => navigate("/profile/cv")}
+        >
+          Upload CV
+        </button>
+      </div>
+    );
+  }
+
   return (
-    <ApplyJobWizard
-      job={job}
-      cvId={cvId}
-      onSubmitSuccess={() => {
-        navigate(`/jobs/${job.id}`, {
-          state: {
-            applied: true,
-          },
-        });
-      }}
-    />
+    <>
+      <div
+        style={{
+          padding: "20px",
+          display: "flex",
+          alignItems: "center",
+          gap: "10px",
+        }}
+      >
+        <label>Select CV:</label>
+
+        <select
+          value={selectedCvId ?? ""}
+          onChange={(e) =>
+            setSelectedCvId(Number(e.target.value))
+          }
+        >
+          {cvs.map((cv) => (
+            <option
+              key={cv.id}
+              value={cv.id}
+            >
+              CV #{cv.id}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <ApplyJobWizard
+        job={job}
+        cv={selectedCv}
+        onSubmitSuccess={() => {
+          navigate("/profile/applied");
+        }}
+      />
+    </>
   );
 }

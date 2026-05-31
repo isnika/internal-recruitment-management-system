@@ -1,85 +1,27 @@
-/* ── CONTAINER WRAPPER ── */
-.tableWorkspace {
+.tableWrapper {
   width: 100%;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
   overflow-x: auto;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.01);
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
-
-/* ── TABLE ARCHITECTURE ── */
-.customTable {
+.table {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
-  font-family: system-ui, -apple-system, sans-serif;
-  font-size: 14px;
 }
-
-/* ── HEADER CELLS ── */
-.customTable th {
-  background-color: #f8fafc;
-  color: #475569;
-  font-weight: 600;
+.table th {
+  background-color: #f3f4f6;
   padding: 14px 16px;
-  border-bottom: 1px solid #e2e8f0;
-  white-space: nowrap;
+  font-size: 13px;
+  font-weight: 600;
+  color: #4b5563;
+  text-transform: uppercase;
 }
-
-/* ── COLUMN WIDTH CONTROL ── */
-.thId {
-  width: 90px;
-}
-
-.thCandidate {
-  min-width: 220px;
-}
-
-.thJob {
-  min-width: 200px;
-}
-
-.thDate {
-  width: 130px;
-}
-
-.thStatus {
-  width: 140px;
-}
-
-.thStage {
-  width: 160px;
-}
-
-.thActions {
-  width: 150px;
-  text-align: right;
-}
-
-/* ── EMPTY DATA STATE ── */
-.emptyStateNotify {
-  padding: 4rem 2rem;
+.empty {
   text-align: center;
-  color: #64748b;
-  background-color: #ffffff;
-}
-
-.emptyStateContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  font-size: 14px;
-  font-weight: 500;
-}
-
-/* ── RESPONSIVE ANIMATION LINK ── */
-.customTable tbody tr {
-  transition: background-color 0.15s ease;
-}
-
-.customTable tbody tr:hover {
-  background-color: #f1f5f9;
+  padding: 40px;
+  background: white;
+  color: #6b7280;
+  border-radius: 8px;
 }

@@ -12,7 +12,13 @@ import RescheduleModal from "../components/RescheduleModal/RescheduleModal";
 import UpdateResultModal from "../components/UpdateResultModal/UpdateResultModal";
 
 import useInterviewModals from "../hooks/useInterviewModals";
-import { FiCalendar, FiClock, FiCheckCircle, FiXCircle } from "react-icons/fi";
+
+import {
+  FiCalendar,
+  FiClock,
+  FiCheckCircle,
+  FiXCircle,
+} from "react-icons/fi";
 
 export default function InterviewManagement() {
   const [statusFilter, setStatusFilter] =
@@ -38,10 +44,16 @@ export default function InterviewManagement() {
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
+
       const res = await interviewApi.getMyInterviews();
-      setData(res.data || []);
+
+      // ⚠️ FIX: backend trả ApiResponse<Interview[]>
+      const interviews = res.data?.data ?? [];
+
+      setData(interviews);
     } catch (err) {
       console.error("Failed to load interviews:", err);
+      setData([]);
     } finally {
       setLoading(false);
     }
@@ -72,15 +84,22 @@ export default function InterviewManagement() {
   }, [data]);
 
   // ======================
+  // HELPERS (safe update)
+  // ======================
+  const updateInterview = (updated: Interview) => {
+    setData((prev) =>
+      prev.map((i) => (i.id === updated.id ? updated : i))
+    );
+  };
+
+  // ======================
   // ACTIONS
   // ======================
-
   const handleAccept = async (id: number) => {
     try {
       const res = await interviewApi.accept(id);
-      setData((prev) =>
-        prev.map((i) => (i.id === id ? res.data : i))
-      );
+      const updated = res.data?.data;
+      if (updated) updateInterview(updated);
     } catch (err) {
       console.error("Accept failed:", err);
     }
@@ -89,9 +108,8 @@ export default function InterviewManagement() {
   const handleReject = async (id: number) => {
     try {
       const res = await interviewApi.reject(id);
-      setData((prev) =>
-        prev.map((i) => (i.id === id ? res.data : i))
-      );
+      const updated = res.data?.data;
+      if (updated) updateInterview(updated);
     } catch (err) {
       console.error("Reject failed:", err);
     }
@@ -108,9 +126,8 @@ export default function InterviewManagement() {
         note: body.note,
       });
 
-      setData((prev) =>
-        prev.map((i) => (i.id === body.id ? res.data : i))
-      );
+      const updated = res.data?.data;
+      if (updated) updateInterview(updated);
 
       setOpenUpdate(false);
     } catch (err) {
@@ -132,9 +149,7 @@ export default function InterviewManagement() {
         <div className={styles.activeFilterBadge}>
           <span>
             View Mode:{" "}
-            <strong>
-              {statusFilter === "ALL" ? "All" : statusFilter}
-            </strong>
+            <strong>{statusFilter === "ALL" ? "All" : statusFilter}</strong>
           </span>
         </div>
       </header>

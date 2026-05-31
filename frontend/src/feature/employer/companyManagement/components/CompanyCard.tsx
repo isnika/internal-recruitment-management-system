@@ -25,7 +25,7 @@ export const CompanyCard: React.FC<CompanyCardProps> = ({
   const handleUploadClick = async () => {
     if (!file) return;
     await onUploadLogo(company.id, file);
-    // Reset file input sau khi upload thành công
+    // Reset file input after successful upload
     setFile(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
@@ -50,15 +50,15 @@ export const CompanyCard: React.FC<CompanyCardProps> = ({
             {company.website}
           </a>
         )}
-        <p className={styles.companyDesc}>{company.description || "Chưa có mô tả."}</p>
+        <p className={styles.companyDesc}>{company.description || "No description available."}</p>
       </div>
 
       <div className={styles.cardActions}>
         <button type="button" onClick={() => onEdit(company)} className={styles.btnEdit}>
-          Sửa
+          Edit
         </button>
         <button type="button" onClick={() => onDelete(company.id)} className={styles.btnDelete}>
-          Xóa
+          Delete
         </button>
       </div>
 
@@ -76,7 +76,7 @@ export const CompanyCard: React.FC<CompanyCardProps> = ({
           disabled={!file}
           className={styles.btnUpload}
         >
-          Đổi Logo
+          Change Logo
         </button>
       </div>
     </div>

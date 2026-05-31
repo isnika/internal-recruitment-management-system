@@ -29,15 +29,15 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({
   return (
     <form ref={formRef} className={styles.form} onSubmit={onSubmit}>
       <h3 className={styles.formTitle}>
-        {editingId ? "Cập Nhật Thông Tin Công Ty" : "Thêm Công Ty Mới"}
+        {editingId ? "Update Company Information" : "Add New Company"}
       </h3>
 
       <div className={styles.formGrid}>
         <div className={styles.formGroup}>
-          <label>Tên công ty <span className={styles.required}>*</span></label>
+          <label>Company Name <span className={styles.required}>*</span></label>
           <input
             name="name"
-            placeholder="Nhập tên công ty..."
+            placeholder="Enter company name..."
             value={form.name}
             onChange={onChange}
             className={styles.input}
@@ -49,7 +49,7 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({
           <label>Website</label>
           <input
             name="website"
-            placeholder="Ví dụ: https://example.com"
+            placeholder="e.g., https://example.com"
             value={form.website}
             onChange={onChange}
             className={styles.input}
@@ -57,10 +57,10 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({
         </div>
 
         <div className={styles.formGroup}>
-          <label>Địa chỉ</label>
+          <label>Address</label>
           <input
             name="address"
-            placeholder="Nhập địa chỉ trụ sở..."
+            placeholder="Enter headquarters address..."
             value={form.address}
             onChange={onChange}
             className={styles.input}
@@ -68,7 +68,7 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({
         </div>
 
         <div className={styles.formGroup}>
-          <label>Trạng thái</label>
+          <label>Status</label>
           <select
             name="status"
             value={form.status}
@@ -82,10 +82,10 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({
       </div>
 
       <div className={styles.formGroup}>
-        <label>Mô tả công ty</label>
+        <label>Company Description</label>
         <textarea
           name="description"
-          placeholder="Nhập thông tin mô tả chi tiết về doanh nghiệp..."
+          placeholder="Enter detailed description about the business..."
           value={form.description}
           onChange={onChange}
           className={styles.textarea}
@@ -94,11 +94,11 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({
 
       <div className={styles.buttonGroup}>
         <button type="submit" className={styles.btnPrimary}>
-          {editingId ? "Cập nhật" : "Tạo mới"}
+          {editingId ? "Update" : "Create"}
         </button>
 
         <button type="button" onClick={onReset} className={styles.btnSecondary}>
-          Hủy / Reset
+          Cancel / Reset
         </button>
       </div>
     </form>

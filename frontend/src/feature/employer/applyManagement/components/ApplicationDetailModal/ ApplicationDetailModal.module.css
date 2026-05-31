@@ -1,0 +1,57 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.modal {
+  background: white;
+  width: 90%;
+  max-width: 700px;
+  max-height: 90vh;
+  border-radius: 12px;
+  overflow-y: auto;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  border-bottom: 1px solid #e5e7eb;
+}
+.header h2 { margin: 0; font-size: 20px; }
+.closeBtn {
+  background: none;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+}
+.body { padding: 24px; }
+.section { margin-bottom: 24px; }
+.section h3 {
+  margin-top: 0;
+  border-left: 4px solid #3b82f6;
+  padding-left: 8px;
+  font-size: 16px;
+  color: #1f2937;
+}
+.section p { margin: 8px 0; color: #4b5563; }
+.downloadLink {
+  display: inline-block;
+  margin-bottom: 12px;
+  color: #2563eb;
+  text-decoration: underline;
+  font-weight: 500;
+}
+.cvViewer {
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  overflow: hidden;
+}

@@ -1,17 +1,25 @@
 import styles from "./InterviewHeader.module.css";
-import type { InterviewStatus } from "../../types";
+import type { InterviewStatus } from "../../types/types";
 
-type Props = {
-  statusFilter: InterviewStatus | "ALL";
-  setStatusFilter: (s: InterviewStatus | "ALL") => void;
-};
-
-const FILTERS: (InterviewStatus | "ALL")[] = [
+// ======================
+// FILTER TYPE
+// ======================
+const FILTERS = [
   "ALL",
   "PENDING",
   "ACCEPTED",
   "REJECTED",
-];
+] as const;
+
+type FilterType = typeof FILTERS[number];
+
+// ======================
+// PROPS
+// ======================
+type Props = {
+  statusFilter: FilterType;
+  setStatusFilter: (s: FilterType) => void;
+};
 
 export default function InterviewHeader({
   statusFilter,
@@ -38,8 +46,10 @@ export default function InterviewHeader({
   );
 }
 
-// optional: UI đẹp hơn thay vì uppercase raw string
-function formatLabel(status: InterviewStatus | "ALL") {
+// ======================
+// LABEL FORMAT
+// ======================
+function formatLabel(status: FilterType) {
   switch (status) {
     case "ALL":
       return "All";

@@ -4,9 +4,14 @@ import InterviewRow from "../InterviewRow/InterviewRow";
 
 type Props = {
   data: Interview[];
+
   onView: (i: Interview) => void;
   onReschedule: (i: Interview) => void;
   onUpdate: (i: Interview) => void;
+
+  // 🔥 ADD (sync với page logic)
+  onAccept?: (i: Interview) => void;
+  onReject?: (i: Interview) => void;
 };
 
 export default function InterviewTable({
@@ -14,6 +19,8 @@ export default function InterviewTable({
   onView,
   onReschedule,
   onUpdate,
+  onAccept,
+  onReject,
 }: Props) {
   if (!data.length) {
     return (
@@ -45,6 +52,8 @@ export default function InterviewTable({
               onView={onView}
               onReschedule={onReschedule}
               onUpdate={onUpdate}
+              onAccept={onAccept}
+              onReject={onReject}
             />
           ))}
         </tbody>

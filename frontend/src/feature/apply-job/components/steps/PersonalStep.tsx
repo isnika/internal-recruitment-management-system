@@ -21,11 +21,6 @@ const PersonalStep = () => {
         </div>
 
         <div className={styles.field}>
-          <label>Full Name</label>
-          <input value={user.fullName || ""} readOnly />
-        </div>
-
-        <div className={styles.field}>
           <label>Email</label>
           <input value={user.email || ""} readOnly />
         </div>

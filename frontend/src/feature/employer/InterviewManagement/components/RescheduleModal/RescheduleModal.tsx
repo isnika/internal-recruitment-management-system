@@ -19,20 +19,40 @@ export default function RescheduleModal({
 }: Props) {
   const [scheduleTime, setScheduleTime] = useState("");
 
-  // sync mỗi khi mở modal
+  // ======================
+  // FIX: SAFE LOCAL TIME FORMAT
+  // ======================
+  const formatToLocalInput = (iso: string) => {
+    const dt = new Date(iso);
+
+    const year = dt.getFullYear();
+    const month = String(dt.getMonth() + 1).padStart(2, "0");
+    const day = String(dt.getDate()).padStart(2, "0");
+
+    const hours = String(dt.getHours()).padStart(2, "0");
+    const minutes = String(dt.getMinutes()).padStart(2, "0");
+
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  };
+
+  // ======================
+  // SYNC DATA
+  // ======================
   useEffect(() => {
-    if (data?.scheduleTime) {
-      const dt = new Date(data.scheduleTime);
+    if (open && data?.scheduleTime) {
+      setScheduleTime(formatToLocalInput(data.scheduleTime));
+    }
 
-      const datePart = dt.toISOString().split("T")[0];
-      const timePart = dt.toTimeString().slice(0, 5);
-
-      setScheduleTime(`${datePart}T${timePart}`);
+    if (!open) {
+      setScheduleTime("");
     }
   }, [data, open]);
 
+  // ======================
+  // SAVE
+  // ======================
   const handleSave = () => {
-    if (!data) return;
+    if (!data || !scheduleTime) return;
 
     onSave({
       id: data.id,
@@ -47,7 +67,9 @@ export default function RescheduleModal({
       <div className={styles.container}>
         <div className={styles.wrapper}>
           <div className={styles.formGroup}>
-            <label className={styles.label}>Schedule Date & Time</label>
+            <label className={styles.label}>
+              Schedule Date & Time
+            </label>
 
             <input
               className={styles.input}

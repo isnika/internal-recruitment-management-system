@@ -4,11 +4,18 @@ import { request } from "./axiosClient";
 // TYPES
 // ======================
 
+export type InterviewStatus =
+  | "PENDING"
+  | "ACCEPTED"
+  | "REJECTED"
+  | "SCHEDULED"
+  | "DONE";
+
 export interface Interview {
   id: number;
   scheduleTime: string;
   location: string;
-  status: "PENDING" | "ACCEPTED" | "REJECTED" | string;
+  status: InterviewStatus;
   result?: string;
   note?: string;
 
@@ -56,55 +63,45 @@ export interface ApiResponse<T> {
 }
 
 // ======================
+// CONFIG
+// ======================
+
+// 🔥 FIX QUAN TRỌNG NHẤT
+const ENDPOINT = "/api/interviews";
+
+// ======================
 // API
 // ======================
 
-const ENDPOINT = "/api/interviews";
-
 export const interviewApi = {
-  // CREATE INTERVIEW
-  create: (
-    body: InterviewCreateRequest
-  ): Promise<ApiResponse<Interview>> => {
-    return request.post<ApiResponse<Interview>>(
-      ENDPOINT,
-      body
+  create: (body: InterviewCreateRequest) => {
+    return request.post<ApiResponse<Interview>>(ENDPOINT, body);
+  },
+
+  getMyInterviews: () => {
+    return request.get<ApiResponse<Interview[]>>(`${ENDPOINT}/me`);
+  },
+
+  getById: (id: number) => {
+    return request.get<ApiResponse<Interview>>(`${ENDPOINT}/${id}`);
+  },
+
+  accept: (id: number) => {
+    return request.post<ApiResponse<Interview>>(`${ENDPOINT}/${id}/accept`);
+  },
+
+  reject: (id: number) => {
+    return request.post<ApiResponse<Interview>>(`${ENDPOINT}/${id}/reject`);
+  },
+
+  updateStatus: (id: number, status: InterviewStatus) => {
+    return request.patch<ApiResponse<Interview>>(
+      `${ENDPOINT}/${id}/status`,
+      { status }
     );
   },
 
-  // GET MY INTERVIEWS
-  getMyInterviews: (): Promise<ApiResponse<Interview[]>> => {
-    return request.get<ApiResponse<Interview[]>>(
-      `${ENDPOINT}/me`
-    );
-  },
-
-  // GET BY ID
-  getById: (id: number): Promise<ApiResponse<Interview>> => {
-    return request.get<ApiResponse<Interview>>(
-      `${ENDPOINT}/${id}`
-    );
-  },
-
-  // ACCEPT INTERVIEW
-  accept: (id: number): Promise<ApiResponse<Interview>> => {
-    return request.post<ApiResponse<Interview>>(
-      `${ENDPOINT}/${id}/accept`
-    );
-  },
-
-  // REJECT INTERVIEW
-  reject: (id: number): Promise<ApiResponse<Interview>> => {
-    return request.post<ApiResponse<Interview>>(
-      `${ENDPOINT}/${id}/reject`
-    );
-  },
-
-  // UPDATE RESULT
-  updateResult: (
-    id: number,
-    body: InterviewResultRequest
-  ): Promise<ApiResponse<Interview>> => {
+  updateResult: (id: number, body: InterviewResultRequest) => {
     return request.patch<ApiResponse<Interview>>(
       `${ENDPOINT}/${id}/result`,
       body

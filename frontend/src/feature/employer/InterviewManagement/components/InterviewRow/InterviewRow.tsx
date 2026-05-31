@@ -14,6 +14,9 @@ export default function InterviewRow({
   onReschedule,
   onUpdate,
 }: Props) {
+  // ======================
+  // STATUS STYLE
+  // ======================
   const getStatusClass = (status: Interview["status"]) => {
     switch (status) {
       case "PENDING":
@@ -27,32 +30,53 @@ export default function InterviewRow({
     }
   };
 
-  const candidateName =
-    `${item.application.user.firstName} ${item.application.user.lastName}`;
+  // ======================
+  // SAFE DATA ACCESS
+  // ======================
+  const firstName = item.application?.user?.firstName ?? "";
+  const lastName = item.application?.user?.lastName ?? "";
 
-  const jobTitle = item.application.job.title;
+  const candidateName = `${firstName} ${lastName}`.trim();
+  const jobTitle = item.application?.job?.title ?? "N/A";
 
-  const scheduleDate = new Date(item.scheduleTime).toLocaleDateString();
-  const scheduleTime = new Date(item.scheduleTime).toLocaleTimeString([], {
+  // ======================
+  // DATE FORMAT (OPTIMIZED)
+  // ======================
+  const dateObj = new Date(item.scheduleTime);
+
+  const scheduleDate = dateObj.toLocaleDateString();
+  const scheduleTime = dateObj.toLocaleTimeString([], {
     hour: "2-digit",
     minute: "2-digit",
   });
 
   return (
     <tr>
-      <td>{candidateName}</td>
+      {/* CANDIDATE */}
+      <td>{candidateName || "Unknown"}</td>
+
+      {/* JOB */}
       <td>{jobTitle}</td>
+
+      {/* LOCATION */}
       <td>{item.location}</td>
 
-      <td>{scheduleDate}</td>
-      <td>{scheduleTime}</td>
+      {/* SCHEDULE (FIX: gộp lại 1 cột) */}
+      <td>
+        <div>
+          <div>{scheduleDate}</div>
+          <small>{scheduleTime}</small>
+        </div>
+      </td>
 
+      {/* STATUS */}
       <td>
         <span className={`${styles.status} ${getStatusClass(item.status)}`}>
           {item.status}
         </span>
       </td>
 
+      {/* ACTIONS */}
       <td className={styles.actions}>
         <button onClick={() => onView(item)}>View</button>
         <button onClick={() => onReschedule(item)}>Reschedule</button>
