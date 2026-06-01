@@ -1,5 +1,6 @@
 package backend.entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -48,7 +49,14 @@ public class User {
 
   private String phone;
   private String gender;
-  private java.time.LocalDate dateOfBirth;
+  private LocalDate dateOfBirth;
+
+  private String address;
+  private String taxCode;
+  private String citizenId;
+  private LocalDate releaseDate;
+  private String socialLink;
+  private String bankAccountName;
 
   @Enumerated(EnumType.STRING)
   private UserRole role;

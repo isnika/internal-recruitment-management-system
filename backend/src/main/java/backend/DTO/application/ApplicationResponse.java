@@ -1,5 +1,7 @@
 package backend.DTO.application;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import backend.DTO.Cv.CvResponse;
@@ -19,6 +21,9 @@ public class ApplicationResponse {
   private Long id;
   private String status;
   private LocalDateTime appliedAt;
+  private String intro;
+  private BigDecimal expectedSalary;
+  private LocalDate startDate;
 
   private UserResponse user;
   private JobResponse job;

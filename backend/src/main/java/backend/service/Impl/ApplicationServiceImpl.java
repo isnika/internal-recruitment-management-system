@@ -6,13 +6,11 @@ import java.util.List;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import backend.DTO.Cv.CvResponse;
 import backend.DTO.application.ApplicationResponse;
 import backend.DTO.application.CreateApplicationRequest;
 import backend.DTO.application.UpdateApplicationStatusRequest;
-import backend.DTO.job.JobResponse;
-import backend.DTO.user.UserResponse;
 import backend.Enum.ApplicationStatus;
 import backend.entity.Application;
 import backend.entity.Cv;
@@ -21,6 +19,7 @@ import backend.entity.User;
 import backend.exception.BadRequestException;
 import backend.exception.ResourceNotFoundException;
 import backend.exception.UnauthorizedException;
+import backend.mapper.ApplicationMapper;
 import backend.repository.ApplicationRepository;
 import backend.repository.CvRepository;
 import backend.repository.JobRepository;
@@ -62,23 +61,29 @@ public class ApplicationServiceImpl implements ApplicationService {
                         .user(user)
                         .job(job)
                         .cv(cv)
+                        .intro(request.getIntro())
+                        .expectedSalary(request.getExpectedSalary())
+                        .startDate(request.getStartDate())
                         .build();
 
                 applicationRepository.save(application);
 
-                return mapToResponse(application);
+                return ApplicationMapper.toResponse(application);
         }
 
         @Override
+        @Transactional(readOnly = true)
         public List<ApplicationResponse> getMyApplications() {
                 User currentUser = getCurrentAuthenticatedUser();
+
                 return applicationRepository.findByUserId(currentUser.getId())
                         .stream()
-                        .map(this::mapToResponse)
+                        .map(ApplicationMapper::toResponse)
                         .toList();
         }
 
         @Override
+        @Transactional(readOnly = true)
         public List<ApplicationResponse> getAllApplications() {
                 User recruiter = getCurrentAuthenticatedUser();
 
@@ -90,11 +95,25 @@ public class ApplicationServiceImpl implements ApplicationService {
 
                 return applicationRepository.findByJobCompanyId(companyId)
                         .stream()
-                        .map(this::mapToResponse)
+                        .map(ApplicationMapper::toResponse)
                         .toList();
         }
 
         @Override
+        @Transactional(readOnly = true)
+        public List<ApplicationResponse> getAllApplicationsForAdmin() {
+                return applicationRepository.findAll()
+                        .stream()
+                        .map(ApplicationMapper::toResponse)
+                        .toList();
+        }
+
+        /**
+         * Recruiter: trả về đơn theo jobId,
+         * chỉ cho phép xem job thuộc công ty của mình.
+         */
+        @Override
+        @Transactional(readOnly = true)
         public List<ApplicationResponse> getApplicationsByJob(Long jobId) {
                 User recruiter = getCurrentAuthenticatedUser();
 
@@ -111,10 +130,14 @@ public class ApplicationServiceImpl implements ApplicationService {
 
                 return applicationRepository.findByJobIdAndCompanyId(jobId, recruiter.getCompany().getId())
                         .stream()
-                        .map(this::mapToResponse)
+                        .map(ApplicationMapper::toResponse)
                         .toList();
         }
 
+        /**
+         * Recruiter: cập nhật trạng thái đơn,
+         * chỉ cho phép thao tác trên đơn thuộc công ty của mình.
+         */
         @Override
         public ApplicationResponse updateStatus(Long applicationId, UpdateApplicationStatusRequest request) {
                 if (request == null || request.getStatus() == null || request.getStatus().isBlank()) {
@@ -141,57 +164,17 @@ public class ApplicationServiceImpl implements ApplicationService {
                 application.setStatus(status);
                 applicationRepository.save(application);
 
-                return mapToResponse(application);
+                return ApplicationMapper.toResponse(application);
         }
-
-        // ── ADMIN ────────────────────────────────────────────────────────────────
-
-        @Override
-        public List<ApplicationResponse> getAllApplicationsForAdmin() {
-                return applicationRepository.findAll()
-                        .stream()
-                        .map(this::mapToResponse)
-                        .toList();
-        }
-
-        // ─── Helpers ──────────────────────────────────────────────────────────────
 
         private User getCurrentAuthenticatedUser() {
                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
                 if (authentication == null || !(authentication.getPrincipal() instanceof AuthUser authUser)) {
                         throw new UnauthorizedException("Bạn chưa đăng nhập");
                 }
 
                 return userRepository.findById(authUser.getId())
                         .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy user hiện tại"));
-        }
-
-        private ApplicationResponse mapToResponse(Application application) {
-                User user = application.getUser();
-                Job job = application.getJob();
-                Cv cv = application.getCv();
-
-                return ApplicationResponse.builder()
-                        .id(application.getId())
-                        .status(application.getStatus() != null ? application.getStatus().toValue() : null)
-                        .appliedAt(application.getAppliedAt())
-                        .user(
-                                UserResponse.builder()
-                                        .id(user.getId())
-                                        .firstName(user.getFirstName())
-                                        .lastName(user.getLastName())
-                                        .email(user.getEmail())
-                                        .build())
-                        .job(
-                                JobResponse.builder()
-                                        .id(job.getId())
-                                        .title(job.getTitle())
-                                        .build())
-                        .cv(
-                                CvResponse.builder()
-                                        .id(cv.getId())
-                                        .fileUrl(cv.getFileUrl())
-                                        .build())
-                        .build();
         }
 }

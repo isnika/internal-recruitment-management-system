@@ -1,5 +1,7 @@
 package backend.entity;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Entity;
@@ -35,6 +37,12 @@ public class Application {
     private ApplicationStatus status;
 
     private LocalDateTime appliedAt;
+
+    private String intro;
+
+    private BigDecimal expectedSalary;
+
+    private LocalDate startDate;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

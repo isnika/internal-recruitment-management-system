@@ -19,6 +19,14 @@ public class UserResponse {
   private String lastName;
   private String gender;
   private LocalDate dateOfBirth;
+  private String phone;
+  private String address;
+  private String taxCode;
+  private String citizenId;
+  private LocalDate releaseDate;
+  private String socialLink;
+  private String bankAccountName;
   private String role;
   private String status;
+  private Long companyId;
 }

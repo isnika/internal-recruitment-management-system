@@ -37,8 +37,16 @@ public final class UserMapper {
             .lastName(user.getLastName())
             .gender(user.getGender())
             .dateOfBirth(user.getDateOfBirth())
+            .phone(user.getPhone())
+            .address(user.getAddress())
+            .taxCode(user.getTaxCode())
+            .citizenId(user.getCitizenId())
+            .releaseDate(user.getReleaseDate())
+            .socialLink(user.getSocialLink())
+            .bankAccountName(user.getBankAccountName())
             .role(user.getRole() != null ? user.getRole().name() : null)
             .status(user.getStatus() != null ? user.getStatus().name() : null)
+            .companyId(user.getCompany() != null ? user.getCompany().getId() : null)
             .build();
   }
 

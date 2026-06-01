@@ -23,19 +23,22 @@ DROP TABLE IF EXISTS `applications`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `applications` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `user_id` bigint DEFAULT NULL,
-  `job_id` bigint DEFAULT NULL,
-  `cv_id` bigint DEFAULT NULL,
-  `status` varchar(255) DEFAULT NULL,
-  `applied_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `user_id` (`user_id`),
-  KEY `job_id` (`job_id`),
-  KEY `cv_id` (`cv_id`),
-  CONSTRAINT `applications_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `applications_ibfk_2` FOREIGN KEY (`job_id`) REFERENCES `jobs` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `applications_ibfk_3` FOREIGN KEY (`cv_id`) REFERENCES `cvs` (`id`) ON DELETE CASCADE
+                                `id` bigint NOT NULL AUTO_INCREMENT,
+                                `user_id` bigint DEFAULT NULL,
+                                `job_id` bigint DEFAULT NULL,
+                                `cv_id` bigint DEFAULT NULL,
+                                `status` varchar(255) DEFAULT NULL,
+                                `applied_at` timestamp NULL DEFAULT NULL,
+                                `intro` text DEFAULT NULL,
+                                `expected_salary` decimal(15,2) DEFAULT NULL,
+                                `start_date` date DEFAULT NULL,
+                                PRIMARY KEY (`id`),
+                                KEY `user_id` (`user_id`),
+                                KEY `job_id` (`job_id`),
+                                KEY `cv_id` (`cv_id`),
+                                CONSTRAINT `applications_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+                                CONSTRAINT `applications_ibfk_2` FOREIGN KEY (`job_id`) REFERENCES `jobs` (`id`) ON DELETE CASCADE,
+                                CONSTRAINT `applications_ibfk_3` FOREIGN KEY (`cv_id`) REFERENCES `cvs` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -45,7 +48,7 @@ CREATE TABLE `applications` (
 
 LOCK TABLES `applications` WRITE;
 /*!40000 ALTER TABLE `applications` DISABLE KEYS */;
-INSERT INTO `applications` VALUES (3,5,49,5,'PENDING','2026-05-24 08:14:32');
+INSERT INTO `applications` VALUES (3,5,49,5,'PENDING','2026-05-24 08:14:32',NULL,NULL,NULL);
 /*!40000 ALTER TABLE `applications` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -57,20 +60,20 @@ DROP TABLE IF EXISTS `candidate_profiles`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `candidate_profiles` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `user_id` bigint DEFAULT NULL,
-  `gender` varchar(255) DEFAULT NULL,
-  `date_of_birth` date DEFAULT NULL,
-  `phone` varchar(255) DEFAULT NULL,
-  `address` varchar(255) DEFAULT NULL,
-  `tax_code` varchar(255) DEFAULT NULL,
-  `citizen_id` varchar(255) DEFAULT NULL,
-  `release_date` date DEFAULT NULL,
-  `social_link` varchar(255) DEFAULT NULL,
-  `bank_account_name` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `user_id` (`user_id`),
-  CONSTRAINT `candidate_profiles_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+                                      `id` bigint NOT NULL AUTO_INCREMENT,
+                                      `user_id` bigint DEFAULT NULL,
+                                      `gender` varchar(255) DEFAULT NULL,
+                                      `date_of_birth` date DEFAULT NULL,
+                                      `phone` varchar(255) DEFAULT NULL,
+                                      `address` varchar(255) DEFAULT NULL,
+                                      `tax_code` varchar(255) DEFAULT NULL,
+                                      `citizen_id` varchar(255) DEFAULT NULL,
+                                      `release_date` date DEFAULT NULL,
+                                      `social_link` varchar(255) DEFAULT NULL,
+                                      `bank_account_name` varchar(255) DEFAULT NULL,
+                                      PRIMARY KEY (`id`),
+                                      UNIQUE KEY `user_id` (`user_id`),
+                                      CONSTRAINT `candidate_profiles_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -92,9 +95,9 @@ DROP TABLE IF EXISTS `categories`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `categories` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+                              `id` bigint NOT NULL AUTO_INCREMENT,
+                              `name` varchar(255) DEFAULT NULL,
+                              PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -116,18 +119,18 @@ DROP TABLE IF EXISTS `companies`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `companies` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) DEFAULT NULL,
-  `description` varchar(255) DEFAULT NULL,
-  `address` varchar(255) DEFAULT NULL,
-  `website` varchar(255) DEFAULT NULL,
-  `logo_url` varchar(255) DEFAULT NULL,
-  `status` varchar(255) DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `logo_storage_public_id` varchar(255) DEFAULT NULL,
-  `logo_storage_resource_type` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+                             `id` bigint NOT NULL AUTO_INCREMENT,
+                             `name` varchar(255) DEFAULT NULL,
+                             `description` varchar(255) DEFAULT NULL,
+                             `address` varchar(255) DEFAULT NULL,
+                             `website` varchar(255) DEFAULT NULL,
+                             `logo_url` varchar(255) DEFAULT NULL,
+                             `status` varchar(255) DEFAULT NULL,
+                             `created_at` timestamp NULL DEFAULT NULL,
+                             `updated_at` timestamp NULL DEFAULT NULL,
+                             `logo_storage_public_id` varchar(255) DEFAULT NULL,
+                             `logo_storage_resource_type` varchar(255) DEFAULT NULL,
+                             PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -149,15 +152,15 @@ DROP TABLE IF EXISTS `cvs`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cvs` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `user_id` bigint DEFAULT NULL,
-  `file_url` varchar(255) DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `storage_public_id` varchar(255) DEFAULT NULL,
-  `storage_resource_type` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `user_id` (`user_id`),
-  CONSTRAINT `cvs_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+                       `id` bigint NOT NULL AUTO_INCREMENT,
+                       `user_id` bigint DEFAULT NULL,
+                       `file_url` varchar(255) DEFAULT NULL,
+                       `created_at` timestamp NULL DEFAULT NULL,
+                       `storage_public_id` varchar(255) DEFAULT NULL,
+                       `storage_resource_type` varchar(255) DEFAULT NULL,
+                       PRIMARY KEY (`id`),
+                       KEY `user_id` (`user_id`),
+                       CONSTRAINT `cvs_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -179,9 +182,9 @@ DROP TABLE IF EXISTS `experience_levels`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `experience_levels` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+                                     `id` bigint NOT NULL AUTO_INCREMENT,
+                                     `name` varchar(255) DEFAULT NULL,
+                                     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -203,18 +206,18 @@ DROP TABLE IF EXISTS `flyway_schema_history`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `flyway_schema_history` (
-  `installed_rank` int NOT NULL,
-  `version` varchar(50) DEFAULT NULL,
-  `description` varchar(200) NOT NULL,
-  `type` varchar(20) NOT NULL,
-  `script` varchar(1000) NOT NULL,
-  `checksum` int DEFAULT NULL,
-  `installed_by` varchar(100) NOT NULL,
-  `installed_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `execution_time` int NOT NULL,
-  `success` tinyint(1) NOT NULL,
-  PRIMARY KEY (`installed_rank`),
-  KEY `flyway_schema_history_s_idx` (`success`)
+                                         `installed_rank` int NOT NULL,
+                                         `version` varchar(50) DEFAULT NULL,
+                                         `description` varchar(200) NOT NULL,
+                                         `type` varchar(20) NOT NULL,
+                                         `script` varchar(1000) NOT NULL,
+                                         `checksum` int DEFAULT NULL,
+                                         `installed_by` varchar(100) NOT NULL,
+                                         `installed_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                         `execution_time` int NOT NULL,
+                                         `success` tinyint(1) NOT NULL,
+                                         PRIMARY KEY (`installed_rank`),
+                                         KEY `flyway_schema_history_s_idx` (`success`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -236,16 +239,16 @@ DROP TABLE IF EXISTS `interviews`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `interviews` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `application_id` bigint DEFAULT NULL,
-  `schedule_time` datetime DEFAULT NULL,
-  `location` varchar(255) DEFAULT NULL,
-  `status` enum('PENDING','ACCEPTED','REJECTED','SCHEDULED') DEFAULT NULL,
-  `result` varchar(255) DEFAULT NULL,
-  `note` text,
-  PRIMARY KEY (`id`),
-  KEY `application_id` (`application_id`),
-  CONSTRAINT `interviews_ibfk_1` FOREIGN KEY (`application_id`) REFERENCES `applications` (`id`) ON DELETE CASCADE
+                              `id` bigint NOT NULL AUTO_INCREMENT,
+                              `application_id` bigint DEFAULT NULL,
+                              `schedule_time` datetime DEFAULT NULL,
+                              `location` varchar(255) DEFAULT NULL,
+                              `status` enum('PENDING','ACCEPTED','REJECTED','SCHEDULED') DEFAULT NULL,
+                              `result` varchar(255) DEFAULT NULL,
+                              `note` text,
+                              PRIMARY KEY (`id`),
+                              KEY `application_id` (`application_id`),
+                              CONSTRAINT `interviews_ibfk_1` FOREIGN KEY (`application_id`) REFERENCES `applications` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -266,12 +269,12 @@ DROP TABLE IF EXISTS `job_skills`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `job_skills` (
-  `job_id` bigint NOT NULL,
-  `skill_id` bigint NOT NULL,
-  PRIMARY KEY (`job_id`,`skill_id`),
-  KEY `skill_id` (`skill_id`),
-  CONSTRAINT `job_skills_ibfk_1` FOREIGN KEY (`job_id`) REFERENCES `jobs` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `job_skills_ibfk_2` FOREIGN KEY (`skill_id`) REFERENCES `skills` (`id`) ON DELETE CASCADE
+                              `job_id` bigint NOT NULL,
+                              `skill_id` bigint NOT NULL,
+                              PRIMARY KEY (`job_id`,`skill_id`),
+                              KEY `skill_id` (`skill_id`),
+                              CONSTRAINT `job_skills_ibfk_1` FOREIGN KEY (`job_id`) REFERENCES `jobs` (`id`) ON DELETE CASCADE,
+                              CONSTRAINT `job_skills_ibfk_2` FOREIGN KEY (`skill_id`) REFERENCES `skills` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -293,29 +296,29 @@ DROP TABLE IF EXISTS `jobs`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `jobs` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `title` varchar(255) DEFAULT NULL,
-  `description` text,
-  `requirements` text,
-  `benefits` text,
-  `salary_min` double DEFAULT NULL,
-  `salary_max` double DEFAULT NULL,
-  `location` varchar(255) DEFAULT NULL,
-  `type` varchar(255) DEFAULT NULL,
-  `status` enum('DRAFT','ACTIVE','PAUSED','CLOSED') DEFAULT NULL,
-  `deadline` date DEFAULT NULL,
-  `company_id` bigint DEFAULT NULL,
-  `category_id` bigint DEFAULT NULL,
-  `experience_level_id` bigint DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `company_id` (`company_id`),
-  KEY `category_id` (`category_id`),
-  KEY `experience_level_id` (`experience_level_id`),
-  CONSTRAINT `jobs_ibfk_1` FOREIGN KEY (`company_id`) REFERENCES `companies` (`id`),
-  CONSTRAINT `jobs_ibfk_2` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`),
-  CONSTRAINT `jobs_ibfk_3` FOREIGN KEY (`experience_level_id`) REFERENCES `experience_levels` (`id`)
+                        `id` bigint NOT NULL AUTO_INCREMENT,
+                        `title` varchar(255) DEFAULT NULL,
+                        `description` text,
+                        `requirements` text,
+                        `benefits` text,
+                        `salary_min` double DEFAULT NULL,
+                        `salary_max` double DEFAULT NULL,
+                        `location` varchar(255) DEFAULT NULL,
+                        `type` varchar(255) DEFAULT NULL,
+                        `status` enum('DRAFT','ACTIVE','PAUSED','CLOSED') DEFAULT NULL,
+                        `deadline` date DEFAULT NULL,
+                        `company_id` bigint DEFAULT NULL,
+                        `category_id` bigint DEFAULT NULL,
+                        `experience_level_id` bigint DEFAULT NULL,
+                        `created_at` timestamp NULL DEFAULT NULL,
+                        `updated_at` timestamp NULL DEFAULT NULL,
+                        PRIMARY KEY (`id`),
+                        KEY `company_id` (`company_id`),
+                        KEY `category_id` (`category_id`),
+                        KEY `experience_level_id` (`experience_level_id`),
+                        CONSTRAINT `jobs_ibfk_1` FOREIGN KEY (`company_id`) REFERENCES `companies` (`id`),
+                        CONSTRAINT `jobs_ibfk_2` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`),
+                        CONSTRAINT `jobs_ibfk_3` FOREIGN KEY (`experience_level_id`) REFERENCES `experience_levels` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=84 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -337,20 +340,20 @@ DROP TABLE IF EXISTS `notifications`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `notifications` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `user_id` bigint DEFAULT NULL,
-  `content` text,
-  `is_read` tinyint(1) DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `is_deleted` bit(1) DEFAULT NULL,
-  `redirect_url` varchar(255) DEFAULT NULL,
-  `type` enum('INTERVIEW','SYSTEM','ACCOUNT') DEFAULT NULL,
-  `sender_id` bigint DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `user_id` (`user_id`),
-  KEY `FK13vcnq3ukas06ho1yrbc5lrb5` (`sender_id`),
-  CONSTRAINT `FK13vcnq3ukas06ho1yrbc5lrb5` FOREIGN KEY (`sender_id`) REFERENCES `users` (`id`),
-  CONSTRAINT `notifications_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+                                 `id` bigint NOT NULL AUTO_INCREMENT,
+                                 `user_id` bigint DEFAULT NULL,
+                                 `content` text,
+                                 `is_read` tinyint(1) DEFAULT NULL,
+                                 `created_at` timestamp NULL DEFAULT NULL,
+                                 `is_deleted` bit(1) DEFAULT NULL,
+                                 `redirect_url` varchar(255) DEFAULT NULL,
+                                 `type` enum('INTERVIEW','SYSTEM','ACCOUNT') DEFAULT NULL,
+                                 `sender_id` bigint DEFAULT NULL,
+                                 PRIMARY KEY (`id`),
+                                 KEY `user_id` (`user_id`),
+                                 KEY `FK13vcnq3ukas06ho1yrbc5lrb5` (`sender_id`),
+                                 CONSTRAINT `FK13vcnq3ukas06ho1yrbc5lrb5` FOREIGN KEY (`sender_id`) REFERENCES `users` (`id`),
+                                 CONSTRAINT `notifications_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -372,13 +375,13 @@ DROP TABLE IF EXISTS `saved_jobs`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `saved_jobs` (
-  `user_id` bigint NOT NULL,
-  `job_id` bigint NOT NULL,
-  `saved_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`user_id`,`job_id`),
-  KEY `job_id` (`job_id`),
-  CONSTRAINT `saved_jobs_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `saved_jobs_ibfk_2` FOREIGN KEY (`job_id`) REFERENCES `jobs` (`id`) ON DELETE CASCADE
+                              `user_id` bigint NOT NULL,
+                              `job_id` bigint NOT NULL,
+                              `saved_at` timestamp NULL DEFAULT NULL,
+                              PRIMARY KEY (`user_id`,`job_id`),
+                              KEY `job_id` (`job_id`),
+                              CONSTRAINT `saved_jobs_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+                              CONSTRAINT `saved_jobs_ibfk_2` FOREIGN KEY (`job_id`) REFERENCES `jobs` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -399,9 +402,9 @@ DROP TABLE IF EXISTS `skills`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `skills` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+                          `id` bigint NOT NULL AUTO_INCREMENT,
+                          `name` varchar(255) DEFAULT NULL,
+                          PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -423,42 +426,50 @@ DROP TABLE IF EXISTS `users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `users` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `email` varchar(255) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `first_name` varchar(255) DEFAULT NULL,
-  `last_name` varchar(255) DEFAULT NULL,
-
-  `avatar_url` varchar(255) DEFAULT NULL,
-  `avatar_storage_public_id` varchar(255) DEFAULT NULL,
-  `avatar_storage_resource_type` varchar(255) DEFAULT NULL,
-
-  `phone` varchar(50) DEFAULT NULL,
-  `gender` varchar(50) DEFAULT NULL,
-  `date_of_birth` date DEFAULT NULL,
-
-  `role` enum('ADMIN','RECRUITER','CANDIDATE') DEFAULT NULL,
-  `status` enum('ACTIVE','BLOCKED') DEFAULT NULL,
-
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `company_id` bigint DEFAULT NULL,
-
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `email` (`email`),
-  KEY `FK_users_company` (`company_id`),
-  CONSTRAINT `FK_users_company`
-      FOREIGN KEY (`company_id`) REFERENCES `companies` (`id`)
+                         `id` bigint NOT NULL AUTO_INCREMENT,
+                         `email` varchar(255) NOT NULL,
+                         `password` varchar(255) NOT NULL,
+                         `first_name` varchar(255) DEFAULT NULL,
+                         `last_name` varchar(255) DEFAULT NULL,
+                         `avatar_url` varchar(255) DEFAULT NULL,
+                         `avatar_storage_public_id` varchar(255) DEFAULT NULL,
+                         `avatar_storage_resource_type` varchar(255) DEFAULT NULL,
+                         `phone` varchar(50) DEFAULT NULL,
+                         `gender` varchar(50) DEFAULT NULL,
+                         `date_of_birth` date DEFAULT NULL,
+                         `role` enum('ADMIN','RECRUITER','CANDIDATE') DEFAULT NULL,
+                         `status` enum('ACTIVE','BLOCKED') DEFAULT NULL,
+                         `created_at` timestamp NULL DEFAULT NULL,
+                         `updated_at` timestamp NULL DEFAULT NULL,
+                         `company_id` bigint DEFAULT NULL,
+                         PRIMARY KEY (`id`),
+                         UNIQUE KEY `email` (`email`),
+                         KEY `FK_users_company` (`company_id`),
+                         CONSTRAINT `FK_users_company`
+                             FOREIGN KEY (`company_id`) REFERENCES `companies` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `users`
+-- Columns: id, email, password, first_name, last_name,
+--          avatar_url, avatar_storage_public_id, avatar_storage_resource_type,
+--          phone, gender, date_of_birth,
+--          role, status, created_at, updated_at, company_id
 --
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'admin@gmail.com','123456','Admin','System',NULL,'ADMIN','ACTIVE','2026-03-26 13:49:36','2026-03-26 13:49:36',NULL,NULL,NULL),(2,'hr@company.com','123456','HR','Manager',NULL,'RECRUITER','ACTIVE','2026-03-26 13:49:36','2026-03-26 13:49:36',NULL,NULL,NULL),(3,'candidate@gmail.com','123456','Nguyen','An',NULL,'CANDIDATE','ACTIVE','2026-03-26 13:49:36','2026-03-26 13:49:36',NULL,NULL,NULL),(4,'khue@gmail.com','$2a$10$as.OjC5lXAaVxD.CCfBfN.EgaBXwB4L0IhcfnPwiwpgYzEh8SZ822','Khue','Chanh',NULL,'ADMIN','ACTIVE','2026-04-04 16:26:59','2026-04-04 16:26:59',NULL,NULL,NULL),(5,'khang@gmail.com','$2a$10$TUROeneEBBIKKmQg9Gmzfu34LRLUaeZjVgReKgkcLOYYYQUchtCVm','Khang','Nhat','https://res.cloudinary.com/dri1spe3b/image/upload/v1776611905/recruitment/candidate-avatars/food_feueni.jpg','CANDIDATE','ACTIVE','2026-04-04 17:28:35','2026-04-04 17:28:35',NULL,'recruitment/candidate-avatars/food_feueni','image'),(6,'recruiter@gmail.com','$2a$10$lPW.VCknQUg98iJPEFaeC.zYoND4.0Td4d7lT/diTuVgJwqdYhb4G','The','Recruiter',NULL,'RECRUITER','ACTIVE','2026-04-05 05:58:41','2026-04-05 05:58:41',NULL,NULL,NULL),(7,'candidate1@gmail.com','$2a$10$9/h3UhNs3HV.yMpjJg2l1eR3BzIvWkBPKk9gQCDLUhsvCh.22/BY2','The','Candidate1',NULL,'CANDIDATE','ACTIVE','2026-04-19 13:34:08','2026-04-19 13:34:08',NULL,NULL,NULL),(8,'chanhkhue7122005@gmail.com','$2a$10$IwpVgWPqF8QUeX.UhKpcV.18HhJWMwqiIZx645fXnP70RZhME0oj2','Khue','Chanh','https://res.cloudinary.com/dri1spe3b/image/upload/v1777042642/recruitment/candidate-avatars/tv2_u33kul.jpg','CANDIDATE','ACTIVE','2026-04-24 14:54:57','2026-04-24 14:54:57',NULL,'recruitment/candidate-avatars/tv2_u33kul','image'),(9,'recuruiter2@gmail.com','$2a$10$g4x9k36rXUBD289wIFsyT.RUNkGcY1YeiDMiC9rUrFMSiFmqGjfoC','RECRUITER','THE',NULL,'RECRUITER',NULL,NULL,'2026-04-25 03:31:08',1,NULL,NULL);
+INSERT INTO `users` VALUES
+                        (1,'admin@gmail.com','123456','Admin','System',NULL,NULL,NULL,NULL,NULL,NULL,'ADMIN','ACTIVE','2026-03-26 13:49:36','2026-03-26 13:49:36',NULL),
+                        (2,'hr@company.com','123456','HR','Manager',NULL,NULL,NULL,NULL,NULL,NULL,'RECRUITER','ACTIVE','2026-03-26 13:49:36','2026-03-26 13:49:36',1),
+                        (3,'candidate@gmail.com','123456','Nguyen','An',NULL,NULL,NULL,NULL,NULL,NULL,'CANDIDATE','ACTIVE','2026-03-26 13:49:36','2026-03-26 13:49:36',NULL),
+                        (4,'khue@gmail.com','$2a$10$as.OjC5lXAaVxD.CCfBfN.EgaBXwB4L0IhcfnPwiwpgYzEh8SZ822','Khue','Chanh',NULL,NULL,NULL,NULL,NULL,NULL,'ADMIN','ACTIVE','2026-04-04 16:26:59','2026-04-04 16:26:59',NULL),
+                        (5,'khang@gmail.com','$2a$10$TUROeneEBBIKKmQg9Gmzfu34LRLUaeZjVgReKgkcLOYYYQUchtCVm','Khang','Nhat','https://res.cloudinary.com/dri1spe3b/image/upload/v1776611905/recruitment/candidate-avatars/food_feueni.jpg','recruitment/candidate-avatars/food_feueni','image',NULL,NULL,NULL,'CANDIDATE','ACTIVE','2026-04-04 17:28:35','2026-04-04 17:28:35',NULL),
+                        (6,'recruiter@gmail.com','$2a$10$lPW.VCknQUg98iJPEFaeC.zYoND4.0Td4d7lT/diTuVgJwqdYhb4G','The','Recruiter',NULL,NULL,NULL,NULL,NULL,NULL,'RECRUITER','ACTIVE','2026-04-05 05:58:41','2026-04-05 05:58:41',1),
+                        (7,'candidate1@gmail.com','$2a$10$9/h3UhNs3HV.yMpjJg2l1eR3BzIvWkBPKk9gQCDLUhsvCh.22/BY2','The','Candidate1',NULL,NULL,NULL,NULL,NULL,NULL,'CANDIDATE','ACTIVE','2026-04-19 13:34:08','2026-04-19 13:34:08',NULL),
+                        (8,'chanhkhue7122005@gmail.com','$2a$10$IwpVgWPqF8QUeX.UhKpcV.18HhJWMwqiIZx645fXnP70RZhME0oj2','Khue','Chanh','https://res.cloudinary.com/dri1spe3b/image/upload/v1777042642/recruitment/candidate-avatars/tv2_u33kul.jpg','recruitment/candidate-avatars/tv2_u33kul','image',NULL,NULL,NULL,'CANDIDATE','ACTIVE','2026-04-24 14:54:57','2026-04-24 14:54:57',NULL),
+                        (9,'recuruiter2@gmail.com','$2a$10$g4x9k36rXUBD289wIFsyT.RUNkGcY1YeiDMiC9rUrFMSiFmqGjfoC','RECRUITER','THE',NULL,NULL,NULL,NULL,NULL,NULL,'RECRUITER','ACTIVE','2026-04-25 03:31:08','2026-04-25 03:31:08',1);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -470,12 +481,12 @@ DROP TABLE IF EXISTS `verification_codes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `verification_codes` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `attempts` int NOT NULL,
-  `code` varchar(255) DEFAULT NULL,
-  `email` varchar(255) DEFAULT NULL,
-  `expire_at` datetime(6) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+                                      `id` bigint NOT NULL AUTO_INCREMENT,
+                                      `attempts` int NOT NULL,
+                                      `code` varchar(255) DEFAULT NULL,
+                                      `email` varchar(255) DEFAULT NULL,
+                                      `expire_at` datetime(6) DEFAULT NULL,
+                                      PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
