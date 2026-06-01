@@ -23,21 +23,24 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/applications")
 @RequiredArgsConstructor
 public class ApplicationController {
+
   private final ApplicationService applicationService;
+
 
   @PostMapping
   @PreAuthorize("hasRole('CANDIDATE')")
   public ResponseEntity<ApplicationResponse> applyJob(
-      @Valid @RequestBody CreateApplicationRequest request) {
-    return ResponseEntity.ok(
-        applicationService.applyJob(request));
+          @Valid @RequestBody CreateApplicationRequest request) {
+    return ResponseEntity.ok(applicationService.applyJob(request));
   }
+
 
   @GetMapping("/me")
   @PreAuthorize("hasRole('CANDIDATE')")
   public ResponseEntity<List<ApplicationResponse>> getMyApplications() {
     return ResponseEntity.ok(applicationService.getMyApplications());
   }
+
 
   @GetMapping
   @PreAuthorize("hasRole('RECRUITER')")
@@ -48,16 +51,22 @@ public class ApplicationController {
   @GetMapping("/job/{jobId}")
   @PreAuthorize("hasRole('RECRUITER')")
   public ResponseEntity<List<ApplicationResponse>> getApplicationsByJob(
-      @PathVariable Long jobId) {
+          @PathVariable Long jobId) {
     return ResponseEntity.ok(applicationService.getApplicationsByJob(jobId));
   }
+
 
   @PatchMapping("/{id}/status")
   @PreAuthorize("hasRole('RECRUITER')")
   public ResponseEntity<ApplicationResponse> updateApplicationStatus(
-      @PathVariable Long id,
-      @Valid @RequestBody UpdateApplicationStatusRequest request) {
-    return ResponseEntity.ok(
-        applicationService.updateStatus(id, request));
+          @PathVariable Long id,
+          @Valid @RequestBody UpdateApplicationStatusRequest request) {
+    return ResponseEntity.ok(applicationService.updateStatus(id, request));
+  }
+
+  @GetMapping("/admin/all")
+  @PreAuthorize("hasRole('ADMIN')")
+  public ResponseEntity<List<ApplicationResponse>> getAllApplicationsForAdmin() {
+    return ResponseEntity.ok(applicationService.getAllApplicationsForAdmin());
   }
 }

@@ -32,6 +32,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class ApplicationServiceImpl implements ApplicationService {
+
         private final ApplicationRepository applicationRepository;
         private final JobRepository jobRepository;
         private final CvRepository cvRepository;
@@ -42,26 +43,26 @@ public class ApplicationServiceImpl implements ApplicationService {
                 User user = getCurrentAuthenticatedUser();
 
                 Job job = jobRepository.findById(request.getJobId())
-                                .orElseThrow(() -> new ResourceNotFoundException("Job not found"));
+                        .orElseThrow(() -> new ResourceNotFoundException("Job not found"));
 
                 Cv cv = cvRepository.findById(request.getCvId())
-                                .orElseThrow(() -> new ResourceNotFoundException("CV not found"));
+                        .orElseThrow(() -> new ResourceNotFoundException("CV not found"));
 
                 boolean alreadyApplied = applicationRepository.existsByUserIdAndJobId(
-                                user.getId(),
-                                job.getId());
+                        user.getId(),
+                        job.getId());
 
                 if (alreadyApplied) {
                         throw new BadRequestException("You already applied this job");
                 }
 
                 Application application = Application.builder()
-                                .status(ApplicationStatus.APPLIED)
-                                .appliedAt(LocalDateTime.now())
-                                .user(user)
-                                .job(job)
-                                .cv(cv)
-                                .build();
+                        .status(ApplicationStatus.APPLIED)
+                        .appliedAt(LocalDateTime.now())
+                        .user(user)
+                        .job(job)
+                        .cv(cv)
+                        .build();
 
                 applicationRepository.save(application);
 
@@ -72,17 +73,46 @@ public class ApplicationServiceImpl implements ApplicationService {
         public List<ApplicationResponse> getMyApplications() {
                 User currentUser = getCurrentAuthenticatedUser();
                 return applicationRepository.findByUserId(currentUser.getId())
-                                .stream()
-                                .map(this::mapToResponse)
-                                .toList();
+                        .stream()
+                        .map(this::mapToResponse)
+                        .toList();
         }
 
         @Override
         public List<ApplicationResponse> getAllApplications() {
-                return applicationRepository.findAll()
-                                .stream()
-                                .map(this::mapToResponse)
-                                .toList();
+                User recruiter = getCurrentAuthenticatedUser();
+
+                if (recruiter.getCompany() == null) {
+                        throw new UnauthorizedException("Recruiter chưa được gán vào công ty nào");
+                }
+
+                Long companyId = recruiter.getCompany().getId();
+
+                return applicationRepository.findByJobCompanyId(companyId)
+                        .stream()
+                        .map(this::mapToResponse)
+                        .toList();
+        }
+
+        @Override
+        public List<ApplicationResponse> getApplicationsByJob(Long jobId) {
+                User recruiter = getCurrentAuthenticatedUser();
+
+                if (recruiter.getCompany() == null) {
+                        throw new UnauthorizedException("Recruiter chưa được gán vào công ty nào");
+                }
+
+                Job job = jobRepository.findById(jobId)
+                        .orElseThrow(() -> new ResourceNotFoundException("Job not found"));
+
+                if (!job.getCompany().getId().equals(recruiter.getCompany().getId())) {
+                        throw new UnauthorizedException("Bạn không có quyền xem đơn của job này");
+                }
+
+                return applicationRepository.findByJobIdAndCompanyId(jobId, recruiter.getCompany().getId())
+                        .stream()
+                        .map(this::mapToResponse)
+                        .toList();
         }
 
         @Override
@@ -91,8 +121,15 @@ public class ApplicationServiceImpl implements ApplicationService {
                         throw new BadRequestException("Status is required");
                 }
 
+                User recruiter = getCurrentAuthenticatedUser();
+
                 Application application = applicationRepository.findById(applicationId)
-                                .orElseThrow(() -> new ResourceNotFoundException("Application not found"));
+                        .orElseThrow(() -> new ResourceNotFoundException("Application not found"));
+
+                if (recruiter.getCompany() == null ||
+                        !application.getJob().getCompany().getId().equals(recruiter.getCompany().getId())) {
+                        throw new UnauthorizedException("Bạn không có quyền cập nhật đơn này");
+                }
 
                 ApplicationStatus status;
                 try {
@@ -107,25 +144,26 @@ public class ApplicationServiceImpl implements ApplicationService {
                 return mapToResponse(application);
         }
 
-        @Override
-        public List<ApplicationResponse> getApplicationsByJob(Long jobId) {
-                jobRepository.findById(jobId)
-                                .orElseThrow(() -> new ResourceNotFoundException("Job not found"));
+        // ── ADMIN ────────────────────────────────────────────────────────────────
 
-                return applicationRepository.findByJobId(jobId)
-                                .stream()
-                                .map(this::mapToResponse)
-                                .toList();
+        @Override
+        public List<ApplicationResponse> getAllApplicationsForAdmin() {
+                return applicationRepository.findAll()
+                        .stream()
+                        .map(this::mapToResponse)
+                        .toList();
         }
+
+        // ─── Helpers ──────────────────────────────────────────────────────────────
 
         private User getCurrentAuthenticatedUser() {
                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
                 if (authentication == null || !(authentication.getPrincipal() instanceof AuthUser authUser)) {
-                        throw new UnauthorizedException("Ban chua dang nhap");
+                        throw new UnauthorizedException("Bạn chưa đăng nhập");
                 }
 
                 return userRepository.findById(authUser.getId())
-                                .orElseThrow(() -> new ResourceNotFoundException("Khong tim thay user hien tai"));
+                        .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy user hiện tại"));
         }
 
         private ApplicationResponse mapToResponse(Application application) {
@@ -134,26 +172,26 @@ public class ApplicationServiceImpl implements ApplicationService {
                 Cv cv = application.getCv();
 
                 return ApplicationResponse.builder()
-                                .id(application.getId())
-                                .status(application.getStatus() != null ? application.getStatus().toValue() : null)
-                                .appliedAt(application.getAppliedAt())
-                                .user(
-                                                UserResponse.builder()
-                                                                .id(user.getId())
-                                                                .firstName(user.getFirstName())
-                                                                .lastName(user.getLastName())
-                                                                .email(user.getEmail())
-                                                                .build())
-                                .job(
-                                                JobResponse.builder()
-                                                                .id(job.getId())
-                                                                .title(job.getTitle())
-                                                                .build())
-                                .cv(
-                                                CvResponse.builder()
-                                                                .id(cv.getId())
-                                                                .fileUrl(cv.getFileUrl())
-                                                                .build())
-                                .build();
+                        .id(application.getId())
+                        .status(application.getStatus() != null ? application.getStatus().toValue() : null)
+                        .appliedAt(application.getAppliedAt())
+                        .user(
+                                UserResponse.builder()
+                                        .id(user.getId())
+                                        .firstName(user.getFirstName())
+                                        .lastName(user.getLastName())
+                                        .email(user.getEmail())
+                                        .build())
+                        .job(
+                                JobResponse.builder()
+                                        .id(job.getId())
+                                        .title(job.getTitle())
+                                        .build())
+                        .cv(
+                                CvResponse.builder()
+                                        .id(cv.getId())
+                                        .fileUrl(cv.getFileUrl())
+                                        .build())
+                        .build();
         }
 }
