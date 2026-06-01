@@ -66,42 +66,47 @@ const UserDropdown = ({ user }: Props) => {
         onClick={() => setOpen(!open)}
       >
         👤 {user.firstName} {user.lastName}
+        <span style={{ fontSize: "11px", marginLeft: "6px", color: "#64748b" }}>
+          ({role})
+        </span>
       </div>
 
       {/* DROPDOWN */}
       {open && (
         <div className={styles.dropdown}>
-          {/* PERSONAL INFO (FIXED) */}
-          <div
-            onClick={() => {
-              navigate(profileRoute);
-              setOpen(false);
-            }}
-          >
-            Personal information
-          </div>
+          {/* NẾU LÀ CANDIDATE THÌ HIỂN THỊ THÊM 3 MENU NÀY */}
+          {role === "candidate" && (
+            <>
+              <div
+                onClick={() => {
+                  navigate(profileRoute);
+                  setOpen(false);
+                }}
+              >
+                Personal information
+              </div>
 
-          {/* SETTINGS */}
-          <div
-            onClick={() => {
-              navigate(settingsRoute);
-              setOpen(false);
-            }}
-          >
-            Settings
-          </div>
+              <div
+                onClick={() => {
+                  navigate(settingsRoute);
+                  setOpen(false);
+                }}
+              >
+                Settings
+              </div>
 
-          {/* HELP */}
-          <div
-            onClick={() => {
-              navigate(helpRoute);
-              setOpen(false);
-            }}
-          >
-            Help
-          </div>
+              <div
+                onClick={() => {
+                  navigate(helpRoute);
+                  setOpen(false);
+                }}
+              >
+                Help
+              </div>
+            </>
+          )}
 
-          {/* LOGOUT */}
+          {/* CÁC ROLE CÒN LẠI (ADMIN, RECRUITMENT) HOẶC CANDIDATE ĐỀU CÓ LOGOUT */}
           <div
             className={styles.logout}
             onClick={handleLogout}

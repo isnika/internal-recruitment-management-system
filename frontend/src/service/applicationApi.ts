@@ -1,36 +1,17 @@
-// src/api/applicationApi.ts
+import axiosClient from "./axiosClient";
 
-import { request } from "./axiosClient";
-
-// ======================
-// TYPES
-// ======================
-
-export interface ApplicationStatusRequest {
+export type User = {
+  id: number;
+  email: string;
+  firstName: string;
+  lastName: string;
+  gender: string;
+  dateOfBirth: string;
+  role: string;
   status: string;
-}
+};
 
-export interface ApplyJobRequest {
-  jobId: number;
-  cvId: number;
-}
-
-export interface Skill {
-  id: number;
-  name: string;
-}
-
-export interface Category {
-  id: number;
-  name: string;
-}
-
-export interface ExperienceLevel {
-  id: number;
-  name: string;
-}
-
-export interface Company {
+export type Company = {
   id: number;
   name: string;
   description: string;
@@ -38,9 +19,24 @@ export interface Company {
   website: string;
   logoUrl: string;
   status: string;
-}
+};
 
-export interface Job {
+export type Category = {
+  id: number;
+  name: string;
+};
+
+export type ExperienceLevel = {
+  id: number;
+  name: string;
+};
+
+export type Skill = {
+  id: number;
+  name: string;
+};
+
+export type Job = {
   id: number;
   title: string;
   description: string;
@@ -52,68 +48,69 @@ export interface Job {
   type: string;
   status: string;
   deadline: string;
-
   company: Company;
   category: Category;
   experienceLevel: ExperienceLevel;
   skills: Skill[];
-}
+};
 
-export interface Cv {
+export type CV = {
   id: number;
   fileUrl: string;
   createdAt: string;
-}
+};
 
-export interface User {
-  id: number;
-  email: string;
-  firstName: string;
-  lastName: string;
-  gender: string;
-  dateOfBirth: string;
-  role: string;
-  status: string;
-}
+export type ApplicationStatus =
+  | "PENDING"
+  | "REVIEWING"
+  | "INTERVIEWING"
+  | "ACCEPTED"
+  | "REJECTED";
 
-export interface Application {
+export type Application = {
   id: number;
-  status: string;
+  status: ApplicationStatus;
   appliedAt: string;
-
   user: User;
   job: Job;
-  cv: Cv;
-}
+  cv: CV;
+};
 
-// ======================
-// API
-// ======================
+export type CreateApplicationReq = {
+  jobId: number;
+  cvId: number;
+};
+
+export type UpdateApplicationStatusReq = {
+  status: ApplicationStatus;
+};
 
 const applicationApi = {
-  // Apply job
-  applyJob: (data: ApplyJobRequest) =>
-    request.post<Application>("/api/applications", data),
+  getAll(): Promise<Application[]> {
+    return axiosClient.get("/api/applications");
+  },
 
-  // Candidate xem danh sách job đã apply
-  getMyApplications: () =>
-    request.get<Application[]>("/api/applications/me"),
+  getMyApplications(): Promise<Application[]> {
+    return axiosClient.get("/api/applications/me");
+  },
 
-  // Recruiter xem ứng viên của job
-  getApplicationsByJob: (jobId: number) =>
-    request.get<Application[]>(
-      `/api/applications/job/${jobId}`
-    ),
+  getByJob(jobId: number): Promise<Application[]> {
+    return axiosClient.get(`/api/applications/job/${jobId}`);
+  },
 
-  // Recruiter update trạng thái
-  updateApplicationStatus: (
-    applicationId: number,
-    data: ApplicationStatusRequest
-  ) =>
-    request.patch<Application>(
-      `/api/applications/${applicationId}/status`,
+  create(data: CreateApplicationReq): Promise<Application> {
+    return axiosClient.post("/api/applications", data);
+  },
+
+  updateStatus(
+    id: number,
+    data: UpdateApplicationStatusReq
+  ): Promise<Application> {
+    return axiosClient.patch(
+      `/api/applications/${id}/status`,
       data
-    ),
+    );
+  },
 };
 
 export default applicationApi;

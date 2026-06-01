@@ -1,7 +1,12 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
 import styles from "./InterviewManagement.module.css";
 
-import type { Interview, InterviewStatus } from "../types/types";
+import type {
+  Interview,
+  InterviewStatus,
+  InterviewResult,
+} from "../types/types";
+
 import interviewApi from "../../../../service/interviewApi";
 
 import InterviewHeader from "../components/InterviewHeader/InterviewHeader";
@@ -21,6 +26,9 @@ import {
 } from "react-icons/fi";
 
 export default function InterviewManagement() {
+  // ======================
+  // STATE
+  // ======================
   const [statusFilter, setStatusFilter] =
     useState<InterviewStatus | "ALL">("ALL");
 
@@ -39,15 +47,13 @@ export default function InterviewManagement() {
   } = useInterviewModals();
 
   // ======================
-  // LOAD DATA
+  // FETCH DATA (ADMIN)
   // ======================
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
 
-      const res = await interviewApi.getMyInterviews();
-
-      // ⚠️ FIX: backend trả ApiResponse<Interview[]>
+      const res = await interviewApi.getAll();
       const interviews = res.data?.data ?? [];
 
       setData(interviews);
@@ -64,7 +70,7 @@ export default function InterviewManagement() {
   }, [fetchData]);
 
   // ======================
-  // FILTER DATA
+  // FILTER
   // ======================
   const filteredData = useMemo(() => {
     if (statusFilter === "ALL") return data;
@@ -77,14 +83,16 @@ export default function InterviewManagement() {
   const metrics = useMemo(() => {
     return {
       total: data.length,
-      pending: data.filter((i) => i.status === "PENDING").length,
-      accepted: data.filter((i) => i.status === "ACCEPTED").length,
-      rejected: data.filter((i) => i.status === "REJECTED").length,
+      scheduled: data.filter((i) => i.status === "scheduled").length,
+      in_progress: data.filter((i) => i.status === "in_progress").length,
+      completed: data.filter((i) => i.status === "completed").length,
+      cancelled: data.filter((i) => i.status === "cancelled").length,
+      no_show: data.filter((i) => i.status === "no_show").length,
     };
   }, [data]);
 
   // ======================
-  // HELPERS (safe update)
+  // UPDATE LOCAL STATE
   // ======================
   const updateInterview = (updated: Interview) => {
     setData((prev) =>
@@ -93,40 +101,39 @@ export default function InterviewManagement() {
   };
 
   // ======================
-  // ACTIONS
+  // UPDATE STATUS
   // ======================
-  const handleAccept = async (id: number) => {
+  const handleUpdateStatus = async (
+    id: number,
+    status: InterviewStatus
+  ) => {
     try {
-      const res = await interviewApi.accept(id);
+      const res = await interviewApi.updateStatus(id, status);
       const updated = res.data?.data;
+
       if (updated) updateInterview(updated);
     } catch (err) {
-      console.error("Accept failed:", err);
+      console.error("Update status failed:", err);
     }
   };
 
-  const handleReject = async (id: number) => {
-    try {
-      const res = await interviewApi.reject(id);
-      const updated = res.data?.data;
-      if (updated) updateInterview(updated);
-    } catch (err) {
-      console.error("Reject failed:", err);
-    }
-  };
-
+  // ======================
+  // UPDATE RESULT
+  // ======================
   const handleUpdateResult = async (body: {
     id: number;
-    result: string;
+    result: InterviewResult;
     note?: string;
   }) => {
     try {
-      const res = await interviewApi.updateResult(body.id, {
-        result: body.result,
-        note: body.note,
-      });
+      const res = await interviewApi.updateResult(
+        body.id,
+        body.result,
+        body.note
+      );
 
       const updated = res.data?.data;
+
       if (updated) updateInterview(updated);
 
       setOpenUpdate(false);
@@ -135,6 +142,9 @@ export default function InterviewManagement() {
     }
   };
 
+  // ======================
+  // RENDER
+  // ======================
   return (
     <div className={styles.wrapper}>
       {/* HEADER */}
@@ -164,20 +174,30 @@ export default function InterviewManagement() {
 
         <div className={styles.statsCard}>
           <FiClock />
-          <strong>{metrics.pending}</strong>
-          <span>Pending</span>
+          <strong>{metrics.scheduled}</strong>
+          <span>Scheduled</span>
+        </div>
+
+        <div className={styles.statsCard}>
+          <strong>{metrics.in_progress}</strong>
+          <span>In Progress</span>
         </div>
 
         <div className={styles.statsCard}>
           <FiCheckCircle />
-          <strong>{metrics.accepted}</strong>
-          <span>Accepted</span>
+          <strong>{metrics.completed}</strong>
+          <span>Completed</span>
         </div>
 
         <div className={styles.statsCard}>
           <FiXCircle />
-          <strong>{metrics.rejected}</strong>
-          <span>Rejected</span>
+          <strong>{metrics.cancelled}</strong>
+          <span>Cancelled</span>
+        </div>
+
+        <div className={styles.statsCard}>
+          <strong>{metrics.no_show}</strong>
+          <span>No Show</span>
         </div>
       </div>
 
@@ -213,8 +233,25 @@ export default function InterviewManagement() {
               setSelected(i);
               setOpenUpdate(true);
             }}
-            onAccept={(i) => handleAccept(i.id)}
-            onReject={(i) => handleReject(i.id)}
+
+            // ======================
+            // STATUS FLOW ACTIONS
+            // ======================
+            onSchedule={(i) =>
+              handleUpdateStatus(i.id, "scheduled")
+            }
+            onStart={(i) =>
+              handleUpdateStatus(i.id, "in_progress")
+            }
+            onComplete={(i) =>
+              handleUpdateStatus(i.id, "completed")
+            }
+            onCancel={(i) =>
+              handleUpdateStatus(i.id, "cancelled")
+            }
+            onNoShow={(i) =>
+              handleUpdateStatus(i.id, "no_show")
+            }
           />
         )}
       </main>

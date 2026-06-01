@@ -1,11 +1,29 @@
-export type InterviewStatus = "SCHEDULED" | "DONE" | "CANCELLED";
-
 export type Interview = {
   id: number;
-  candidateName: string;
-  jobTitle: string;
-  interviewer: string;
-  date: string;
-  time: string;
+
+  scheduleTime: string; // ISO string
+
+  location: string;
+
   status: InterviewStatus;
+
+  result?: InterviewResult;
+
+  note?: string;
+
+  application: {
+    id: number;
+
+    user: {
+      id: number;
+      email: string;
+      firstName: string;
+      lastName: string;
+    };
+
+    job: {
+      id: number;
+      title: string;
+    };
+  };
 };

@@ -46,10 +46,8 @@ export default function Settings(): React.ReactElement {
  const [step, setStep] = useState<1 | 2 | 3>(1);
  const [loading, setLoading] = useState(false);
 
-  // Hàm trigger hiển thị thông báo "Coming soon" kèm mô tả chi tiết
   const handleFeatureClick = (type: "theme" | "lang", optLabel: string) => {
     setActiveNotice(type);
-    // Tự động tắt thông báo sau 5 giây nếu người dùng không bấm đóng
     setTimeout(() => {
       setActiveNotice((current) => (current === type ? null : current));
     }, 5000);
@@ -141,7 +139,6 @@ const handleSendEmail = async () => {
 
       <hr className={styles.divider} />
 
-      {/* CHỨC NĂNG 3: SECURE PASSPHRASE ROTATION (TÍNH NĂNG ĐÃ CHẠY) */}
       <ChangePassword />
     </div>
   );

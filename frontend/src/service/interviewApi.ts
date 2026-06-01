@@ -1,22 +1,32 @@
 import { request } from "./axiosClient";
 
-// ======================
+ 
 // TYPES
-// ======================
-
 export type InterviewStatus =
-  | "PENDING"
-  | "ACCEPTED"
-  | "REJECTED"
-  | "SCHEDULED"
-  | "DONE";
+  | "scheduled"
+  | "in_progress"
+  | "completed"
+  | "cancelled"
+  | "no_show";
+
+export type InterviewResult = "passed" | "failed";
+
+export interface ApiResponse<T> {
+  status: number;
+  message: string;
+  data: T;
+}
+
+// INTERVIEW TYPES
 
 export interface Interview {
   id: number;
   scheduleTime: string;
   location: string;
+
   status: InterviewStatus;
-  result?: string;
+
+  result?: InterviewResult;
   note?: string;
 
   application: {
@@ -52,48 +62,52 @@ export interface InterviewCreateRequest {
 }
 
 export interface InterviewResultRequest {
-  result: string;
+  result: InterviewResult;
   note?: string;
 }
 
-export interface ApiResponse<T> {
-  status: number;
-  message: string;
-  data: T;
+export interface InterviewStatusRequest {
+  status: InterviewStatus;
 }
 
-// ======================
-// CONFIG
-// ======================
-
-// 🔥 FIX QUAN TRỌNG NHẤT
+ 
+// BASE ENDPOINT
 const ENDPOINT = "/api/interviews";
 
-// ======================
+ 
 // API
-// ======================
 
 export const interviewApi = {
+  // CREATE INTERVIEW
   create: (body: InterviewCreateRequest) => {
     return request.post<ApiResponse<Interview>>(ENDPOINT, body);
   },
 
+  // GET MY INTERVIEWS
   getMyInterviews: () => {
     return request.get<ApiResponse<Interview[]>>(`${ENDPOINT}/me`);
   },
 
+  // GET BY ID
   getById: (id: number) => {
     return request.get<ApiResponse<Interview>>(`${ENDPOINT}/${id}`);
   },
 
+  // ACCEPT INTERVIEW
   accept: (id: number) => {
-    return request.post<ApiResponse<Interview>>(`${ENDPOINT}/${id}/accept`);
+    return request.post<ApiResponse<Interview>>(
+      `${ENDPOINT}/${id}/accept`
+    );
   },
 
+  // REJECT INTERVIEW
   reject: (id: number) => {
-    return request.post<ApiResponse<Interview>>(`${ENDPOINT}/${id}/reject`);
+    return request.post<ApiResponse<Interview>>(
+      `${ENDPOINT}/${id}/reject`
+    );
   },
 
+  //  UPDATE STATUS
   updateStatus: (id: number, status: InterviewStatus) => {
     return request.patch<ApiResponse<Interview>>(
       `${ENDPOINT}/${id}/status`,
@@ -101,6 +115,7 @@ export const interviewApi = {
     );
   },
 
+  //  UPDATE RESULT
   updateResult: (id: number, body: InterviewResultRequest) => {
     return request.patch<ApiResponse<Interview>>(
       `${ENDPOINT}/${id}/result`,

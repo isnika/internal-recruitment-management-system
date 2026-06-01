@@ -254,3 +254,4 @@ export default function ChangePassword(): React.ReactElement {
     </div>
   );
 }
+
