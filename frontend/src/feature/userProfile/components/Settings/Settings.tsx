@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import styles from "./Settings.module.css";
 import ChangePassword from "./components/ChangePassword/ChangePassword";
 
+
 interface OptionItem<T> {
   value: T;
   label: string;
@@ -10,14 +11,11 @@ interface OptionItem<T> {
 }
 
 export default function Settings(): React.ReactElement {
-  // Mock dữ liệu mặc định hệ thống (vì tính năng chưa thực tế thay đổi được)
   const [language] = useState<string>("en");
   const [theme] = useState<string>("light");
 
-  // State quản lý việc hiển thị popup thông báo chi tiết tính năng cho từng khu vực
   const [activeNotice, setActiveNotice] = useState<"theme" | "lang" | null>(null);
 
-  // Bộ data chứa đầy đủ thông tin mô tả chi tiết hệ thống sẽ phát triển
   const themeOptions: OptionItem<"light" | "dark">[] = [
     {
       value: "light",
@@ -39,6 +37,15 @@ export default function Settings(): React.ReactElement {
     { value: "ja", label: "日本語", description: "システム全体の表記、通知、およびダッシュボードを日本語環境に切り替えます。" },
   ];
 
+ const [forgotOpen, setForgotOpen] = useState(false);
+
+ const [email, setEmail] = useState("");
+ const [otp, setOtp] = useState("");
+ const [newPassword, setNewPassword] = useState("");
+
+ const [step, setStep] = useState<1 | 2 | 3>(1);
+ const [loading, setLoading] = useState(false);
+
   // Hàm trigger hiển thị thông báo "Coming soon" kèm mô tả chi tiết
   const handleFeatureClick = (type: "theme" | "lang", optLabel: string) => {
     setActiveNotice(type);
@@ -47,6 +54,20 @@ export default function Settings(): React.ReactElement {
       setActiveNotice((current) => (current === type ? null : current));
     }, 5000);
   };
+
+const handleSendEmail = async () => {
+  setLoading(true);
+  try {
+    await forgotPassword({ email });
+    await sendCode({ email }); // nếu backend bạn tách OTP
+
+    setStep(2);
+  } catch (err) {
+    console.error(err);
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className={styles.container}>
