@@ -23,6 +23,7 @@ import AppliedJobs from "../feature/userProfile/components/AppliedJob/AppliedJob
 import Settings from "../feature/userProfile/components/Settings/Settings";
 import ApplyJobPage from "../feature/apply-job/ApplyJobPage";
 import SearchPage from "../feature/Search/pages/SearchPage/SearchPage";
+import RecruitmentHelpCenter from "../feature/userProfile/components/Help/RecruitmentHelpCenter";
 
 /* management */
 import HomeEmployer from "../feature/employer/home/pages/HomeEmployer/homeEmployer";
@@ -75,6 +76,7 @@ export default function AppRoutes() {
           <Route path="saved" element={<SavedJobs />} />
           <Route path="applied" element={<AppliedJobs />} />
           <Route path="settings" element={<Settings />} />
+          <Route path="help" element={<RecruitmentHelpCenter/>} />
         </Route>
       </Route>
 

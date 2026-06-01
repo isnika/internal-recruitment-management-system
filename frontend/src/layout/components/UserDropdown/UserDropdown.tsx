@@ -25,8 +25,8 @@ const UserDropdown = ({ user }: Props) => {
 
   // ROUTES FIXED (KHÔNG LỆ THUỘC baseRoute)
   const profileRoute = "/profile";
-  const settingsRoute = "/settings";
-  const helpRoute = "/help";
+  const settingsRoute = "/profile/settings";
+  const helpRoute = "/profile/help";
 
   const handleLogout = async () => {
     try {

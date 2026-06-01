@@ -62,6 +62,18 @@ export default function Sidebar() {
             Settings
           </NavLink>
         </li>
+
+        <li>
+          <NavLink
+            to="/profile/help"
+            className={({ isActive }) =>
+              `${styles.navLink} ${isActive ? styles.navActive : ""}`
+            }
+          >
+            Help
+          </NavLink>
+        </li>
+
       </ul>
     </div>
   );
