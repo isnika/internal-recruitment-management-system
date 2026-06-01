@@ -243,13 +243,13 @@ CREATE TABLE `interviews` (
                               `application_id` bigint DEFAULT NULL,
                               `schedule_time` datetime DEFAULT NULL,
                               `location` varchar(255) DEFAULT NULL,
-                              `status` enum('PENDING','ACCEPTED','REJECTED','SCHEDULED') DEFAULT NULL,
+                              `status` enum('PENDING','ACCEPTED','REJECTED','SCHEDULED','IN_PROGRESS','COMPLETED','CANCELLED','NO_SHOW') DEFAULT NULL,
                               `result` varchar(255) DEFAULT NULL,
                               `note` text,
                               PRIMARY KEY (`id`),
                               KEY `application_id` (`application_id`),
                               CONSTRAINT `interviews_ibfk_1` FOREIGN KEY (`application_id`) REFERENCES `applications` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -258,6 +258,10 @@ CREATE TABLE `interviews` (
 
 LOCK TABLES `interviews` WRITE;
 /*!40000 ALTER TABLE `interviews` DISABLE KEYS */;
+INSERT INTO `interviews` VALUES
+                             (1, 3, '2026-06-05 09:00:00', 'HCM Office - Floor 3', 'PENDING',   NULL,    'Phỏng vấn vòng 1 - Technical'),
+                             (2, 3, '2026-06-10 14:00:00', 'HCM Office - Floor 5', 'SCHEDULED', NULL,    'Phỏng vấn vòng 2 - HR'),
+                             (3, 3, '2026-06-12 10:00:00', 'Online - Google Meet',  'ACCEPTED',  NULL,    'Ứng viên đã xác nhận lịch');
 /*!40000 ALTER TABLE `interviews` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -452,10 +456,6 @@ CREATE TABLE `users` (
 
 --
 -- Dumping data for table `users`
--- Columns: id, email, password, first_name, last_name,
---          avatar_url, avatar_storage_public_id, avatar_storage_resource_type,
---          phone, gender, date_of_birth,
---          role, status, created_at, updated_at, company_id
 --
 
 LOCK TABLES `users` WRITE;
@@ -498,8 +498,8 @@ LOCK TABLES `verification_codes` WRITE;
 /*!40000 ALTER TABLE `verification_codes` DISABLE KEYS */;
 /*!40000 ALTER TABLE `verification_codes` ENABLE KEYS */;
 UNLOCK TABLES;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
@@ -508,4 +508,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-05-27 21:54:45
+-- Dump completed on 2026-06-02 00:00:00
