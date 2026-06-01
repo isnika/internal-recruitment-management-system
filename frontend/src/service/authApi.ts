@@ -24,11 +24,15 @@ export type LoginRes = { token: string; type: string; userId: number; email: str
 export type RegisterReq = {
   email: string;
   password: string;
+  confirmPassword: string;
   firstName: string;
   lastName: string;
+  phone: string;
+  gender: string;
+  dateOfBirth: string;
   code: string;
-  role: "CANDIDATE" | "RECRUITER" | string;
-  companyId?: number;
+  role: "CANDIDATE" | "RECRUITER";
+  companyId?: number | null;
 };
 
 export type ForgotPasswordReq = { email: string };

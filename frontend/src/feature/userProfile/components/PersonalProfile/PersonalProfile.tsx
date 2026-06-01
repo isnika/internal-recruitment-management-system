@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 
-import { useAuth } from "../../../auth/context/AuthContext";
-
 import {
   getMyCandidateProfile,
   updateCandidateProfile,
@@ -14,8 +12,8 @@ import RecruitmentSection from "./RecruitmentSection";
 import styles from "./PersonalProfile.module.css";
 
 export default function PersonalProfile() {
-  const { user, setUser } = useAuth();
-
+  // ✅ PROFILE STATE (tách riêng auth)
+  const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   // =========================
@@ -26,52 +24,53 @@ export default function PersonalProfile() {
       try {
         setLoading(true);
 
-        const profile =
-          await getMyCandidateProfile();
+        const res = await getMyCandidateProfile();
 
-        console.log(
-          "PROFILE:",
-          profile
-        );
+        console.log("PROFILE:", res);
 
-        setUser(profile);
+        setProfile(res); // ✅ đúng
       } catch (err) {
-        console.error(
-          "Failed to load profile:",
-          err
-        );
+        console.error("Failed to load profile:", err);
       } finally {
         setLoading(false);
       }
     };
 
     fetchProfile();
-  }, [setUser]);
+  }, []);
 
-  const handleUpdateProfile = async (
-    updatedData: any
-  ) => {
+  // =========================
+  // UPDATE PROFILE
+  // =========================
+  const handleUpdateProfile = async (updatedData: any) => {
     try {
-      const updatedUser =
-        await updateCandidateProfile(
-          updatedData
-        );
+      const updated = await updateCandidateProfile(updatedData);
 
-      setUser(updatedUser);
+      setProfile(updated); //  update UI luôn
     } catch (err) {
       console.error(err);
       throw err;
     }
   };
 
+  // =========================
+  // UPDATE AVATAR
+  // =========================
   const handleUpdateAvatar = async (file: File) => {
-    await updateCandidateAvatar(file);
+    try {
+      await updateCandidateAvatar(file);
 
-    const profile = await getMyCandidateProfile();
+      const res = await getMyCandidateProfile();
 
-    setUser(profile);
+      setProfile(res); //  refresh profile
+    } catch (err) {
+      console.error(err);
+    }
   };
 
+  // =========================
+  // LOADING STATE
+  // =========================
   if (loading) {
     return (
       <div className={styles.loadingState}>
@@ -80,7 +79,10 @@ export default function PersonalProfile() {
     );
   }
 
-  if (!user) {
+  // =========================
+  // EMPTY STATE
+  // =========================
+  if (!profile) {
     return (
       <div className={styles.loadingState}>
         No profile found.
@@ -88,12 +90,16 @@ export default function PersonalProfile() {
     );
   }
 
-console.log("PROFILE USER:", user);
+  console.log("PROFILE USER:", profile);
+
+  // =========================
+  // UI
+  // =========================
   return (
     <div className={styles.container}>
       <main className={styles.profileWrapper}>
         <PersonalSection
-          user={user}
+          user={profile}
           onSave={handleUpdateProfile}
           onAvatarSave={handleUpdateAvatar}
         />
@@ -101,7 +107,7 @@ console.log("PROFILE USER:", user);
         <hr className={styles.sectionDivider} />
 
         <RecruitmentSection
-          user={user}
+          user={profile}
           onSave={handleUpdateProfile}
         />
       </main>

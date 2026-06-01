@@ -5,26 +5,17 @@ import {
   ReactNode,
 } from "react";
 
-type User = {
+type AuthUser = {
   userId?: number;
   email?: string;
   role?: string;
   token?: string;
-  [key: string]: any;
 };
 
 type AuthContextType = {
-  user: User | null;
-
-  setUser: React.Dispatch<
-    React.SetStateAction<User | null>
-  >;
-
-  login: (
-    user: User,
-    token: string
-  ) => void;
-
+  user: AuthUser | null;
+  setUser: React.Dispatch<React.SetStateAction<AuthUser | null>>;
+  login: (user: AuthUser, token: string) => void;
   logout: () => void;
 };
 
@@ -59,18 +50,19 @@ export const AuthProvider = ({
       return null;
     });
 
-  const login = (userData: User, token: string) => {
-    const fullUser = {
-      ...userData,
-      token,
-    };
-
-    localStorage.setItem("user", JSON.stringify(fullUser));
-    localStorage.setItem("access_token", token);
-
-    setUser(fullUser);
+const login = (userData: AuthUser, token: string) => {
+  const fullUser = {
+    ...userData,
+    token,
   };
-  const logout = () => {
+
+  localStorage.setItem("user", JSON.stringify(fullUser));
+  localStorage.setItem("access_token", token);
+
+  setUser(fullUser);
+};
+
+const logout = () => {
     localStorage.removeItem("user");
 
     localStorage.removeItem(

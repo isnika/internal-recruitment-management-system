@@ -382,7 +382,7 @@ export default function RecruitmentSection({
           </div>
 
           <div className={styles.formGroup}>
-            <label>Social Link</label>
+            <label>LinkedIn / Portfolio / GitHub</label>
 
             <input
               disabled={!edit}

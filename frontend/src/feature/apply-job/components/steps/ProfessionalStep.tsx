@@ -1,25 +1,39 @@
+import { useEffect } from "react";
 import styles from "./ProfessionalStep.module.css";
 
 const ProfessionalStep = ({ job, form, setForm }: any) => {
   if (!job) return null;
 
-  const handleChange = (field: string, value: string) => {
-    setForm({
-      ...form,
+  const handleChange = (field: string, value: any) => {
+    setForm((prev: any) => ({
+      ...prev,
       [field]: value,
-    });
+    }));
   };
+
+  // sync job data
+  useEffect(() => {
+    setForm((prev: any) => ({
+      ...prev,
+      jobId: job.id,
+      jobTitle: job.title,
+    }));
+  }, [job, setForm]);
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.title}>Professional Information</h2>
+      <h2 className={styles.title}>
+        Professional Information
+      </h2>
 
       <div className={styles.grid}>
         <div className={styles.fieldFull}>
           <label>Introduction</label>
           <textarea
             value={form?.intro ?? ""}
-            onChange={(e) => handleChange("intro", e.target.value)}
+            onChange={(e) =>
+              handleChange("intro", e.target.value)
+            }
             placeholder="Write your introduction..."
           />
         </div>
@@ -34,7 +48,12 @@ const ProfessionalStep = ({ job, form, setForm }: any) => {
           <input
             type="number"
             value={form?.salary ?? ""}
-            onChange={(e) => handleChange("salary", e.target.value)}
+            onChange={(e) =>
+              handleChange(
+                "salary",
+                Number(e.target.value)
+              )
+            }
             placeholder="Enter salary"
           />
         </div>
@@ -44,7 +63,9 @@ const ProfessionalStep = ({ job, form, setForm }: any) => {
           <input
             type="date"
             value={form?.startDate ?? ""}
-            onChange={(e) => handleChange("startDate", e.target.value)}
+            onChange={(e) =>
+              handleChange("startDate", e.target.value)
+            }
           />
         </div>
       </div>

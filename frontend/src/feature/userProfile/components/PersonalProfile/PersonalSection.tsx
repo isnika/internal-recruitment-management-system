@@ -25,14 +25,8 @@ export default function PersonalSection({
   const [phone, setPhone] = useState("");
   const [gender, setGender] = useState("");
 
-  const [avatarUploading, setAvatarUploading] =
-    useState(false);
-
-  const [avatarMessage, setAvatarMessage] =
-    useState("");
-
-  const [avatarPreview, setAvatarPreview] =
-    useState<string | null>(null);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
 
   const [dob, setDob] = useState({
     year: "",
@@ -40,10 +34,14 @@ export default function PersonalSection({
     day: "",
   });
 
+  const [avatarUploading, setAvatarUploading] = useState(false);
+  const [avatarMessage, setAvatarMessage] = useState("");
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // =========================
-  // SYNC USER
+  // SYNC USER → STATE
   // =========================
   useEffect(() => {
     if (!user) return;
@@ -52,11 +50,10 @@ export default function PersonalSection({
     setPhone(user.phone || "");
     setGender(user.gender || "");
 
-    const parts = user.dateOfBirth?.split("-") || [
-      "",
-      "",
-      "",
-    ];
+    setFirstName(user.firstName || "");
+    setLastName(user.lastName || "");
+
+    const parts = user?.dateOfBirth?.split("-") ?? ["", "", ""];
 
     setDob({
       year: parts[0] || "",
@@ -65,7 +62,7 @@ export default function PersonalSection({
     });
   }, [user]);
 
-  // cleanup avatar preview
+  // cleanup preview
   useEffect(() => {
     return () => {
       if (avatarPreview) {
@@ -74,7 +71,10 @@ export default function PersonalSection({
     };
   }, [avatarPreview]);
 
-  const genders = ["male", "female", "other"];
+  // =========================
+  // CONSTANTS
+  // =========================
+  const genders = ["MALE", "FEMALE", "OTHER"];
 
   const days = Array.from({ length: 31 }, (_, i) =>
     String(i + 1).padStart(2, "0")
@@ -88,56 +88,38 @@ export default function PersonalSection({
     String(new Date().getFullYear() - i)
   );
 
-  const firstName = user?.firstName || "";
-  const lastName = user?.lastName || "";
-
   // =========================
-  // AVATAR
+  // AVATAR UPLOAD
   // =========================
   const handleAvatarChange = async (
     e: ChangeEvent<HTMLInputElement>
   ) => {
     const file = e.target.files?.[0];
-
     if (!file) return;
 
     const previewUrl = URL.createObjectURL(file);
-
     setAvatarPreview(previewUrl);
 
     try {
       setAvatarUploading(true);
-
       setAvatarMessage("Uploading avatar...");
 
       await onAvatarSave(file);
 
-      // clear preview để dùng avatar từ backend
       setAvatarPreview(null);
-
-      setAvatarMessage(
-        "Avatar uploaded successfully!"
-      );
+      setAvatarMessage("Avatar uploaded successfully!");
     } catch (error) {
-      console.error(
-        "Upload avatar failed:",
-        error
-      );
-
-      setAvatarMessage(
-        "Upload avatar failed!"
-      );
+      console.error(error);
+      setAvatarMessage("Upload avatar failed!");
     } finally {
       setAvatarUploading(false);
 
-      setTimeout(() => {
-        setAvatarMessage("");
-      }, 3000);
+      setTimeout(() => setAvatarMessage(""), 3000);
     }
   };
 
   // =========================
-  // SAVE
+  // SAVE PROFILE
   // =========================
   const handleSave = async () => {
     if (!editPersonal) {
@@ -172,6 +154,9 @@ export default function PersonalSection({
     return <div>Loading...</div>;
   }
 
+  // =========================
+  // UI
+  // =========================
   return (
     <div className={styles.sectionContainer}>
       <h2 className={styles.sectionTitle}>
@@ -191,9 +176,7 @@ export default function PersonalSection({
 
           <div
             className={styles.avatarCircle}
-            onClick={() =>
-              fileInputRef.current?.click()
-            }
+            onClick={() => fileInputRef.current?.click()}
           >
             <img
               src={
@@ -207,12 +190,13 @@ export default function PersonalSection({
             />
           </div>
 
-          <p className={styles.changeAvatarText}
-             onClick={() =>
-             fileInputRef.current?.click()
-           }>
+          <p
+            className={styles.changeAvatarText}
+            onClick={() => fileInputRef.current?.click()}
+          >
             Change Avatar
           </p>
+
           {avatarMessage && (
             <p className={styles.uploadMessage}>
               {avatarMessage}
@@ -223,20 +207,14 @@ export default function PersonalSection({
         <div className={styles.formBox}>
           <div className={styles.formGroup}>
             <label>Email</label>
-            <input
-              value={user?.email || ""}
-              readOnly
-            />
+            <input value={user?.email || ""} readOnly />
           </div>
 
           <div className={styles.formGroup}>
             <label>Address</label>
-
             <input
               value={address}
-              onChange={(e) =>
-                setAddress(e.target.value)
-              }
+              onChange={(e) => setAddress(e.target.value)}
               readOnly={!editPersonal}
             />
           </div>
@@ -249,20 +227,12 @@ export default function PersonalSection({
           <div className={styles.rowTwo}>
             <div className={styles.formGroup}>
               <label>First Name</label>
-
-              <input
-                value={firstName}
-                readOnly
-              />
+              <input value={firstName} readOnly />
             </div>
 
             <div className={styles.formGroup}>
               <label>Last Name</label>
-
-              <input
-                value={lastName}
-                readOnly
-              />
+              <input value={lastName} readOnly />
             </div>
           </div>
 
@@ -273,14 +243,9 @@ export default function PersonalSection({
               {editPersonal ? (
                 <select
                   value={gender}
-                  onChange={(e) =>
-                    setGender(e.target.value)
-                  }
+                  onChange={(e) => setGender(e.target.value)}
                 >
-                  <option value="">
-                    Select gender
-                  </option>
-
+                  <option value="">Select gender</option>
                   {genders.map((g) => (
                     <option key={g} value={g}>
                       {g}
@@ -294,12 +259,9 @@ export default function PersonalSection({
 
             <div className={styles.formGroup}>
               <label>Phone</label>
-
               <input
                 value={phone}
-                onChange={(e) =>
-                  setPhone(e.target.value)
-                }
+                onChange={(e) => setPhone(e.target.value)}
                 readOnly={!editPersonal}
               />
             </div>
@@ -314,16 +276,10 @@ export default function PersonalSection({
                 disabled={!editPersonal}
                 value={dob.day}
                 onChange={(e) =>
-                  setDob({
-                    ...dob,
-                    day: e.target.value,
-                  })
+                  setDob({ ...dob, day: e.target.value })
                 }
               >
-                <option value="">
-                  Day
-                </option>
-
+                <option value="">Day</option>
                 {days.map((d) => (
                   <option key={d} value={d}>
                     {d}
@@ -335,16 +291,10 @@ export default function PersonalSection({
                 disabled={!editPersonal}
                 value={dob.month}
                 onChange={(e) =>
-                  setDob({
-                    ...dob,
-                    month: e.target.value,
-                  })
+                  setDob({ ...dob, month: e.target.value })
                 }
               >
-                <option value="">
-                  Month
-                </option>
-
+                <option value="">Month</option>
                 {months.map((m) => (
                   <option key={m} value={m}>
                     {m}
@@ -356,16 +306,10 @@ export default function PersonalSection({
                 disabled={!editPersonal}
                 value={dob.year}
                 onChange={(e) =>
-                  setDob({
-                    ...dob,
-                    year: e.target.value,
-                  })
+                  setDob({ ...dob, year: e.target.value })
                 }
               >
-                <option value="">
-                  Year
-                </option>
-
+                <option value="">Year</option>
                 {years.map((y) => (
                   <option key={y} value={y}>
                     {y}
@@ -378,10 +322,7 @@ export default function PersonalSection({
       </div>
 
       <div className={styles.headerActions}>
-        <button
-          onClick={handleSave}
-          disabled={saving}
-        >
+        <button onClick={handleSave} disabled={saving}>
           {saving
             ? "Saving..."
             : editPersonal

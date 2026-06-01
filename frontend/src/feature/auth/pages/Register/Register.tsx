@@ -3,11 +3,13 @@ import styles from "./Register.module.css";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
 import { FaRegEye } from "react-icons/fa";
+import { register, sendCode } from "../../../../service/authApi";
 
 import { useState, ChangeEvent, FormEvent } from "react";
 
 type FormData = {
   email: string;
+  phone: string;
   firstName: string;
   lastName: string;
 
@@ -38,6 +40,8 @@ const Register = () => {
     password: "",
     confirmPassword: "",
     code: "",
+    role: "CANDIDATE",
+    companyId: null,
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -61,39 +65,52 @@ const Register = () => {
       return;
     }
 
-    const payload = {
-      email: form.email,
-      password: form.password,
-      firstName: form.firstName,
-      lastName: form.lastName,
-      phone: form.phone,
-      gender: form.gender,
-      dateOfBirth: `${form.year}-${form.month.padStart(2, "0")}-${form.day.padStart(2, "0")}`,
-      role: "CANDIDATE",
-      code: form.code,
-      companyId: null,
-    };
+    try {
+      const res = await register({
+        email: form.email,
+        password: form.password,
+        confirmPassword: form.confirmPassword,
+        firstName: form.firstName,
+        lastName: form.lastName,
+        phone: form.phone,
+        gender: form.gender,
+        dateOfBirth: `${form.year}-${form.month.padStart(
+          2,
+          "0"
+        )}-${form.day.padStart(2, "0")}`,
+        code: form.code,
+        role: "CANDIDATE",
+        companyId: null,
+      });
 
-    console.log("PAYLOAD:", payload);
+      alert(res.data.message || "Đăng ký thành công");
+      console.log(res.data);
+    } catch (error: any) {
+      console.error(error);
 
-    // call API
-    // await authApi.register(payload);
+      alert(
+        error?.response?.data?.message ||
+          "Đăng ký thất bại"
+      );
+    }
   };
-
 const handleSendOtp = async () => {
   if (!form.email) {
-    alert("Please enter email first");
+    alert("Vui lòng nhập email");
     return;
   }
 
   try {
-    // gọi API send-code
-    // await authApi.sendCode({ email: form.email });
+    const res = await sendCode({
+      email: form.email,
+    });
 
-    console.log("Send OTP to:", form.email);
-    alert("OTP sent!");
-  } catch (err) {
-    console.log(err);
+    alert(res.data.message || "Đã gửi mã xác thực");
+  } catch (error: any) {
+    alert(
+      error?.response?.data?.message ||
+        "Không thể gửi mã xác thực"
+    );
   }
 };
 
