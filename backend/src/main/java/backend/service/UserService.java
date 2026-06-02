@@ -4,6 +4,7 @@ import java.util.List;
 
 import backend.DTO.user.CreateUserRequest;
 import backend.DTO.user.UserResponse;
+import backend.Enum.UserStatus;
 
 public interface UserService {
 
@@ -16,6 +17,8 @@ public interface UserService {
   UserResponse createUser(CreateUserRequest request);
 
   UserResponse updateUser(Long id, CreateUserRequest request);
+
+  UserResponse updateUserStatus(Long id, UserStatus status);
 
   void deleteUser(Long id);
 

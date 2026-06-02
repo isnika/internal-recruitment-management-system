@@ -7,10 +7,8 @@ import backend.DTO.user.UpdateRecruitmentInfoRequest;
 import backend.DTO.user.UserResponse;
 import backend.service.AuthService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 
@@ -25,7 +23,6 @@ public class AuthController {
         return ApiResponse.<T>builder()
                 .status(status).message(message).data(data).build();
     }
-
 
     @PostMapping("/send-code")
     public ResponseEntity<ApiResponse<SendOtpResponse>> sendOtp(
@@ -64,7 +61,6 @@ public class AuthController {
         return ResponseEntity.ok(authService.logout());
     }
 
-
     @PostMapping("/google")
     public ResponseEntity<ApiResponse<AuthResponse>> loginWithGoogle(
             @RequestBody GoogleLoginRequest request) {
@@ -72,27 +68,4 @@ public class AuthController {
         return ResponseEntity.ok(wrap(res, "Login with Google success", 200));
     }
 
-
-    @PatchMapping("/me/profile")
-    public ResponseEntity<ApiResponse<UserResponse>> updateProfile(
-            @RequestBody UpdateProfileRequest request) {
-        UserResponse res = authService.updateProfile(request);
-        return ResponseEntity.ok(wrap(res, "Profile updated", 200));
-    }
-
-
-    @PatchMapping(value = "/me/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ApiResponse<UserResponse>> uploadAvatar(
-            @RequestPart("file") MultipartFile file) {
-        UserResponse res = authService.uploadAvatar(file);
-        return ResponseEntity.ok(wrap(res, "Avatar updated", 200));
-    }
-
-
-    @PatchMapping("/me/recruitment-info")
-    public ResponseEntity<ApiResponse<UserResponse>> updateRecruitmentInfo(
-            @RequestBody UpdateRecruitmentInfoRequest request) {
-        UserResponse res = authService.updateRecruitmentInfo(request);
-        return ResponseEntity.ok(wrap(res, "Recruitment info updated", 200));
-    }
 }

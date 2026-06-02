@@ -6,6 +6,7 @@ import backend.entity.Application;
 import backend.entity.Cv;
 import backend.entity.Job;
 import backend.entity.User;
+import backend.Enum.ApplicationStatus;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -18,10 +19,13 @@ public final class ApplicationMapper {
     }
 
     return Application.builder()
-        .user(user)
-        .job(job)
-        .cv(cv)
-        .build();
+            .user(user)
+            .job(job)
+            .cv(cv)
+            .intro(request.getIntro())
+            .expectedSalary(request.getExpectedSalary())
+            .startDate(request.getStartDate())
+            .build();
   }
 
   public static ApplicationResponse toResponse(Application application) {
@@ -30,12 +34,15 @@ public final class ApplicationMapper {
     }
 
     return ApplicationResponse.builder()
-        .id(application.getId())
-        .status(application.getStatus())
-        .appliedAt(application.getAppliedAt())
-        .user(UserMapper.toResponse(application.getUser()))
-        .job(JobMapper.toResponse(application.getJob()))
-        .cv(CvMapper.toResponse(application.getCv()))
-        .build();
+            .id(application.getId())
+            .status(application.getStatus() != null ? application.getStatus().toValue() : null)
+            .appliedAt(application.getAppliedAt())
+            .intro(application.getIntro())
+            .expectedSalary(application.getExpectedSalary())
+            .startDate(application.getStartDate())
+            .user(UserMapper.toResponse(application.getUser()))
+            .job(JobMapper.toResponse(application.getJob()))
+            .cv(CvMapper.toResponse(application.getCv()))
+            .build();
   }
 }

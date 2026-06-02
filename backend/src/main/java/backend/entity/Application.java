@@ -1,8 +1,12 @@
 package backend.entity;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -14,6 +18,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import backend.Enum.ApplicationStatus;
 
 @Entity
 @Table(name = "applications")
@@ -27,9 +33,16 @@ public class Application {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private ApplicationStatus status;
 
     private LocalDateTime appliedAt;
+
+    private String intro;
+
+    private BigDecimal expectedSalary;
+
+    private LocalDate startDate;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

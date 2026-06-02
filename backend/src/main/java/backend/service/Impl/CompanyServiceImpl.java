@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import backend.DTO.company.CompanyResponse;
 import backend.DTO.company.CreateCompanyRequest;
+import backend.DTO.company.UpdateCompanyRequest;
 import backend.entity.Company;
 import backend.exception.BadRequestException;
 import backend.exception.ResourceNotFoundException;
@@ -61,7 +62,6 @@ public class CompanyServiceImpl implements CompanyService {
     validateDuplicateName(request.getName(), null);
 
     Company company = CompanyMapper.toEntity(request);
-    company.setStatus("ACTIVE");
     company.setCreatedAt(LocalDateTime.now());
     company.setUpdatedAt(LocalDateTime.now());
 
@@ -70,8 +70,8 @@ public class CompanyServiceImpl implements CompanyService {
 
   @Override
   @Transactional
-  public CompanyResponse updateCompany(Long id, CreateCompanyRequest request) {
-    validateRequest(request);
+  public CompanyResponse updateCompany(Long id, UpdateCompanyRequest request) {
+    validateUpdateRequest(request);
 
     Company company = findCompanyById(id);
     validateDuplicateName(request.getName(), company.getId());
@@ -122,6 +122,12 @@ public class CompanyServiceImpl implements CompanyService {
   }
 
   private void validateRequest(CreateCompanyRequest request) {
+    if (request == null || isBlank(request.getName())) {
+      throw new BadRequestException("Name khong duoc de trong");
+    }
+  }
+
+  private void validateUpdateRequest(UpdateCompanyRequest request) {
     if (request == null || isBlank(request.getName())) {
       throw new BadRequestException("Name khong duoc de trong");
     }

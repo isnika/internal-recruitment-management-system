@@ -7,6 +7,7 @@ import backend.DTO.user.UpdateRecruitmentInfoRequest;
 import backend.DTO.user.UserResponse;
 import backend.Enum.RegisterRole;
 import backend.Enum.UserRole;
+import backend.Enum.UserStatus;
 import backend.config.GoogleTokenVerifier;
 import backend.entity.CandidateProfile;
 import backend.entity.Company;
@@ -81,8 +82,26 @@ public class AuthServiceImpl implements AuthService {
         validateEmail(request.getEmail());
         validatePassword(request.getPassword());
 
-        if (request.getRole() == null || request.getRole() != RegisterRole.CANDIDATE) {
-            throw new BadRequestException("Chi duoc dang ky tai khoan CANDIDATE");
+        // Validate confirmPassword đồng bộ với frontend
+        if (request.getConfirmPassword() == null || !request.getConfirmPassword().equals(request.getPassword())) {
+            throw new BadRequestException("Mat khau xac nhan khong khop");
+        }
+
+        // Mặc định role là CANDIDATE nếu frontend không gửi
+        if (request.getRole() == null) {
+            request.setRole(RegisterRole.CANDIDATE);
+        }
+
+        // Validate role hợp lệ
+        if (request.getRole() != RegisterRole.CANDIDATE && request.getRole() != RegisterRole.RECRUITER) {
+            throw new BadRequestException("Role khong hop le. Chi chap nhan CANDIDATE hoac RECRUITER");
+        }
+
+        // Nếu là RECRUITER thì companyId bắt buộc
+        if (request.getRole() == RegisterRole.RECRUITER) {
+            if (request.getCompanyId() == null) {
+                throw new BadRequestException("RECRUITER phai co companyId");
+            }
         }
 
         VerificationCode vc = verificationCodeRepository.findByEmail(request.getEmail())
@@ -91,22 +110,38 @@ public class AuthServiceImpl implements AuthService {
         if (!vc.getCode().equals(request.getCode()))        throw new BadRequestException("OTP sai");
         if (userRepository.existsByEmail(request.getEmail())) throw new BadRequestException("Email da ton tai");
 
+        // Resolve company nếu là RECRUITER
+        Company company = null;
+        if (request.getRole() == RegisterRole.RECRUITER) {
+            company = companyRepository.findById(request.getCompanyId())
+                    .orElseThrow(() -> new BadRequestException("Khong tim thay cong ty voi id: " + request.getCompanyId()));
+        }
+
+        UserRole userRole = request.getRole() == RegisterRole.RECRUITER ? UserRole.RECRUITER : UserRole.CANDIDATE;
+
         User user = userRepository.save(User.builder()
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
-                .role(UserRole.CANDIDATE)
-                .status("ACTIVE")
+                .phone(request.getPhone())
+                .gender(request.getGender())
+                .dateOfBirth(request.getDateOfBirth())
+                .role(userRole)
+                .company(company)
+                .status(UserStatus.ACTIVE)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build());
 
-        candidateProfileRepository.save(CandidateProfile.builder().user(user).build());
+        // Chỉ tạo CandidateProfile cho CANDIDATE
+        if (userRole == UserRole.CANDIDATE) {
+            candidateProfileRepository.save(CandidateProfile.builder().user(user).build());
+        }
+
         verificationCodeRepository.deleteByEmail(request.getEmail());
 
-        return RegisterResponse.builder().status(201).message("Register successfully")
-                .user(toUserResponse(user)).build();
+        return RegisterResponse.builder().user(toUserResponse(user)).build();
     }
 
     // ══════════════════════════════════════════════════════════════
@@ -120,6 +155,11 @@ public class AuthServiceImpl implements AuthService {
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new BadRequestException("Email khong ton tai"));
+
+        // Kiem tra tai khoan bi khoa
+        if (user.getStatus() == UserStatus.BLOCKED) {
+            throw new BadRequestException("Tai khoan da bi khoa");
+        }
 
         // Kiem tra khoa tam thoi
         LocalDateTime lockTime = lockTimeMap.get(email);
@@ -176,6 +216,10 @@ public class AuthServiceImpl implements AuthService {
 
         if (existing.isPresent()) {
             user = existing.get();
+            // Kiem tra tai khoan bi khoa
+            if (user.getStatus() == UserStatus.BLOCKED) {
+                throw new BadRequestException("Tai khoan da bi khoa");
+            }
             // Cap nhat avatar neu thay doi
             if (avatar != null && !avatar.equals(user.getAvatarUrl())) {
                 user.setAvatarUrl(avatar);
@@ -191,7 +235,7 @@ public class AuthServiceImpl implements AuthService {
                     .lastName(lastName   != null ? lastName  : "")
                     .avatarUrl(avatar)
                     .role(UserRole.CANDIDATE)
-                    .status("ACTIVE")
+                    .status(UserStatus.ACTIVE)
                     .createdAt(LocalDateTime.now())
                     .updatedAt(LocalDateTime.now())
                     .build());
@@ -210,74 +254,6 @@ public class AuthServiceImpl implements AuthService {
                 .email(user.getEmail())
                 .role(user.getRole().name())
                 .build();
-    }
-
-    // ══════════════════════════════════════════════════════════════
-    // PATCH: UPDATE PROFILE
-    // ══════════════════════════════════════════════════════════════
-    @Override
-    @Transactional
-    public UserResponse updateProfile(UpdateProfileRequest request) {
-        User user = getCurrentUserEntity();
-
-        if (request.getFirstName() != null && !request.getFirstName().isBlank()) {
-            user.setFirstName(request.getFirstName());
-        }
-        if (request.getLastName() != null && !request.getLastName().isBlank()) {
-            user.setLastName(request.getLastName());
-        }
-        if (request.getAvatarUrl() != null && !request.getAvatarUrl().isBlank()) {
-            user.setAvatarUrl(request.getAvatarUrl());
-        }
-        user.setUpdatedAt(LocalDateTime.now());
-        return toUserResponse(userRepository.save(user));
-    }
-
-
-    @Override
-    @Transactional
-    public UserResponse uploadAvatar(MultipartFile file) {
-        if (file == null || file.isEmpty()) {
-            throw new BadRequestException("File khong duoc de trong");
-        }
-
-        User user = getCurrentUserEntity();
-
-        // Xoa avatar cu tren Cloudinary neu co
-        if (user.getAvatarStoragePublicId() != null) {
-            fileStorageService.deleteCandidateAvatar(
-                    user.getAvatarStoragePublicId(),
-                    user.getAvatarStorageResourceType());
-        }
-
-        FileStorageService.UploadResult result = fileStorageService.uploadCandidateAvatar(file);
-
-        user.setAvatarUrl(result.fileUrl());
-        user.setAvatarStoragePublicId(result.publicId());
-        user.setAvatarStorageResourceType(result.resourceType());
-        user.setUpdatedAt(LocalDateTime.now());
-
-        return toUserResponse(userRepository.save(user));
-    }
-
-
-    @Override
-    @Transactional
-    public UserResponse updateRecruitmentInfo(UpdateRecruitmentInfoRequest request) {
-        User user = getCurrentUserEntity();
-
-        if (user.getRole() != UserRole.RECRUITER && user.getRole() != UserRole.ADMIN) {
-            throw new BadRequestException("Chi RECRUITER hoac ADMIN moi duoc cap nhat thong tin tuyen dung");
-        }
-
-        if (request.getCompanyId() != null) {
-            Company company = companyRepository.findById(request.getCompanyId())
-                    .orElseThrow(() -> new BadRequestException("Khong tim thay company id: " + request.getCompanyId()));
-            user.setCompany(company);
-        }
-
-        user.setUpdatedAt(LocalDateTime.now());
-        return toUserResponse(userRepository.save(user));
     }
 
     @Override

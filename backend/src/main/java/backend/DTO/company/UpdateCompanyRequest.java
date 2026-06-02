@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CreateCompanyRequest {
+public class UpdateCompanyRequest {
   @NotBlank(message = "Name khong duoc de trong")
   private String name;
   private String description;

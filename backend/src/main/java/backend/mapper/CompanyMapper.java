@@ -2,6 +2,7 @@ package backend.mapper;
 
 import backend.DTO.company.CompanyResponse;
 import backend.DTO.company.CreateCompanyRequest;
+import backend.DTO.company.UpdateCompanyRequest;
 import backend.entity.Company;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -19,6 +20,7 @@ public final class CompanyMapper {
         .description(request.getDescription())
         .address(request.getAddress())
         .website(request.getWebsite())
+        .status(request.getStatus())
         .build();
   }
 
@@ -38,7 +40,7 @@ public final class CompanyMapper {
         .build();
   }
 
-  public static void updateEntity(Company company, CreateCompanyRequest request) {
+  public static void updateEntity(Company company, UpdateCompanyRequest request) {
     if (company == null || request == null) {
       return;
     }
@@ -47,5 +49,6 @@ public final class CompanyMapper {
     company.setDescription(request.getDescription());
     company.setAddress(request.getAddress());
     company.setWebsite(request.getWebsite());
+    company.setStatus(request.getStatus());
   }
 }
