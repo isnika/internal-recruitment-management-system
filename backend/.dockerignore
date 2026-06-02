@@ -2,6 +2,6 @@ target
 .m2
 .git
 .gitignore
-.env
+../.env
 *.log
 src/main/java/backend/Dockerfile

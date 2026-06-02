@@ -1,0 +1,53 @@
+/* ── 1. STATS SECTION ── */
+.statsSection {
+  margin-top: -48px;
+  position: relative;
+  z-index: 10;
+  margin-bottom: 48px;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.statCard {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 28px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  border: 1px solid rgba(241, 245, 249, 0.8);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.iconBox {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.blue { background-color: #eff6ff; color: #2563eb; }
+.green { background-color: #f0fdf4; color: #16a34a; }
+.purple { background-color: #faf5ff; color: #9333ea; }
+
+.statInfo h3 {
+  font-size: 26px;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.statInfo p {
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 500;
+  margin: 4px 0 0 0;
+}

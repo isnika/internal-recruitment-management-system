@@ -1,0 +1,81 @@
+/* --- Featured Section --- */
+.featuredSection {
+  padding: 64px 0;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 32px;
+  gap: 16px;
+}
+
+.headerLeft h2 {
+  font-size: 30px;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+  margin: 0 0 8px 0;
+}
+
+.headerLeft p {
+  color: #64748b;
+  font-size: 16px;
+  margin: 0;
+}
+
+/* --- View All Button --- */
+.viewAllBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 10px;
+  cursor: pointer;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  color: #2563eb;
+  transition: all 0.2s ease;
+}
+
+.viewAllBtn:hover {
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+}
+
+/* --- Responsive Header --- */
+@media (max-width: 768px) {
+  .sectionHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .viewAllBtn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .headerLeft h2 { font-size: 26px; }
+}
+
+/* --- Grid Container --- */
+.jobListContainer {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  margin-top: 32px;
+}
+
+@media (min-width: 768px) {
+  .jobListContainer { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (min-width: 1024px) {
+  .jobListContainer { grid-template-columns: repeat(3, 1fr); }
+}

@@ -1,0 +1,117 @@
+/* ==========================================================================
+   1. LAYOUT & HEADER (LIGHT MODE)
+   ========================================================================== */
+
+.container {
+  width: 100%;
+}
+
+.header {
+  margin-bottom: 1.75rem;
+}
+
+.titleGroup {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 0.5rem;
+}
+
+.pageTitle {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.02em;
+}
+
+.jobCount {
+  font-size: 0.75rem;
+  font-weight: 600;
+  background-color: #f3f4f6;
+  color: #4b5563;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.subtitle {
+  margin: 0;
+  font-size: 0.938rem;
+  color: #4b5563;
+}
+
+/* ==========================================================================
+   2. JOB LIST WRAPPER
+   ========================================================================== */
+
+.jobList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px; /* Khoảng cách dọc đều giữa các thẻ JobCard */
+}
+
+/* ==========================================================================
+   3. EMPTY STATE (KHI KHÔNG CÓ JOB NÀO ĐƯỢC LƯU)
+   ========================================================================== */
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  background-color: #ffffff;
+  border: 1px dashed #e5e7eb;
+  border-radius: 12px;
+}
+
+.emptyIcon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.emptyState h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.emptyState p {
+  margin: 0;
+  font-size: 0.938rem;
+  color: #6b7280;
+  max-width: 320px;
+}
+
+
+/* ==========================================================================
+   4. TRADITIONAL DARK MODE OVERRIDES (:global(.dark-mode))
+   ========================================================================== */
+
+:global(.dark-mode) .pageTitle {
+  color: #f8fafc;
+}
+
+:global(.dark-mode) .jobCount {
+  background-color: #1e293b;
+  color: #94a3b8;
+}
+
+:global(.dark-mode) .subtitle {
+  color: #94a3b8;
+}
+
+:global(.dark-mode) .emptyState {
+  background-color: #0f172a;
+  border-color: #334155;
+}
+
+:global(.dark-mode) .emptyState h3 {
+  color: #f8fafc;
+}
+
+:global(.dark-mode) .emptyState p {
+  color: #94a3b8;
+}

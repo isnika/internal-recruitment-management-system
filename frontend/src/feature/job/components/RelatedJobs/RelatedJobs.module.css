@@ -1,0 +1,33 @@
+/* Related Work */
+.relatedTitle {
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 40px 0 20px;
+}
+
+.relatedList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (max-width: 992px) {
+  .contentLayout {
+    flex-direction: column;
+  }
+  .headerCard {
+    flex-direction: column;
+  }
+  .headerRight {
+    align-items: flex-start;
+    gap: 16px;
+  }
+}
+
+.contentLayout {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+}
+

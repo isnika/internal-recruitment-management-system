@@ -1,0 +1,36 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.header h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.filters {
+  display: flex;
+  gap: 10px;
+}
+
+.filterBtn {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  cursor: pointer;
+  font-size: 13px;
+  transition: 0.2s;
+}
+
+.filterBtn:hover {
+  background: rgba(110, 155, 210, 1);
+}
+
+.activeFilter {
+  background: rgba(80, 128, 190, 1);
+  color: #fff;
+}

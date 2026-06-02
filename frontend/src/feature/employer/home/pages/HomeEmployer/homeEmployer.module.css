@@ -1,0 +1,58 @@
+.layout {
+  display: flex;
+  min-height: 100vh;
+  background: #f8fafc;
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: 260px;
+  background: white;
+  border-right: 1px solid #e2e8f0;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.logo {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  color: #111827;
+}
+
+/* MENU */
+.menuItem {
+  display: block;
+  padding: 12px 14px;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+  background: white;
+  transition: 0.2s;
+}
+
+.menuItem:hover {
+  transform: translateX(4px);
+  border-color: #c7d2fe;
+}
+
+.active {
+  background: rgba(80, 128, 190, 1);
+  color: white;
+  border-color: #6366f1;
+}
+
+/* sidebar spacing đẹp hơn */
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* MAIN CONTENT */
+.content {
+  flex: 1;
+  padding: 24px;
+}

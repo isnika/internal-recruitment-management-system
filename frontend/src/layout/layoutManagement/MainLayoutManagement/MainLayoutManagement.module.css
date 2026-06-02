@@ -1,0 +1,5 @@
+.main {
+  background-color: #f6eff4; /* Light pinkish/purple background */
+  min-height: calc(100vh - 64px); /* Adjust based on header height */
+  padding-bottom: 40px;
+}

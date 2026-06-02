@@ -1,0 +1,341 @@
+/* ── Reset & Wrappers ── */
+.wrapper {
+  width: 100%;
+  background-color: #f8fafc;
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ── Headers ── */
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 32px;
+}
+
+.headerLeft h2, .centerHeader h2 {
+  font-size: 30px;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+  margin: 0 0 8px 0;
+}
+
+.headerLeft p, .centerHeader p {
+  color: #64748b;
+  font-size: 16px;
+  margin: 0;
+}
+
+.centerHeader {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+/* Button View All chung */
+.viewAllBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  color: #2563eb;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.viewAllBtn:hover {
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+}
+
+/* ── 1. STATS SECTION ── */
+.statsSection {
+  margin-top: -48px;
+  position: relative;
+  z-index: 10;
+  margin-bottom: 48px;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.statCard {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 28px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  border: 1px solid rgba(241, 245, 249, 0.8);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.iconBox {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.blue { background-color: #eff6ff; color: #2563eb; }
+.green { background-color: #f0fdf4; color: #16a34a; }
+.purple { background-color: #faf5ff; color: #9333ea; }
+
+.statInfo h3 {
+  font-size: 26px;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.statInfo p {
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 500;
+  margin: 4px 0 0 0;
+}
+
+/* ── 2. FEATURED JOBS ── */
+.featuredSection {
+  padding: 64px 0;
+}
+
+/* ── 3. CATEGORIES SECTION ── */
+.categorySection {
+  padding: 80px 0;
+  background: #ffffff;
+  border-top: 1px solid #f1f5f9;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.categoryGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.categoryCard {
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
+  border-radius: 20px;
+  padding: 32px 28px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.catIconWrapper {
+  width: 48px;
+  height: 48px;
+  background: #ffffff;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+  transition: all 0.3s ease;
+}
+
+.catIcon {
+  color: #475569;
+  transition: color 0.3s ease;
+}
+
+.categoryCard h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 0 0 8px 0;
+}
+
+.categoryCard span {
+  font-size: 14px;
+  font-weight: 500;
+  color: #94a3b8;
+}
+
+.categoryCard:hover {
+  background: #ffffff;
+  border-color: #2563eb;
+  box-shadow: 0 20px 25px -5px rgba(37, 99, 235, 0.05), 0 10px 10px -5px rgba(37, 99, 235, 0.02);
+  transform: translateY(-4px);
+}
+
+.categoryCard:hover .catIconWrapper {
+  background: #2563eb;
+}
+
+.categoryCard:hover .catIcon {
+  color: #ffffff;
+}
+
+/* ── 4. TESTIMONIALS SECTION ── */
+.testimonialSection {
+  padding: 80px 0;
+}
+
+.testimonialGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 32px;
+}
+
+.testimonialCard {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 36px;
+  border: 1px solid rgba(241, 245, 249, 0.8);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.02);
+}
+
+.starsRow {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 20px;
+}
+
+.testiContent {
+  color: #334155;
+  font-size: 16px;
+  line-height: 1.6;
+  font-weight: 400;
+  margin: 0 0 28px 0;
+}
+
+.testiUser {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.testiAvatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.testiUser h4 {
+  font-size: 15px;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 0 0 2px 0;
+}
+
+.testiUser span {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+/* ── 5. CTA SECTION ── */
+.ctaSection {
+  /* Sửa 100px thành 40px */
+  padding: 40px 24px 40px 24px;
+}
+
+.ctaCard {
+  position: relative;
+  background-image: url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200');
+  background-size: cover;
+  background-position: center;
+  border-radius: 28px;
+  padding: 88px 40px;
+  text-align: center;
+  overflow: hidden;
+  box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.2);
+}
+
+.ctaOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.92), rgba(37, 99, 235, 0.80));
+  z-index: 1;
+}
+
+.ctaContent {
+  position: relative;
+  z-index: 2;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.ctaContent h2 {
+  color: #ffffff;
+  font-size: 38px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0 0 16px 0;
+}
+
+.ctaContent p {
+  color: #bfdbfe;
+  font-size: 17px;
+  line-height: 1.6;
+  margin: 0 0 36px 0;
+}
+
+.ctaBtn {
+  background: #ffffff;
+  color: #2563eb;
+  border: none;
+  padding: 14px 36px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ctaBtn:hover {
+  background: #f8fafc;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 20px -5px rgba(0, 0, 0, 0.3);
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 1024px) {
+  .categoryGrid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+}
+
+@media (max-width: 768px) {
+  .statsGrid, .categoryGrid, .testimonialGrid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .sectionHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .viewAllBtn { width: 100%; justify-content: center; }
+  .headerLeft h2, .centerHeader h2 { font-size: 26px; }
+  .ctaContent h2 { font-size: 30px; }
+  .ctaCard { padding: 60px 20px; }
+}
+

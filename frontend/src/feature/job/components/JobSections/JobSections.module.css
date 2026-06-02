@@ -1,0 +1,93 @@
+.applyBtn {
+  background: #9f191b;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.applyBtn:hover {
+  background: #7f1d1d;
+}
+
+.saveTaskBtn {
+  background: white;
+  color: #5280bc;
+  border: 1px solid #5280bc;
+  border-radius: 12px;
+  padding: 10px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+
+/* Grey Content Cards */
+.greyCard {
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 20px;
+  border: 1px solid #f1f5f9;
+}
+
+.sectionTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 16px;
+}
+
+.textContent {
+  font-size: 14px;
+  color: #334155;
+  line-height: 1.6;
+}
+
+.textContent ul {
+  padding-left: 20px;
+  margin: 0;
+}
+
+.textContent li {
+  margin-bottom: 8px;
+}
+
+.applyActions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.deadlineText {
+  color: #dc2626;
+  font-size: 13px;
+  margin-top: 12px;
+  display: block;
+}
+
+
+@media (max-width: 992px) {
+  .contentLayout {
+    flex-direction: column;
+  }
+  .headerCard {
+    flex-direction: column;
+  }
+  .headerRight {
+    align-items: flex-start;
+    gap: 16px;
+  }
+}
+
+.contentLayout {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+}
+

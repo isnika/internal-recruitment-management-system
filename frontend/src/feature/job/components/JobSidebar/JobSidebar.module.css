@@ -1,0 +1,173 @@
+/* ==========================================================================
+   1. KHUNG THÔNG TIN CHUNG (GENERAL INFO CARD)
+   ========================================================================== */
+.generalInfoCard {
+  background-color: #ffffff;
+  border: 1px solid #eef2f6;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.generalInfoCard:hover {
+  box-shadow: 0 6px 24px rgba(16, 24, 40, 0.05);
+}
+
+.generalInfoTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a1f36;
+  margin: 0 0 20px 0;
+  letter-spacing: -0.3px;
+}
+
+.infoList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.infoItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 0;
+}
+
+.infoIcon {
+  font-size: 20px;
+  color: #64748b; /* Màu xám slate hiện đại, không bị tối quá */
+  flex-shrink: 0;
+}
+
+.infoText {
+  font-size: 14px;
+  color: #475569;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+
+/* ==========================================================================
+   2. CÁC KHUNG PHỤ (SKILLS, CATEGORY, SALARY, STATUS)
+   ========================================================================== */
+.blueCard {
+  background-color: #ffffff;
+  border: 1px solid #eef2f6;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+}
+
+.blueCardTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #94a3b8; /* Chữ tiêu đề nhỏ, nhạt theo style dashboard hiện đại */
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 12px 0;
+}
+
+.blueCardList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Các item mặc định (Dành cho Skills, Salary) */
+.blueCardItem {
+  display: inline-block;
+  background-color: #f8fafc;
+  color: #334155;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid #f1f5f9;
+}
+
+/* Item nổi bật (Dành cho Category) */
+.blueCardItemActive {
+  display: inline-block;
+  background-color: #eff6ff; /* Nền xanh dương nhẹ */
+  color: #1d4ed8;            /* Chữ xanh dương đậm */
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  border: 1px solid #dbeafe;
+}
+
+
+/* ==========================================================================
+   3. ĐỊNH DẠNG RIÊNG CHO PHẦN STATUS BADGE
+   ========================================================================== */
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  border-radius: 20px; /* Dạng capsule bo tròn hẳn */
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase; /* Viết hoa toàn bộ nhìn sẽ gọn và "clean" hơn */
+  letter-spacing: 0.5px;
+}
+
+.statusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* --- ACTIVE: Xanh lá nhẹ nhàng --- */
+.statusActive {
+  background-color: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+.dotActive {
+  background-color: #10b981;
+  box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+  animation: pulse 2s infinite;
+}
+
+/* --- CLOSED: Đỏ quyền lực --- */
+.statusClosed {
+  background-color: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+.dotClosed {
+  background-color: #ef4444;
+}
+
+/* --- PAUSED: Vàng hổ phách dịu mắt --- */
+.statusPaused {
+  background-color: #fffbeb;
+  color: #92400e;
+  border: 1px solid #fde68a;
+}
+.dotPaused {
+  background-color: #f59e0b;
+}
+
+/* Hiệu ứng sóng nhấp nháy cho trạng thái ACTIVE */
+@keyframes pulse {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
+}

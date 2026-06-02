@@ -1,0 +1,44 @@
+/* ── CATEGORY ── */
+.categoriesList {
+  display: flex;
+  gap: 25px;
+  overflow-x: auto;
+  padding-bottom: 12px;
+  margin: 0px 0;
+  align-items: center;
+}
+
+.categoryBtn {
+  background: white;
+  border: 1px solid black;
+  border-radius: 20px;
+  padding: 10px 20px;
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.categoryBtnActive {
+  background: #0f172a;
+  color: white;
+}
+
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .bodyLayout {
+    flex-direction: column;
+  }
+
+  .filterSidebar {
+    width: 100%;
+  }
+
+  .bodyLayoutWithSidebar .jobsColumn {
+    border-left: none;
+    padding-left: 0;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 16px;
+  }
+}
+

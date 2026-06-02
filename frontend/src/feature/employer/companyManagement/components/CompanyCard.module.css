@@ -1,0 +1,165 @@
+.card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 14px;
+}
+
+.logo {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #f1f5f9;
+  background-color: #f8f9fa;
+}
+
+/* Trạng thái badges */
+.badge {
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 4px;
+}
+
+.bgActive {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+.bgInactive {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+/* Nội dung text */
+.cardBody {
+  margin-bottom: 16px;
+  flex-grow: 1; /* Cân đối chiều cao đồng đều giữa các thẻ */
+}
+
+.companyName {
+  margin: 0 0 4px 0;
+  font-size: 1.2rem;
+  color: #0f172a;
+}
+
+.companyLink {
+  font-size: 0.85rem;
+  color: #3b82f6;
+  text-decoration: none;
+  display: inline-block;
+  margin-bottom: 8px;
+}
+
+.companyLink:hover {
+  text-decoration: underline;
+}
+
+.companyDesc {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #64748b;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* Cắt ngắn nếu mô tả vượt quá 2 dòng */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Các nút Edit/Delete */
+.cardActions {
+  display: flex;
+  gap: 8px;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 14px;
+  margin-bottom: 12px;
+}
+
+.cardActions button {
+  flex: 1;
+  padding: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btnEdit {
+  background-color: #ffffff;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+}
+
+.btnEdit:hover {
+  background-color: #f8fafc;
+  border-color: #94a3b8;
+}
+
+.btnDelete {
+  background-color: #ffffff;
+  color: #ef4444;
+  border: 1px solid #fee2e2;
+}
+
+.btnDelete:hover {
+  background-color: #fef2f2;
+  border-color: #ef4444;
+}
+
+/* Khu vực Upload Logo */
+.uploadSection {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #f8fafc;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+}
+
+.fileInput {
+  font-size: 0.75rem;
+  color: #64748b;
+  max-width: 65%;
+}
+
+.btnUpload {
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background-color: #10b981;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.2s;
+}
+
+.btnUpload:hover:not(:disabled) {
+  background-color: #059669;
+}
+
+.btnUpload:disabled {
+  background-color: #cbd5e1;
+  color: #94a3b8;
+  cursor: not-allowed;
+}

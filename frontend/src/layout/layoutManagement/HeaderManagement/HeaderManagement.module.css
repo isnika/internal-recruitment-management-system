@@ -1,0 +1,98 @@
+.header {
+  background: white;
+  padding-bottom: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* top bar */
+.topBar {
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  height: 70px;
+}
+
+/* logo */
+.logo {
+  flex:1;
+  font-size: 30px;
+  display: flex;
+  align-items: center;
+}
+
+.logoBlue {
+  color: rgba(80, 128, 190, 1);
+  font-weight: 700;
+}
+
+.logoBlack {
+  color: #000;
+  font-weight: 700;
+}
+
+.logoItalic {
+  font-style: italic;
+  margin-left: 6px;
+}
+
+/* menu center */
+.nav {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+}
+
+/* mặc định:  hiện hết */
+.hideOnSmall {
+  display: inline;
+}
+
+/* khi màn nhỏ hoặc zoom to */
+@media (max-width: 900px) {
+  .hideOnSmall {
+    display: none; /* ẩn  */
+  }
+}
+
+.nav a {
+  text-decoration: none;
+  color: #555;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+.nav a:hover {
+  color: #4a6fa5 ;
+
+}
+
+/* action*/
+.actions {
+  flex:1;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.signIn {
+  padding: 6px 16px;
+  border-radius: 10px;
+  border: 1px solid #4a6fa5;
+  background: white;
+  cursor: pointer;
+  font-weight: 500;
+  color: #4a6fa5;
+}
+
+.signUp {
+  background: #4a6fa5;
+  color: white;
+  border: none;
+}
+
+.signIn:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  transform: translateY(-1px);
+}

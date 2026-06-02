@@ -1,0 +1,76 @@
+/* Container bao bọc toàn bộ khu vực chọn CV */
+.cvSelectContainer {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #eef2f6;
+  max-width: 500px; /* Giới hạn độ rộng vừa phải, không bị tràn màn hình */
+  margin: 20px 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+}
+
+/* Label chữ "Select CV:" */
+.cvSelectLabel {
+  font-size: 14px;
+  font-weight: 600;
+  color: #475569; /* Màu slate xám đậm */
+  white-space: nowrap;
+}
+
+/* Wrapper để xử lý nút mũi tên tùy chỉnh */
+.selectWrapper {
+  position: relative;
+  flex: 1; /* Tự động co giãn lấp đầy khoảng trống */
+  display: flex;
+  align-items: center;
+}
+
+/* Custom lại thẻ select */
+.cvSelect {
+  width: 100%;
+  padding: 10px 36px 10px 14px; /* Chừa khoảng trống bên phải cho mũi tên */
+  font-size: 14px;
+  font-weight: 500;
+  color: #1e293b;
+  background-color: #f8fafc; /* Nền xám siêu nhẹ */
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  cursor: pointer;
+
+  /* Quan trọng: Xóa bỏ mũi tên mặc định xấu xí của hệ điều hành */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  transition: all 0.2s ease-in-out;
+}
+
+/* Hiệu ứng khi click hoặc focus vào ô select */
+.cvSelect:focus {
+  outline: none;
+  border-color: #3b82f6; /* Đổi sang border màu xanh công nghệ */
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); /* Hiệu ứng tỏa sáng nhẹ xung quanh */
+}
+
+/* Tạo hình mũi tên xuống (Dropdown Arrow) bằng CSS nguyên bản */
+.customArrow {
+  position: absolute;
+  right: 14px;
+  pointer-events: none; /* Tránh việc click vào mũi tên bị chặn tương tác */
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 6px solid #64748b; /* Màu sắc của mũi tên */
+  transition: transform 0.2s ease;
+}
+
+/* Xoay mũi tên ngược lên khi select được kích hoạt (Tùy chọn nâng cao nếu cần tinh chỉnh sâu) */
+.cvSelect:focus ~ .customArrow {
+  transform: rotate(180deg);
+  border-top-color: #3b82f6;
+}

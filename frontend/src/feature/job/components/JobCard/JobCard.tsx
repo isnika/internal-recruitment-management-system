@@ -1,0 +1,250 @@
+import React from "react";
+import { useNavigate } from "react-router-dom";
+
+import styles from "./JobCard.module.css";
+
+import {
+  FiMapPin,
+  FiBookmark,
+} from "react-icons/fi";
+
+import { BsCash } from "react-icons/bs";
+
+import { FaBookmark } from "react-icons/fa";
+
+import type { Job } from "../../../../types/job";
+
+// =========================
+// FORMAT SALARY
+// =========================
+
+const formatMoney = (
+  value?: number | null
+) => {
+  if (value == null) {
+    return "Thoả thuận";
+  }
+
+  return new Intl.NumberFormat(
+    "vi-VN"
+  ).format(value);
+};
+
+const formatSalary = (job: Job) => {
+  if (
+    job.salaryMin == null &&
+    job.salaryMax == null
+  ) {
+    return "Thoả thuận";
+  }
+
+  return `${formatMoney(
+    job.salaryMin
+  )} - ${formatMoney(
+    job.salaryMax
+  )} VND`;
+};
+
+interface JobCardProps {
+  job: Job;
+
+  onBookmark: (
+    id: number,
+    saved: boolean
+  ) => void;
+}
+
+const JobCard: React.FC<JobCardProps> = ({
+  job,
+  onBookmark,
+}) => {
+  const navigate = useNavigate();
+
+  // Kiểm tra trạng thái đóng/hết hạn của Job
+  const isClosed = job.status?.toUpperCase() === "CLOSED";
+
+  // Hàm xử lý khi người dùng tương tác vào các nút cần chặn
+  const handleActionClick = (callback: () => void) => {
+    if (isClosed) {
+      // Thay alert này bằng hàm mở Modal tùy chỉnh của bạn nếu có (VD: setOpenModal(true))
+      alert("Công việc này đã hết hạn nhận hồ sơ!");
+      return;
+    }
+    callback();
+  };
+
+  return (
+    <div className={`${styles.jobCard} ${isClosed ? styles.jobCardClosed : ""}`}>
+      {/* LOGO */}
+      <div className={styles.jobLogoCol}>
+        <img
+          src={
+            job.company?.logoUrl ||
+            "/images/default-company.png"
+          }
+          alt={job.title}
+          className={styles.logoImage}
+        />
+      </div>
+
+      {/* INFO */}
+      <div className={styles.jobInfoCol}>
+        <div className={styles.titleWrapper}>
+          <h3 className={styles.jobTitle}>
+            {job.title}
+          </h3>
+
+          {/* Nhãn thông báo hết hạn trực quan ngay cạnh tiêu đề */}
+          {isClosed && (
+            <span className={styles.expiredBadge}>Hết hạn</span>
+          )}
+        </div>
+
+        <p className={styles.jobCategory}>
+          {job.category?.name}
+        </p>
+
+        {/* SKILLS */}
+        <div className={styles.jobSkills}>
+          <span className={styles.skillLabel}>
+            Skills:
+          </span>
+
+          {job.skills
+            ?.slice(0, 3)
+            .map((skill) => (
+              <span
+                key={skill.id}
+                className={styles.skillTag}
+              >
+                {skill.name}
+              </span>
+            ))}
+
+          {(job.skills?.length || 0) >
+            3 && (
+            <span
+              className={
+                styles.moreSkill
+              }
+            >
+              +
+              {job.skills.length -
+                3}
+            </span>
+          )}
+        </div>
+
+        {/* META */}
+        <div className={styles.jobMetaList}>
+          <div className={styles.metaItem}>
+            <BsCash
+              className={
+                styles.metaIconYellow
+              }
+            />
+
+            <span
+              className={
+                styles.metaBold
+              }
+            >
+              {formatSalary(job)}
+            </span>
+          </div>
+
+          <div className={styles.metaItem}>
+            <FiMapPin
+              className={
+                styles.metaIconRed
+              }
+            />
+
+            <span
+              className={
+                styles.metaText
+              }
+            >
+              {job.location}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* ACTION */}
+      <div className={styles.jobActionCol}>
+        <div className={styles.jobTopRight}>
+          <span
+            className={
+              styles.jobPostedAt
+            }
+          >
+            {job.deadline}
+          </span>
+
+          <button
+            type="button"
+            className={
+              styles.bookmarkBtn
+            }
+            disabled={isClosed} // Vô hiệu hóa nút lưu nếu job đóng
+            onClick={(e) => {
+              e.stopPropagation();
+              onBookmark(
+                job.id,
+                !!job.isSaved
+              );
+            }}
+          >
+            {job.isSaved ? (
+              <FaBookmark
+                className={`${styles.bookmarkIcon} ${styles.bookmarkIconActive}`}
+              />
+            ) : (
+              <FiBookmark
+                className={
+                  styles.bookmarkIcon
+                }
+              />
+            )}
+          </button>
+        </div>
+
+        <div
+          className={
+            styles.actionButtons
+          }
+        >
+          <button
+            className={styles.viewDetailsBtn}
+            onClick={() => {
+              // Vẫn cho phép xem chi tiết, hoặc chặn tùy bạn (ở đây đang cấu hình chặn)
+              handleActionClick(() => {
+                navigate(`/jobs/${job.id}`);
+                window.scrollTo(0, 0);
+              });
+            }}
+          >
+            View Details
+          </button>
+
+          <button
+            className={`${styles.applyBtn} ${isClosed ? styles.disabledBtn : ""}`}
+            onClick={() => {
+              handleActionClick(() => {
+                navigate(`/jobs/${job.id}`, {
+                  state: { autoApply: true },
+                });
+                window.scrollTo(0, 0);
+              });
+            }}
+          >
+            Apply Now
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default JobCard;

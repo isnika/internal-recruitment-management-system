@@ -1,0 +1,141 @@
+/*       
+   LAYOUT CHUNG
+          */
+.footer {
+  background: rgba(6, 16, 37, 1);
+  color: white;
+  padding: 50px 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  gap: 60px;
+}
+
+/*       
+   CỘT TRÁI (LOGO & CONTACT)
+          */
+.left {
+  width: 650px;
+}
+
+.logo {
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.logoBlue {
+  color: rgba(80, 128, 190, 1);
+  font-weight: 700;
+}
+
+.logoItalic {
+  font-style: italic;
+  font-size: 26px;
+  font-weight: normal;
+}
+
+.desc {
+  margin: 15px 0;
+  font-size: 14px;
+  color: #aaa;
+  line-height: 1.6;
+}
+
+.contact h4 {
+  margin: 20px 0 10px;
+}
+
+.contactItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0;
+  font-size: 14px;
+  color: #ccc;
+}
+
+.contactItem a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.contactItem a:hover {
+  color: rgba(80, 128, 190, 1);
+}
+
+/* Icons Contact */
+.iconMail { color: white; }
+.iconPhone { color: rgba(80, 128, 190, 1); }
+.iconMap { color: red; }
+
+/*       
+   CỘT PHẢI (MENU LINKS)
+          */
+.right {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 40px;
+}
+
+.links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.links h4 {
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+.links a {
+  color: #aaa;
+  text-decoration: none;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.links a:hover {
+  color: white;
+}
+
+/*       
+   MẠNG XÃ HỘI & BẢN QUYỀN
+          */
+.social {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 40px;
+  padding-top: 16px;
+  border-top: 1px solid #333;
+}
+
+.socialLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.socialLink:hover {
+  transform: translateY(-3px);
+}
+
+/* Icons Mạng xã hội */
+.fbIcon { color: #1877F2; }
+.ytIcon { color: red; }
+.twIcon { color: #1DA1F2; }
+
+.bottom {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 12px;
+  color: #aaa;
+}

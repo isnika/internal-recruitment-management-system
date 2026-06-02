@@ -1,0 +1,83 @@
+/* Container bọc ngoài cùng */
+.paginationContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  user-select: none;
+  margin-top: 24px;
+}
+
+/* Khối chứa các số trang */
+.pageNumbers {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Style chung cho nút số và nút mũi tên */
+.pageBtn,
+.arrowBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 38px;
+  height: 38px;
+  padding: 0 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #334155; /* Xám Slate đậm tinh tế, không bị gắt như màu đen */
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0; /* Viền xám nhạt nhẹ nhàng */
+  border-radius: 8px; /* Bo góc modern */
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pageBtn:hover:not(.active),
+.arrowBtn:hover:not(:disabled) {
+  background-color: rgba(80, 128, 190, 0.08);
+  border-color: rgba(80, 128, 190, 0.4);
+  color: rgba(80, 128, 190, 1);
+}
+
+.pageBtn.active {
+  background-color: rgba(80, 128, 190, 1);
+  border-color: rgba(80, 128, 190, 1);
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(80, 128, 190, 0.25);
+}
+
+.pageBtn:focus-visible,
+.arrowBtn:focus-visible {
+  outline: 2px solid rgba(80, 128, 190, 0.5);
+  outline-offset: 2px;
+}
+
+.arrowBtn:disabled {
+  background-color: #f8fafc;
+  border-color: #e2e8f0;
+  color: #94a3b8; /* Xám nhạt */
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.arrowBtn svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+/* Dấu ba chấm */
+.dots {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 38px;
+  height: 38px;
+  color: #94a3b8;
+  font-size: 14px;
+  letter-spacing: 2px;
+}

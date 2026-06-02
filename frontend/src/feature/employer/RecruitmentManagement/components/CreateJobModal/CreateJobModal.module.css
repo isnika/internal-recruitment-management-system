@@ -1,0 +1,371 @@
+/* ==========================================================================
+   1. MODAL LAYOUT CONTAINERS
+   ========================================================================== */
+.modalWrapper {
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.header {
+  margin-bottom: 24px;
+}
+
+.header h2 {
+  color: #1e293b;
+  font-size: 22px;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* ==========================================================================
+   2. NAVIGATION TABS
+   ========================================================================== */
+.tabs {
+  display: flex;
+  gap: 24px;
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 24px;
+}
+
+.tab,
+.activeTab {
+  padding: 10px 0;
+  font-size: 14px;
+  font-weight: 500;
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+.tab {
+  color: #64748b;
+}
+
+.tab:hover {
+  color: #334155;
+}
+
+.activeTab {
+  color: #6366f1;
+  font-weight: 600;
+}
+
+.activeTab::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: #6366f1;
+}
+
+/* ==========================================================================
+   3. TAB CONTENT CORES
+   ========================================================================== */
+.tabContent {
+  min-height: 480px;
+  position: relative;
+  /* FIX: Đảm bảo không sử dụng overflow: hidden ở đây để dropdown không bị cắt */
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  color: #64748b;
+  font-size: 14px;
+}
+
+/* ==========================================================================
+   4. FORM ELEMENTS & GRID
+   ========================================================================== */
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+}
+
+/* FIX UI: Cho ô chọn Skills chiếm trọn cả 2 cột để giao diện cân đối hơn */
+.formGroupFullWidth {
+  grid-column: span 2;
+}
+
+.formGroup label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.input,
+.select,
+.textarea {
+  padding: 10px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  color: #334155;
+  background-color: #ffffff;
+  transition: all 0.2s ease;
+  width: 100%;
+  box-sizing: border-box; /* Bảo vệ input không bị tràn viền */
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 240px;
+  line-height: 1.5;
+}
+
+/* ==========================================================================
+   5. MULTI-SELECT DROPDOWN (Skills/Tags) - ĐÃ TỐI ƯU
+   ========================================================================== */
+.multiSelectContainer {
+  position: relative;
+  width: 100%;
+}
+
+.multiSelectTrigger {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.multiSelectTrigger:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  outline: none;
+}
+
+.selectedText {
+  flex: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  text-align: left;
+  color: #334155;
+  font-size: 14px;
+}
+
+.multiSelectDropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  width: 100%;
+  max-height: 220px;
+  overflow-y: auto;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  /* Tăng cường cô lập layer để đè lên toàn bộ các formGroup bên dưới */
+  z-index: 999;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  padding: 6px;
+  box-sizing: border-box;
+}
+
+.multiSelectOption {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.15s ease;
+  user-select: none; /* Tránh bôi đen chữ khi click nhanh */
+}
+
+.multiSelectOption:hover {
+  background: #f1f5f9;
+}
+
+/* Style lại checkbox tùy chỉnh trong dropdown */
+.multiSelectOption input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: #6366f1;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.multiSelectOption span {
+  font-size: 14px;
+  color: #334155;
+}
+
+.emptyState {
+  padding: 16px;
+  text-align: center;
+  color: #64748b;
+  font-size: 14px;
+}
+
+/* ==========================================================================
+   6. MODAL FOOTER & BUTTONS
+   ========================================================================== */
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  margin-top: 32px;
+  padding-top: 16px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.cancelBtn,
+.submitBtn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancelBtn {
+  border: 1px solid #cbd5e1;
+  color: #475569;
+  background: #ffffff;
+}
+
+.cancelBtn:hover {
+  background: #f8fafc;
+  color: #1e293b;
+  border-color: #94a3b8;
+}
+
+.submitBtn {
+  border: none;
+  color: #ffffff;
+  background-color: #22c55e;
+}
+
+.submitBtn:hover:not(:disabled) {
+  background-color: #16a34a;
+}
+
+.submitBtn:disabled {
+  background-color: #cbd5e1;
+  color: #94a3b8;
+  cursor: not-allowed;
+}
+
+/* ==========================================================================
+   7. JOB STATUS SELECTION CARDS
+   ========================================================================== */
+.statusContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.statusCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.statusCard:hover {
+  border-color: #cbd5e1;
+  background-color: #f8fafc;
+}
+
+.statusCardActive {
+  border-color: #6366f1;
+  background-color: #f5f3ff;
+}
+
+.statusInfo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.statusIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 18px;
+  background-color: #64748b;
+}
+
+.statusCardActive .statusIcon {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.statusTitle {
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 2px;
+}
+
+.statusDesc {
+  font-size: 13px;
+  color: #64748b;
+}
+
+/* Custom Radio UI Component */
+.radioCircle {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.radioCircleActive {
+  border-color: #6366f1;
+}
+
+.radioDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #6366f1;
+}

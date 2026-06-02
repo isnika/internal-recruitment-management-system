@@ -1,0 +1,140 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.title { font-size: 24px; font-weight: 700; color: #1e293b; margin: 0; }
+.subtitle { font-size: 14px; color: #64748b; margin: 4px 0 0 0; }
+
+.createBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  background-color: #6366f1;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.createBtn:hover { background-color: #4f46e5; }
+
+.filterBar {
+  background: white;
+  padding: 16px;
+  border: 1px solid #e2e8f0;
+  border-bottom: none;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.searchWrapper {
+  position: relative;
+  max-width: 320px;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 10px 14px 10px 38px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+}
+.searchInput:focus { border-color: #6366f1; }
+
+.tableWrapper {
+  background: white;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.table th {
+  background-color: #f8fafc;
+  padding: 14px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.table td {
+  padding: 14px 20px;
+  font-size: 14px;
+  color: #334155;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.codeBadge {
+  background-color: #f1f5f9;
+  color: #475569;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.boldText { font-weight: 600; color: #1e293b; }
+.descText { color: #64748b; max-width: 400px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.actions { display: flex; gap: 8px; justify-content: flex-end; }
+.editBtn, .deleteBtn {
+  background: none; border: 1px solid #cbd5e1; padding: 6px; border-radius: 6px; cursor: pointer; display: inline-flex; font-size: 14px; transition: all 0.2s;
+}
+.editBtn { color: #475569; }
+.editBtn:hover { background-color: #f1f5f9; border-color: #94a3b8; }
+.deleteBtn { color: #ef4444; }
+.deleteBtn:hover { background-color: #fef2f2; border-color: #fca5a5; }
+
+.emptyState { padding: 40px !important; color: #64748b; }
+
+/* PAGINATION */
+.pagination {
+  display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; background: white; border: 1px solid #e2e8f0; border-top: none; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px;
+}
+.pageInfo { font-size: 14px; color: #64748b; }
+.pageActions { display: flex; align-items: center; gap: 12px; }
+.pageIndicator { font-size: 14px; color: #334155; }
+.pageBtn {
+  display: inline-flex; align-items: center; gap: 4px; padding: 6px 12px; font-size: 13px; border: 1px solid #d1d5db; border-radius: 6px; background: white; cursor: pointer; color: #334155;
+}
+.pageBtn:disabled { color: #cbd5e1; background: #f1f5f9; border-color: #e2e8f0; cursor: not-allowed; }
+
+/* MODAL STANDARD CSS */
+.modalOverlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; z-index: 100; }
+.modal { background: white; padding: 24px; border-radius: 12px; width: 100%; max-width: 460px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
+.modal h3 { margin: 0 0 20px 0; font-size: 18px; color: #1e293b; }
+.form { display: flex; flex-direction: column; gap: 16px; }
+.formGroup { display: flex; flex-direction: column; gap: 6px; }
+.formGroup label { font-size: 13px; font-weight: 600; color: #475569; }
+.formGroup input, .formGroup textarea { padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; outline: none; }
+.formGroup input:focus, .formGroup textarea:focus { border-color: #6366f1; }
+.modalFooter { display: flex; justify-content: flex-end; gap: 12px; margin-top: 12px; }
+.cancelBtn, .submitBtn { padding: 9px 16px; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer; }
+.cancelBtn { border: 1px solid #cbd5e1; background: white; color: #475569; }
+.submitBtn { border: none; background: #6366f1; color: white; }
+.submitBtn:hover { background-color: #4f46e5; }

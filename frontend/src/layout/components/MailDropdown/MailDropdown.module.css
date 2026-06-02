@@ -1,0 +1,232 @@
+/* MailDropdown.module.css */
+.wrapper {
+  position: relative;
+  display: inline-block;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Nút bấm Icon */
+.iconBtn {
+  position: relative;
+  background: transparent;
+  border: none;
+  padding: 8px;
+  border-radius: 50%;
+  color: #64748b;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.iconBtn:hover, .activeIcon {
+  background-color: #f1f5f9;
+  color: rgba(80, 128, 190, 1);
+}
+
+/* Badge số thông báo */
+.badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background-color: #ef4444; /* Đỏ alert tiêu chuẩn */
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 99px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #ffffff; /* Viền trắng để nổi bật trên nền */
+}
+
+/* Khung Dropdown tổng thể */
+.dropdown {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  width: 360px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
+  z-index: 100;
+  overflow: hidden;
+  animation: slideDown 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Tiêu đề Dropdown */
+.dropHeader {
+  padding: 16px 20px;
+  border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ffffff;
+}
+
+.dropHeader h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.dropHeader span {
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(80, 128, 190, 1);
+  background-color: rgba(80, 128, 190, 0.08);
+  padding: 2px 8px;
+  border-radius: 99px;
+}
+
+.dropBody {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+/* Từng dòng thông báo */
+.item {
+  position: relative;
+  display: flex;
+  gap: 14px;
+  padding: 16px 20px;
+  cursor: pointer;
+  border-bottom: 1px solid #f8fafc;
+  transition: background-color 0.15s ease;
+}
+
+.item:hover {
+  background-color: #f8fafc;
+}
+
+.item:last-child {
+  border-bottom: none;
+}
+
+/* Các tin chưa đọc */
+.unread {
+  background-color: rgba(80, 128, 190, 0.02);
+}
+
+.unreadDot {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: rgba(80, 128, 190, 1);
+}
+
+/* Avatar HR thu nhỏ */
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: rgba(80, 128, 190, 0.1);
+  color: rgba(80, 128, 190, 1);
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Cấu trúc Content bên trong tin */
+.content {
+  flex-grow: 1;
+  padding-right: 12px; /* Chừa khoảng trống cho chấm unread */
+}
+
+.topRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e293b;
+  line-height: 1.4;
+}
+
+.unread .title {
+  color: #0f172a;
+  font-weight: 700; /* Đậm nét hơn khi chưa đọc */
+}
+
+.time {
+  font-size: 11px;
+  color: #94a3b8;
+  white-space: nowrap;
+}
+
+.desc {
+  margin: 0;
+  font-size: 13px;
+  color: #64748b;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Trạng thái trống / Chưa đăng nhập */
+.emptyState {
+  padding: 32px 24px;
+  text-align: center;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.emptyState p {
+  margin: 0 0 16px 0;
+}
+
+.loginBtn {
+  background-color: rgba(80, 128, 190, 1);
+  color: #ffffff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.loginBtn:hover {
+  background-color: rgba(65, 108, 165, 1);
+}
+
+/* Tùy chỉnh thanh cuộn nhỏ gọn (Scrollbar) */
+.dropBody::-webkit-scrollbar {
+  width: 6px;
+}
+.dropBody::-webkit-scrollbar-track {
+  background: transparent;
+}
+.dropBody::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+.dropBody::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}

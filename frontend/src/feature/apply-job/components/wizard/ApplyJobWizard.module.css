@@ -1,0 +1,97 @@
+.container {
+  max-width: 850px;
+  margin: 0 auto;
+  padding: 24px;
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  border: 1px solid #eef2f7;
+  margin: 40px auto;
+}
+
+.steps {
+  margin-bottom: 24px;
+}
+
+/* Buttons wrapper */
+.buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* Base button */
+.button {
+  padding: 11px 18px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* BACK */
+.back {
+  background: #f3f4f6;
+  color: #111827;
+  border-radius: 5px;
+}
+
+.back:hover {
+  background: #e5e7eb;
+  transform: translateY(-1px);
+}
+
+/* NEXT */
+.next {
+  background: rgba(80, 128, 190, 1);
+  color: #fff;
+  border-radius: 5px;
+}
+
+.next:hover {
+  background: rgba(65, 105, 160, 1);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(80, 128, 190, 0.3);
+}
+
+/* SUBMIT */
+.submit {
+  background: rgba(80, 128, 190, 1);
+  color: #fff;
+  border-radius: 5px;
+}
+
+.submit:hover {
+  background: rgba(65, 105, 160, 1);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(80, 128, 190, 0.35);
+}
+
+/* STEP CONTENT */
+.stepContent {
+  min-height: 320px;
+  padding: 10px 0;
+}
+
+/* APPLIED STATE */
+.applied {
+  text-align: center;
+  padding: 45px 20px;
+  background: #ecfdf5;
+  border: 1px solid #10b981;
+  border-radius: 12px;
+  color: #065f46;
+  font-weight: 600;
+  font-size: 16px;
+}

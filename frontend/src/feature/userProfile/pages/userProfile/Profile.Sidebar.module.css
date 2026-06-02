@@ -1,0 +1,126 @@
+/*         
+   1. MAIN LAYOUT (PAGE CONTAINER)
+            */
+
+.accountPage {
+  display: flex;
+  gap: 24px;
+  padding: 24px;
+  width: 100%;
+  box-sizing: border-box;
+  align-items: flex-start;
+}
+
+
+/*         
+   2. SIDEBAR NAVIGATION (LIGHT MODE)
+            */
+
+.sidebar {
+  width: 240px;
+  padding: 1.5rem;
+  background-color: #ffffff;
+  border-right: 1px solid #e5e7eb;
+  border-radius: 12px; /* Đồng bộ bo góc với khung content cho cân đối */
+}
+
+/* Tìm đến đoạn này trong file CSS của bạn và cập nhật lại nhé */
+
+.title {
+  margin: 0 0 1.25rem 0;
+  padding-left: 0.75rem;
+  font-size: 18px;       /* Tăng tiêu đề "MY ACCOUNT" lên một chút (gốc: 0.875rem) */
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #4b5563;
+}
+
+.navLink {
+  display: block;
+  padding: 0.75rem 0.875rem; /* Tăng padding để menu bấm thoải mái hơn (gốc: 0.625rem 0.75rem) */
+  font-size: 1.063rem;       /* Tăng kích thước chữ menu chính (gốc: 0.938rem ~15px) */
+  font-weight: 500;
+  color: #4b5563;
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  border-radius: 6px;
+  transition: all 0.15s ease-in-out;
+}
+
+.navList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+
+
+.navLink:hover {
+  background-color: #f3f4f6;
+  color: #111827;
+}
+
+.navActive {
+  background-color: #f3f4f6;
+  color: #2563eb !important;
+  font-weight: 600;
+  border-left: 2px solid #2563eb;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+
+/*         
+   3. CONTENT AREA (LIGHT MODE)
+            */
+
+.content {
+  flex: 1;
+  min-width: 0;
+  padding: 24px;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb; /* Thêm border nhẹ để tách biệt nền rõ ràng */
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+
+/*         
+   4. TRADITIONAL DARK MODE OVERRIDES (:global(.dark-mode))
+            */
+
+/* Layout & Containers */
+:global(.dark-mode) .sidebar,
+:global(.dark-mode) .content {
+  background-color: #0f172a;
+  border-color: #334155;
+}
+
+:global(.dark-mode) .content {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Đổ bóng sâu hơn trên nền tối */
+}
+
+/* Typography & Headers */
+:global(.dark-mode) .title {
+  color: #94a3b8;
+}
+
+/* Navigation Links */
+:global(.dark-mode) .navLink {
+  color: #94a3b8;
+}
+
+:global(.dark-mode) .navLink:hover {
+  background-color: #1e293b;
+  color: #f8fafc;
+}
+
+:global(.dark-mode) .navActive {
+  background-color: #1e293b;
+  color: #3b82f6 !important;
+  border-left-color: #3b82f6;
+}

@@ -1,0 +1,34 @@
+.container { width: 100%; }
+
+.header { margin-bottom: 1.5rem; }
+
+.pageTitle { font-size: 1.5rem; font-weight: 700; color: #111827; margin: 0 0 0.5rem 0; }
+
+.jobCount { font-size: 0.75rem; background: #f3f4f6; padding: 4px 8px; border-radius: 20px; color: #4b5563; }
+
+.subtitle { color: #4b5563; }
+
+/* TABLE STYLES */
+.tableWrapper { overflow-x: auto; background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; }
+
+.jobTable { width: 100%; border-collapse: collapse; text-align: left; }
+
+.jobTable th { padding: 1rem; border-bottom: 1px solid #e5e7eb; color: #6b7280; font-size: 0.875rem; }
+
+.jobTable td { padding: 1rem; border-bottom: 1px solid #e5e7eb; font-size: 0.938rem; }
+
+/* STATUS BADGES */
+.statusBadge { padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; }
+
+.pending { background: #fef3c7; color: #92400e; }
+.accepted { background: #d1fae5; color: #065f46; }
+.rejected { background: #fee2e2; color: #991b1b; }
+
+.viewBtn { background: none; border: 1px solid #e5e7eb; padding: 6px 12px; border-radius: 6px; cursor: pointer; }
+
+/* DARK MODE OVERRIDES */
+:global(.dark-mode) .pageTitle { color: #f8fafc; }
+:global(.dark-mode) .tableWrapper { background: #0f172a; border-color: #334155; }
+:global(.dark-mode) .jobTable th { border-bottom-color: #334155; }
+:global(.dark-mode) .jobTable td { border-bottom-color: #334155; color: #cbd5e1; }
+:global(.dark-mode) .viewBtn { border-color: #334155; color: #94a3b8; }

@@ -1,0 +1,221 @@
+/*
+   CONTAINER
+  */
+.container {
+  padding: 24px;
+  min-height: 100vh;
+}
+
+.sectionTitle {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 20px 0;
+}
+
+/*
+   LAYOUT
+  */
+.gridTwo {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 40px;
+  margin-bottom: 20px;
+  align-items: start;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.rowTwo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/*
+   HEADER ACTIONS
+  */
+.headerActions {
+  display: flex;
+  justify-content: flex-end;
+  margin: 10px 0 20px;
+  gap: 10px;
+}
+
+.headerActions button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 8px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.headerActions button:first-child {
+  background: #2563eb;
+  color: white;
+}
+
+.headerActions button:first-child:hover {
+  background: #1d4ed8;
+}
+
+.headerActions button:last-child {
+  background: #16a34a;
+  color: white;
+}
+
+.headerActions button:last-child:hover {
+  background: #15803d;
+}
+
+.headerActions button:hover {
+  transform: translateY(-1px);
+}
+
+/*
+   AVATAR
+  */
+.avatarBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 15px;
+}
+
+.avatarInput {
+  display: none;
+}
+
+.avatarCircle {
+  width: 120px;
+  height: 120px;
+
+  border-radius: 50%;
+  overflow: hidden;
+
+  background: #dbe4f0;
+  border: 4px solid #fff;
+
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+  cursor: pointer;
+}
+
+.avatarImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.changeAvatarText {
+  background: rgba(80, 128, 190, 1);
+  margin-top: 5px;
+  font-size: 14px;
+  color: white;
+  padding: 5px 10px ;
+  text-decoration: underline;
+  cursor: pointer;
+  border-radius: 10px;
+}
+
+/*
+   FORM
+  */
+.formBox {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.formGroup label {
+  font-size: 14px;
+  color: #555;
+}
+
+/*
+   INPUT
+  */
+input {
+  width: 100%;
+  height: 34px;
+
+  padding: 0 12px;
+  box-sizing: border-box;
+
+  border-radius: 13px;
+  border: 1px solid #ddd;
+
+  font-size: 14px;
+  outline: none;
+}
+
+input:focus {
+  border-color: #4a90e2;
+}
+
+/*
+   DATE OF BIRTH
+  */
+.dob {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.dob input {
+  min-width: 0;
+}
+
+/*
+   SOCIAL
+  */
+.socialRow {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.socialRow input {
+  flex: 1;
+}
+
+.add {
+  font-size: 13px;
+  color: #4a90e2;
+  cursor: pointer;
+}
+
+/*
+   RESPONSIVE
+  */
+@media (max-width: 768px) {
+  .gridTwo {
+    grid-template-columns: 1fr;
+  }
+
+  .dob {
+    grid-template-columns: 1fr;
+  }
+}
+
+.uploadMessage {
+  margin-top: 8px;
+  font-size: 14px;
+  color: #2563eb;
+  text-align: center;
+}

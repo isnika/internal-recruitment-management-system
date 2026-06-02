@@ -1,0 +1,37 @@
+.userBox {
+  position: relative;
+  cursor: pointer;
+}
+
+.userInfo {
+  padding: 6px 10px;
+  border-radius: 8px;
+}
+
+.userInfo:hover {
+  background: #f2f2f2;
+}
+
+.dropdown {
+  position: absolute;
+  top: 40px;
+  right: 0;
+
+  width: 200px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  z-index: 999;
+}
+
+.dropdown div {
+  padding: 10px;
+}
+
+.dropdown div:hover {
+  background: #f5f6fa;
+}
+
+.logout {
+  color: red;
+}
