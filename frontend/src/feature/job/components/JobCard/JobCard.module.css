@@ -190,3 +190,36 @@
 .applyBtn:hover {
   background: #7f1d1d;
 }
+
+/* Container tiêu đề dùng flexbox để hiển thị nhãn kế bên */
+.titleWrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Biến đổi nhẹ toàn bộ card khi bị đóng (làm mờ nhẹ đi) */
+.jobCardClosed {
+  opacity: 0.85;
+  background-color: #fafafa;
+}
+
+/* Nhãn Hết hạn (Expired Badge) */
+.expiredBadge {
+  background-color: #fef2f2;
+  color: #ef4444;
+  border: 1px solid #fecaca;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Class style dành cho nút Apply khi bị vô hiệu hóa */
+.disabledBtn {
+  background-color: #cbd5e1 !important; /* Đổi nút thành màu xám */
+  border-color: #cbd5e1 !important;
+  color: #64748b !important;
+  cursor: not-allowed !important;
+}

@@ -27,8 +27,6 @@ const ExperienceLevelManagement = () => {
 
   const [formData, setFormData] = useState({
     name: "",
-    monthsMin: "0",
-    monthsMax: "12",
   });
 
   // =========================
@@ -77,15 +75,11 @@ const ExperienceLevelManagement = () => {
       setEditingLevel(level);
       setFormData({
         name: level.name,
-        monthsMin: String(level.monthsMin),
-        monthsMax: String(level.monthsMax),
       });
     } else {
       setEditingLevel(null);
       setFormData({
         name: "",
-        monthsMin: "0",
-        monthsMax: "12",
       });
     }
     setIsModalOpen(true);
@@ -100,8 +94,6 @@ const ExperienceLevelManagement = () => {
 
     const payload = {
       name: formData.name.trim(),
-      monthsMin: Number(formData.monthsMin),
-      monthsMax: Number(formData.monthsMax),
     };
 
     try {
@@ -176,9 +168,7 @@ const ExperienceLevelManagement = () => {
           <table className={styles.table}>
             <thead>
               <tr>
-                <th>Tier</th>
-                <th>Min</th>
-                <th>Max</th>
+                <th>Experience Level</th>
                 <th align="right">Actions</th>
               </tr>
             </thead>
@@ -190,8 +180,7 @@ const ExperienceLevelManagement = () => {
                     <td>
                       <FiAward /> {lvl.name}
                     </td>
-                    <td>{lvl.monthsMin} months</td>
-                    <td>{lvl.monthsMax} months</td>
+
                     <td align="right">
                       <button onClick={() => openModal(lvl)}>
                         <FiEdit2 />
@@ -204,7 +193,7 @@ const ExperienceLevelManagement = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={4} align="center">
+                  <td colSpan={2} align="center">
                     No data found
                   </td>
                 </tr>
@@ -232,42 +221,36 @@ const ExperienceLevelManagement = () => {
       </div>
 
       {/* MODAL */}
+      {/* MODAL */}
       {isModalOpen && (
         <div className={styles.modalOverlay}>
           <div className={styles.modal}>
-            <h3>{editingLevel ? "Edit Level" : "Create Level"}</h3>
+            <h3>
+              {editingLevel ? "Edit Experience Level" : "Create Experience Level"}
+            </h3>
 
             <form onSubmit={handleSave}>
               <input
-                placeholder="Name"
+                placeholder="Experience level name"
                 value={formData.name}
                 onChange={(e) =>
-                  setFormData((p) => ({ ...p, name: e.target.value }))
-                }
-              />
-
-              <input
-                type="number"
-                value={formData.monthsMin}
-                onChange={(e) =>
-                  setFormData((p) => ({ ...p, monthsMin: e.target.value }))
-                }
-              />
-
-              <input
-                type="number"
-                value={formData.monthsMax}
-                onChange={(e) =>
-                  setFormData((p) => ({ ...p, monthsMax: e.target.value }))
+                  setFormData({
+                    name: e.target.value,
+                  })
                 }
               />
 
               <div>
-                <button type="button" onClick={() => setIsModalOpen(false)}>
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                >
                   Cancel
                 </button>
 
-                <button type="submit">Save</button>
+                <button type="submit">
+                  Save
+                </button>
               </div>
             </form>
           </div>

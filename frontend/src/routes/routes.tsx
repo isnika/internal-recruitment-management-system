@@ -20,6 +20,7 @@ import PersonalProfile from "../feature/userProfile/components/PersonalProfile/P
 import ManageCV from "../feature/userProfile/components/CVManagement/CVManagement";
 import SavedJobs from "../feature/userProfile/components/SavedJob/SavedJob";
 import AppliedJobs from "../feature/userProfile/components/AppliedJob/AppliedJob";
+import InterviewMe from "../feature/userProfile/components/Interview/pages/InterviewMe"
 import Settings from "../feature/userProfile/components/Settings/Settings";
 import ApplyJobPage from "../feature/apply-job/ApplyJobPage";
 import SearchPage from "../feature/Search/pages/SearchPage/SearchPage";
@@ -75,6 +76,7 @@ export default function AppRoutes() {
           <Route path="cv" element={<ManageCV />} />
           <Route path="saved" element={<SavedJobs />} />
           <Route path="applied" element={<AppliedJobs />} />
+          <Route path="interviewMe" element={<InterviewMe/>} />
           <Route path="settings" element={<Settings />} />
           <Route path="help" element={<RecruitmentHelpCenter/>} />
         </Route>

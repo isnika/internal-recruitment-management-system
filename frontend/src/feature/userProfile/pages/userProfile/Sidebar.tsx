@@ -54,6 +54,17 @@ export default function Sidebar() {
 
         <li>
           <NavLink
+            to="/profile/interviewMe"
+            className={({ isActive }) =>
+              `${styles.navLink} ${isActive ? styles.navActive : ""}`
+            }
+          >
+            My Interviews
+          </NavLink>
+        </li>
+
+        <li>
+          <NavLink
             to="/profile/settings"
             className={({ isActive }) =>
               `${styles.navLink} ${isActive ? styles.navActive : ""}`

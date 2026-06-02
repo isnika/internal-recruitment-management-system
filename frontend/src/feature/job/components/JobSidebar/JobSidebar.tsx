@@ -165,23 +165,35 @@ const JobSidebar = ({
           </div>
 
           {/* STATUS */}
-          <div className={styles.blueCard}>
-            <h4 className={styles.blueCardTitle}>
-              Status
-            </h4>
+       {/* STATUS */}
+                 <div className={styles.blueCard}>
+                   <h4 className={styles.blueCardTitle}>
+                     Status
+                   </h4>
 
-            <div
-              className={styles.blueCardList}
-            >
-              <span
-                className={
-                  styles.blueCardItem
-                }
-              >
-                {job.status}
-              </span>
-            </div>
-          </div>
+                   <div className={styles.blueCardList}>
+                     {(() => {
+                       const statusUpper = job.status?.toUpperCase();
+                       let statusClass = styles.statusActive;
+                       let dotClass = styles.dotActive;
+
+                       if (statusUpper === "CLOSED") {
+                         statusClass = styles.statusClosed;
+                         dotClass = styles.dotClosed;
+                       } else if (statusUpper === "PAUSED") {
+                         statusClass = styles.statusPaused;
+                         dotClass = styles.dotPaused;
+                       }
+
+                       return (
+                         <span className={`${styles.statusBadge} ${statusClass}`}>
+                           <span className={`${styles.statusDot} ${dotClass}`}></span>
+                           {job.status}
+                         </span>
+                       );
+                     })()}
+                   </div>
+                 </div>
         </>
       )}
     </>

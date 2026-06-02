@@ -69,6 +69,29 @@ export default function CVManagement() {
     }
   };
 
+ const getFileNameFromUrl = (url: string) => {
+   if (!url) return "Không có tên file";
+
+   try {
+     // 1. Lấy phần cuối cùng của URL (tên file kèm đuôi)
+     const decodeUrl = decodeURIComponent(url); // Giải mã URL thành Tiếng Việt có dấu (ví dụ: Phân tích thiết kế hệ thống...)
+     const baseName = decodeUrl.substring(decodeUrl.lastIndexOf("/") + 1);
+
+     // 2. Loại bỏ đuôi định dạng file (.pdf, .docx, .doc)
+     const nameWithoutExt = baseName.replace(/\.[^/.]+$/, "");
+
+     // 3. (Tùy chọn) Loại bỏ mã đuôi ngẫu nhiên của Cloudinary (_ioxruj, _vk2z6s) để tên file "sạch" hoàn toàn
+     // Tìm vị trí của dấu gạch dưới cuối cùng để cắt bỏ phần mã id ngẫu nhiên
+     const cleanName = nameWithoutExt.replace(/_[a-zA-Z0-9]+$/, "");
+
+     // Trả về tên file kèm .pdf/.docx ban đầu sau khi đã làm sạch
+     const extension = baseName.split('.').pop();
+     return `${cleanName}.${extension}`;
+   } catch (error) {
+     return "CV_Attachment.pdf";
+   }
+ };
+
   return (
     <div className={styles.container}>
       <h2 className={styles.pageTitle}>Manage CV</h2>
@@ -100,13 +123,13 @@ export default function CVManagement() {
                 <span className={styles.fileIcon}>📄</span>
 
                 <div>
-                  <p className={styles.fileName}>
-                    CV #{cv.id}
+                  <p className={styles.fileName} title={getFileNameFromUrl(cv.fileUrl)}>
+                    {getFileNameFromUrl(cv.fileUrl)}
                   </p>
 
                   <p className={styles.fileMeta}>
                     Uploaded on{" "}
-                    {new Date(cv.createdAt).toLocaleDateString()}
+                    {new Date(cv.createdAt).toLocaleDateString("vi-VN")}
                   </p>
                 </div>
               </div>

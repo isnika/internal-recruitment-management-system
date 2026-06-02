@@ -60,8 +60,21 @@ const JobCard: React.FC<JobCardProps> = ({
 }) => {
   const navigate = useNavigate();
 
+  // Kiểm tra trạng thái đóng/hết hạn của Job
+  const isClosed = job.status?.toUpperCase() === "CLOSED";
+
+  // Hàm xử lý khi người dùng tương tác vào các nút cần chặn
+  const handleActionClick = (callback: () => void) => {
+    if (isClosed) {
+      // Thay alert này bằng hàm mở Modal tùy chỉnh của bạn nếu có (VD: setOpenModal(true))
+      alert("Công việc này đã hết hạn nhận hồ sơ!");
+      return;
+    }
+    callback();
+  };
+
   return (
-    <div className={styles.jobCard}>
+    <div className={`${styles.jobCard} ${isClosed ? styles.jobCardClosed : ""}`}>
       {/* LOGO */}
       <div className={styles.jobLogoCol}>
         <img
@@ -76,9 +89,16 @@ const JobCard: React.FC<JobCardProps> = ({
 
       {/* INFO */}
       <div className={styles.jobInfoCol}>
-        <h3 className={styles.jobTitle}>
-          {job.title}
-        </h3>
+        <div className={styles.titleWrapper}>
+          <h3 className={styles.jobTitle}>
+            {job.title}
+          </h3>
+
+          {/* Nhãn thông báo hết hạn trực quan ngay cạnh tiêu đề */}
+          {isClosed && (
+            <span className={styles.expiredBadge}>Hết hạn</span>
+          )}
+        </div>
 
         <p className={styles.jobCategory}>
           {job.category?.name}
@@ -167,9 +187,9 @@ const JobCard: React.FC<JobCardProps> = ({
             className={
               styles.bookmarkBtn
             }
+            disabled={isClosed} // Vô hiệu hóa nút lưu nếu job đóng
             onClick={(e) => {
               e.stopPropagation();
-
               onBookmark(
                 job.id,
                 !!job.isSaved
@@ -196,41 +216,27 @@ const JobCard: React.FC<JobCardProps> = ({
           }
         >
           <button
-            className={
-              styles.viewDetailsBtn
-            }
+            className={styles.viewDetailsBtn}
             onClick={() => {
-              navigate(
-                `/jobs/${job.id}`
-              );
-
-              window.scrollTo(
-                0,
-                0
-              );
+              // Vẫn cho phép xem chi tiết, hoặc chặn tùy bạn (ở đây đang cấu hình chặn)
+              handleActionClick(() => {
+                navigate(`/jobs/${job.id}`);
+                window.scrollTo(0, 0);
+              });
             }}
           >
             View Details
           </button>
 
           <button
-            className={
-              styles.applyBtn
-            }
+            className={`${styles.applyBtn} ${isClosed ? styles.disabledBtn : ""}`}
             onClick={() => {
-              navigate(
-                `/jobs/${job.id}`,
-                {
-                  state: {
-                    autoApply: true,
-                  },
-                }
-              );
-
-              window.scrollTo(
-                0,
-                0
-              );
+              handleActionClick(() => {
+                navigate(`/jobs/${job.id}`, {
+                  state: { autoApply: true },
+                });
+                window.scrollTo(0, 0);
+              });
             }}
           >
             Apply Now
