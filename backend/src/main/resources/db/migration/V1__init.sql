@@ -1,8 +1,8 @@
 -- MySQL dump 10.13  Distrib 8.0.44, for Win64 (x86_64)
 --
--- Host: 127.0.0.1    Database: recruitment_db1
+-- Host: localhost    Database: recruitment_db1
 -- ------------------------------------------------------
--- Server version	8.0.46
+-- Server version	8.2.0
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -27,7 +27,7 @@ CREATE TABLE `applications` (
   `user_id` bigint DEFAULT NULL,
   `job_id` bigint DEFAULT NULL,
   `cv_id` bigint DEFAULT NULL,
-  `status` varchar(255) DEFAULT NULL,
+  `status` enum('APPLIED','PENDING','REVIEWING','SHORTLISTED','REJECTED','WITHDRAWN','HIRED') DEFAULT NULL,
   `applied_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
@@ -193,39 +193,6 @@ LOCK TABLES `experience_levels` WRITE;
 /*!40000 ALTER TABLE `experience_levels` DISABLE KEYS */;
 INSERT INTO `experience_levels` VALUES (1,'Junior'),(2,'Fresher'),(3,'Intern'),(4,'Senior'),(5,'Leader'),(7,'Mid-Level'),(8,'Test');
 /*!40000 ALTER TABLE `experience_levels` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `flyway_schema_history`
---
-
-DROP TABLE IF EXISTS `flyway_schema_history`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `flyway_schema_history` (
-  `installed_rank` int NOT NULL,
-  `version` varchar(50) DEFAULT NULL,
-  `description` varchar(200) NOT NULL,
-  `type` varchar(20) NOT NULL,
-  `script` varchar(1000) NOT NULL,
-  `checksum` int DEFAULT NULL,
-  `installed_by` varchar(100) NOT NULL,
-  `installed_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `execution_time` int NOT NULL,
-  `success` tinyint(1) NOT NULL,
-  PRIMARY KEY (`installed_rank`),
-  KEY `flyway_schema_history_s_idx` (`success`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `flyway_schema_history`
---
-
-LOCK TABLES `flyway_schema_history` WRITE;
-/*!40000 ALTER TABLE `flyway_schema_history` DISABLE KEYS */;
-INSERT INTO `flyway_schema_history` VALUES (1,'1','init','SQL','V1__init.sql',699621463,'root','2026-05-24 08:07:45',573,1),(2,'1','init','SQL','V1__init.sql',529330383,'root','2026-05-27 14:42:38',2924,1);
-/*!40000 ALTER TABLE `flyway_schema_history` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -428,27 +395,21 @@ CREATE TABLE `users` (
   `password` varchar(255) NOT NULL,
   `first_name` varchar(255) DEFAULT NULL,
   `last_name` varchar(255) DEFAULT NULL,
-
   `avatar_url` varchar(255) DEFAULT NULL,
-  `avatar_storage_public_id` varchar(255) DEFAULT NULL,
-  `avatar_storage_resource_type` varchar(255) DEFAULT NULL,
-
-  `phone` varchar(50) DEFAULT NULL,
-  `gender` varchar(50) DEFAULT NULL,
-  `date_of_birth` date DEFAULT NULL,
-
   `role` enum('ADMIN','RECRUITER','CANDIDATE') DEFAULT NULL,
   `status` enum('ACTIVE','BLOCKED') DEFAULT NULL,
-
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `company_id` bigint DEFAULT NULL,
-
+  `avatar_storage_public_id` varchar(255) DEFAULT NULL,
+  `avatar_storage_resource_type` varchar(255) DEFAULT NULL,
+  `date_of_birth` date DEFAULT NULL,
+  `gender` varchar(255) DEFAULT NULL,
+  `phone` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`),
   KEY `FK_users_company` (`company_id`),
-  CONSTRAINT `FK_users_company`
-      FOREIGN KEY (`company_id`) REFERENCES `companies` (`id`)
+  CONSTRAINT `FK_users_company` FOREIGN KEY (`company_id`) REFERENCES `companies` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -458,7 +419,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'admin@gmail.com','123456','Admin','System',NULL,'ADMIN','ACTIVE','2026-03-26 13:49:36','2026-03-26 13:49:36',NULL,NULL,NULL),(2,'hr@company.com','123456','HR','Manager',NULL,'RECRUITER','ACTIVE','2026-03-26 13:49:36','2026-03-26 13:49:36',NULL,NULL,NULL),(3,'candidate@gmail.com','123456','Nguyen','An',NULL,'CANDIDATE','ACTIVE','2026-03-26 13:49:36','2026-03-26 13:49:36',NULL,NULL,NULL),(4,'khue@gmail.com','$2a$10$as.OjC5lXAaVxD.CCfBfN.EgaBXwB4L0IhcfnPwiwpgYzEh8SZ822','Khue','Chanh',NULL,'ADMIN','ACTIVE','2026-04-04 16:26:59','2026-04-04 16:26:59',NULL,NULL,NULL),(5,'khang@gmail.com','$2a$10$TUROeneEBBIKKmQg9Gmzfu34LRLUaeZjVgReKgkcLOYYYQUchtCVm','Khang','Nhat','https://res.cloudinary.com/dri1spe3b/image/upload/v1776611905/recruitment/candidate-avatars/food_feueni.jpg','CANDIDATE','ACTIVE','2026-04-04 17:28:35','2026-04-04 17:28:35',NULL,'recruitment/candidate-avatars/food_feueni','image'),(6,'recruiter@gmail.com','$2a$10$lPW.VCknQUg98iJPEFaeC.zYoND4.0Td4d7lT/diTuVgJwqdYhb4G','The','Recruiter',NULL,'RECRUITER','ACTIVE','2026-04-05 05:58:41','2026-04-05 05:58:41',NULL,NULL,NULL),(7,'candidate1@gmail.com','$2a$10$9/h3UhNs3HV.yMpjJg2l1eR3BzIvWkBPKk9gQCDLUhsvCh.22/BY2','The','Candidate1',NULL,'CANDIDATE','ACTIVE','2026-04-19 13:34:08','2026-04-19 13:34:08',NULL,NULL,NULL),(8,'chanhkhue7122005@gmail.com','$2a$10$IwpVgWPqF8QUeX.UhKpcV.18HhJWMwqiIZx645fXnP70RZhME0oj2','Khue','Chanh','https://res.cloudinary.com/dri1spe3b/image/upload/v1777042642/recruitment/candidate-avatars/tv2_u33kul.jpg','CANDIDATE','ACTIVE','2026-04-24 14:54:57','2026-04-24 14:54:57',NULL,'recruitment/candidate-avatars/tv2_u33kul','image'),(9,'recuruiter2@gmail.com','$2a$10$g4x9k36rXUBD289wIFsyT.RUNkGcY1YeiDMiC9rUrFMSiFmqGjfoC','RECRUITER','THE',NULL,'RECRUITER',NULL,NULL,'2026-04-25 03:31:08',1,NULL,NULL);
+INSERT INTO `users` VALUES (1,'admin@gmail.com','123456','Admin','System',NULL,'ADMIN','ACTIVE','2026-03-26 13:49:36','2026-03-26 13:49:36',NULL,NULL,NULL,NULL,NULL,NULL),(2,'hr@company.com','123456','HR','Manager',NULL,'RECRUITER','ACTIVE','2026-03-26 13:49:36','2026-03-26 13:49:36',NULL,NULL,NULL,NULL,NULL,NULL),(3,'candidate@gmail.com','123456','Nguyen','An',NULL,'CANDIDATE','ACTIVE','2026-03-26 13:49:36','2026-03-26 13:49:36',NULL,NULL,NULL,NULL,NULL,NULL),(4,'khue@gmail.com','$2a$10$as.OjC5lXAaVxD.CCfBfN.EgaBXwB4L0IhcfnPwiwpgYzEh8SZ822','Khue','Chanh',NULL,'ADMIN','ACTIVE','2026-04-04 16:26:59','2026-04-04 16:26:59',NULL,NULL,NULL,NULL,NULL,NULL),(5,'khang@gmail.com','$2a$10$TUROeneEBBIKKmQg9Gmzfu34LRLUaeZjVgReKgkcLOYYYQUchtCVm','Khang','Nhat','https://res.cloudinary.com/dri1spe3b/image/upload/v1776611905/recruitment/candidate-avatars/food_feueni.jpg','CANDIDATE','ACTIVE','2026-04-04 17:28:35','2026-04-04 17:28:35',NULL,'recruitment/candidate-avatars/food_feueni','image',NULL,NULL,NULL),(6,'recruiter@gmail.com','$2a$10$lPW.VCknQUg98iJPEFaeC.zYoND4.0Td4d7lT/diTuVgJwqdYhb4G','The','Recruiter',NULL,'RECRUITER','ACTIVE','2026-04-05 05:58:41','2026-04-05 05:58:41',NULL,NULL,NULL,NULL,NULL,NULL),(7,'candidate1@gmail.com','$2a$10$9/h3UhNs3HV.yMpjJg2l1eR3BzIvWkBPKk9gQCDLUhsvCh.22/BY2','The','Candidate1',NULL,'CANDIDATE','ACTIVE','2026-04-19 13:34:08','2026-04-19 13:34:08',NULL,NULL,NULL,NULL,NULL,NULL),(8,'chanhkhue7122005@gmail.com','$2a$10$IwpVgWPqF8QUeX.UhKpcV.18HhJWMwqiIZx645fXnP70RZhME0oj2','Khue','Chanh','https://res.cloudinary.com/dri1spe3b/image/upload/v1777042642/recruitment/candidate-avatars/tv2_u33kul.jpg','CANDIDATE','ACTIVE','2026-04-24 14:54:57','2026-04-24 14:54:57',NULL,'recruitment/candidate-avatars/tv2_u33kul','image',NULL,NULL,NULL),(9,'recuruiter2@gmail.com','$2a$10$g4x9k36rXUBD289wIFsyT.RUNkGcY1YeiDMiC9rUrFMSiFmqGjfoC','RECRUITER','THE',NULL,'RECRUITER',NULL,NULL,'2026-04-25 03:31:08',1,NULL,NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -497,4 +458,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-05-27 21:54:45
+-- Dump completed on 2026-06-01 13:37:27

@@ -40,20 +40,20 @@ public class ApplicationController {
   }
 
   @GetMapping
-  @PreAuthorize("hasRole('RECRUITER')")
+  @PreAuthorize("hasAnyRole('RECRUITER', 'ADMIN')")
   public ResponseEntity<List<ApplicationResponse>> getAllApplications() {
     return ResponseEntity.ok(applicationService.getAllApplications());
   }
 
   @GetMapping("/job/{jobId}")
-  @PreAuthorize("hasRole('RECRUITER')")
+  @PreAuthorize("hasAnyRole('RECRUITER', 'ADMIN')")
   public ResponseEntity<List<ApplicationResponse>> getApplicationsByJob(
       @PathVariable Long jobId) {
     return ResponseEntity.ok(applicationService.getApplicationsByJob(jobId));
   }
 
   @PatchMapping("/{id}/status")
-  @PreAuthorize("hasRole('RECRUITER')")
+  @PreAuthorize("hasAnyRole('RECRUITER', 'ADMIN')")
   public ResponseEntity<ApplicationResponse> updateApplicationStatus(
       @PathVariable Long id,
       @Valid @RequestBody UpdateApplicationStatusRequest request) {

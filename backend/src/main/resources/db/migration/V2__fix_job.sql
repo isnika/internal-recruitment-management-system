@@ -1,0 +1,1 @@
+UPDATE jobs SET status = 'ACTIVE' WHERE status = 'OPEN';

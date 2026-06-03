@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-
 @RestController
 @RequestMapping("/api/reports")
 @RequiredArgsConstructor
@@ -21,7 +20,6 @@ public class ReportController {
 
     private final ReportService reportService;
 
-
     @GetMapping("/overview")
     public ResponseEntity<ReportDTO.OverviewResponse> getOverview() {
         return ResponseEntity.ok(reportService.getOverview());
@@ -29,13 +27,13 @@ public class ReportController {
 
     @GetMapping("/new-candidates")
     public ResponseEntity<ReportDTO.NewCandidatesResponse> getNewCandidates(
-            @RequestParam(defaultValue = "day")  String period,
-            @RequestParam(required = false)      String from,
-            @RequestParam(required = false)      String to) {
+            @RequestParam(defaultValue = "day") String period,
+            @RequestParam(required = false) String from,
+            @RequestParam(required = false) String to) {
         return ResponseEntity.ok(reportService.getNewCandidates(period, from, to));
     }
 
-    @GetMapping("/jobs")
+    @GetMapping("  ")
     public ResponseEntity<List<ReportDTO.JobReportResponse>> getJobReport() {
         return ResponseEntity.ok(reportService.getJobReport());
     }
@@ -64,8 +62,8 @@ public class ReportController {
     @GetMapping("/time-series")
     public ResponseEntity<ReportDTO.TimeSeriesReportResponse> getTimeSeries(
             @RequestParam(defaultValue = "month") String period,
-            @RequestParam(required = false)       String from,
-            @RequestParam(required = false)       String to) {
+            @RequestParam(required = false) String from,
+            @RequestParam(required = false) String to) {
         return ResponseEntity.ok(reportService.getTimeSeries(period, from, to));
     }
 }
