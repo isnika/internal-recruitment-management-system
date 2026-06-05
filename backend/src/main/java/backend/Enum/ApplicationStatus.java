@@ -10,6 +10,8 @@ public enum ApplicationStatus {
   SHORTLISTED,
   REJECTED,
   WITHDRAWN,
+  INTERVIEWING,
+  ACCEPTED,
   HIRED;
 
   @JsonValue

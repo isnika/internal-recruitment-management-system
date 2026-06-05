@@ -56,7 +56,8 @@ public class InterviewServiceImpl implements InterviewService {
 
     private void checkRole(User user, UserRole... roles) {
         for (UserRole role : roles) {
-            if (user.getRole() == role) return;
+            if (user.getRole() == role)
+                return;
         }
         throw new BadRequestException("Không có quyền truy cập");
     }
@@ -203,7 +204,6 @@ public class InterviewServiceImpl implements InterviewService {
 
     // ================= RECRUITER / ADMIN =================
 
-
     @Override
     @Transactional
     public InterviewResponse createInterview(CreateInterviewRequest request) {
@@ -237,7 +237,7 @@ public class InterviewServiceImpl implements InterviewService {
 
         notificationService.createNotification(
                 application.getUser().getId(),
-                "Bạn có lịch phỏng vấn mới",
+                "You have new interview schedule",
                 "/api/interviews/" + saved.getId(),
                 NotificationType.INTERVIEW,
                 true);
@@ -246,27 +246,25 @@ public class InterviewServiceImpl implements InterviewService {
                 application.getUser().getEmail(),
                 "Thư mời phỏng vấn",
                 """
-                Xin chào %s,
-        
-                Bạn đã được mời tham gia phỏng vấn.
-        
-                Vị trí: %s
-                Thời gian: %s
-                Địa điểm: %s
-        
-                Ghi chú:
-                %s
-        
-                Trân trọng.
-                """
+                        Hello %s,
+
+                        You have been invited for an interview.
+
+                        Site: %s
+                        Time: %s
+                        Location: %s
+
+                        Note
+                        %s
+
+                        Best Reagard.
+                        """
                         .formatted(
-                                application.getUser().getFirstName()+" "+application.getUser().getLastName(),
+                                application.getUser().getFirstName() + " " + application.getUser().getLastName(),
                                 application.getJob().getTitle(),
                                 saved.getScheduleTime(),
                                 saved.getLocation(),
-                                saved.getNote() == null ? "" : saved.getNote()
-                        )
-        );
+                                saved.getNote() == null ? "" : saved.getNote()));
 
         return InterviewMapper.toResponse(saved);
     }
@@ -318,27 +316,25 @@ public class InterviewServiceImpl implements InterviewService {
 
             emailService.sendSimpleMail(
                     saved.getApplication().getUser().getEmail(),
-                    "Thông báo hủy phỏng vấn",
+                    "Interview cancellation notice",
                     """
-                    Xin chào %s,
-        
-                    Buổi phỏng vấn cho vị trí %s đã bị hủy.
-        
-                    Vui lòng theo dõi hệ thống để nhận thông báo mới.
-        
-                    Trân trọng.
-                    """
+                            Hello %s,
+
+                            The interview for the %s position has been cancelled.
+
+                            Please monitor the system for new notifications.
+
+                            Best Regard.
+                            """
                             .formatted(
                                     saved.getApplication().getUser().getFirstName(),
-                                    saved.getApplication().getJob().getTitle()
-                            )
-            );
+                                    saved.getApplication().getJob().getTitle()));
         }
         if (newStatus == InterviewStatus.CANCELLED || newStatus == InterviewStatus.COMPLETED) {
             String msg = switch (newStatus) {
                 case CANCELLED -> "Lịch phỏng vấn của bạn đã bị HỦY";
                 case COMPLETED -> "Buổi phỏng vấn của bạn đã hoàn thành";
-                default        -> "Trạng thái lịch phỏng vấn đã được cập nhật: " + newStatus;
+                default -> "Trạng thái lịch phỏng vấn đã được cập nhật: " + newStatus;
             };
             notificationService.createNotification(
                     saved.getApplication().getUser().getId(),
@@ -367,8 +363,10 @@ public class InterviewServiceImpl implements InterviewService {
         }
         // ADMIN: không giới hạn companyId
 
-        if (request.getResult() != null) interview.setResult(request.getResult());
-        if (request.getNote() != null)   interview.setNote(request.getNote());
+        if (request.getResult() != null)
+            interview.setResult(request.getResult());
+        if (request.getNote() != null)
+            interview.setNote(request.getNote());
 
         Interview saved = interviewRepository.save(interview);
 
@@ -377,34 +375,29 @@ public class InterviewServiceImpl implements InterviewService {
         switch (saved.getResult().toUpperCase()) {
 
             case "PASSED" ->
-                    emailContent =
-                            "Chúc mừng! Bạn đã vượt qua vòng phỏng vấn cho vị trí "
-                                    + saved.getApplication().getJob().getTitle();
+                emailContent = "Congratulations! You have passed the interview for the position. "
+                        + saved.getApplication().getJob().getTitle();
 
             case "FAILED" ->
-                    emailContent =
-                            "Rất tiếc, bạn chưa vượt qua vòng phỏng vấn cho vị trí "
-                                    + saved.getApplication().getJob().getTitle();
+                emailContent = "Unfortunately, you did not pass the interview for the position. "
+                        + saved.getApplication().getJob().getTitle();
 
             case "ON_HOLD" ->
-                    emailContent =
-                            "Kết quả phỏng vấn của bạn hiện đang được xem xét.";
+                emailContent = "Your interview results are currently being reviewed.";
 
             default ->
-                    emailContent =
-                            "Kết quả phỏng vấn của bạn đã được cập nhật.";
+                emailContent = "Your interview results have been updated.";
         }
 
         emailService.sendSimpleMail(
                 saved.getApplication().getUser().getEmail(),
                 "Kết quả phỏng vấn",
-                emailContent
-        );
+                emailContent);
         String candidateMsg = switch (saved.getResult().toUpperCase()) {
-            case "PASSED"  -> "Chúc mừng! Bạn đã PASSED buổi phỏng vấn";
-            case "FAILED"  -> "Rất tiếc, bạn chưa vượt qua buổi phỏng vấn lần này";
+            case "PASSED" -> "Chúc mừng! Bạn đã PASSED buổi phỏng vấn";
+            case "FAILED" -> "Rất tiếc, bạn chưa vượt qua buổi phỏng vấn lần này";
             case "ON_HOLD" -> "Kết quả phỏng vấn của bạn đang được xem xét (ON_HOLD)";
-            default        -> "Kết quả phỏng vấn của bạn đã được cập nhật: " + saved.getResult();
+            default -> "Kết quả phỏng vấn của bạn đã được cập nhật: " + saved.getResult();
         };
 
         notificationService.createNotification(
@@ -433,32 +426,34 @@ public class InterviewServiceImpl implements InterviewService {
         }
         // ADMIN: không giới hạn companyId
 
-        if (request.getScheduleTime() != null) interview.setScheduleTime(request.getScheduleTime());
-        if (request.getLocation() != null)     interview.setLocation(request.getLocation());
-        if (request.getNote() != null)         interview.setNote(request.getNote());
+        if (request.getScheduleTime() != null)
+            interview.setScheduleTime(request.getScheduleTime());
+        if (request.getLocation() != null)
+            interview.setLocation(request.getLocation());
+        if (request.getNote() != null)
+            interview.setNote(request.getNote());
 
         interview.setStatus(InterviewStatus.PENDING);
         Interview saved = interviewRepository.save(interview);
 
         emailService.sendSimpleMail(
                 saved.getApplication().getUser().getEmail(),
-                "Cập nhật lịch phỏng vấn",
+                "Update interview schedule",
                 """
-                Xin chào %s,
-        
-                Lịch phỏng vấn của bạn đã được thay đổi.
-        
-                Thời gian mới: %s
-                Địa điểm mới: %s
-        
-                Vui lòng đăng nhập hệ thống để xem chi tiết.
-                """
+                        Hello %s,
+
+                        Your interview schedule has been changed.
+
+                        New Time: %s
+                        New Location: %s
+
+                        Please log in to the system to view the details.
+                        """
                         .formatted(
-                                saved.getApplication().getUser().getFirstName() + " " + saved.getApplication().getUser().getLastName(),
+                                saved.getApplication().getUser().getFirstName() + " "
+                                        + saved.getApplication().getUser().getLastName(),
                                 saved.getScheduleTime(),
-                                saved.getLocation()
-                        )
-        );
+                                saved.getLocation()));
 
         notificationService.createNotification(
                 saved.getApplication().getUser().getId(),

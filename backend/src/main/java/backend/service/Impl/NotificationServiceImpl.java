@@ -47,7 +47,7 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     @Transactional
     public String createNotification(Long receiverId, String content, String redirectUrl,
-                                     NotificationType type, boolean sendEmail) {
+            NotificationType type, boolean sendEmail) {
 
         User sender = getCurrentUser();
 
@@ -76,7 +76,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Async
     public void sendEmailAsync(String email, String content) {
-        emailService.sendSimpleMail(email, "Thông báo hệ thống", content);
+        emailService.sendSimpleMail(email, "System notification", content);
     }
 
     // ===== GET =====
