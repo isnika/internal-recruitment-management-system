@@ -256,9 +256,8 @@ CREATE TABLE `interviews` (
 LOCK TABLES `interviews` WRITE;
 /*!40000 ALTER TABLE `interviews` DISABLE KEYS */;
 INSERT INTO `interviews` VALUES
-                             (1, 3, '2026-06-05 09:00:00', 'HCM Office - Floor 3', 'PENDING',   NULL,    'Phỏng vấn vòng 1 - Technical'),
-                             (2, 3, '2026-06-10 14:00:00', 'HCM Office - Floor 5', 'SCHEDULED', NULL,    'Phỏng vấn vòng 2 - HR'),
-                             (3, 3, '2026-06-12 10:00:00', 'Online - Google Meet',  'ACCEPTED',  NULL,    'Ứng viên đã xác nhận lịch');
+                             (1, 3, '2026-06-05 09:00:00', 'HCM Office - Floor 3', 'PENDING',   NULL,    'Phỏng vấn vòng 1 - Technical');
+                             
 /*!40000 ALTER TABLE `interviews` ENABLE KEYS */;
 UNLOCK TABLES;
 
