@@ -1,11 +1,11 @@
 import React from "react";
 import { FiShield, FiFileText } from "react-icons/fi";
 import styles from "../pages/ApplicationMonitoring.module.css";
-import type { ApplicationMock } from "../../../../dataMock/adminMock";
+import type { AdminApplicationRecord } from "../pages/ApplicationMonitoring";
 
 interface ApplicationTableProps {
-  filteredApps: ApplicationMock[];
-  onAudit: (app: ApplicationMock) => void;
+  filteredApps: AdminApplicationRecord[];
+  onAudit: (app: AdminApplicationRecord) => void;
 }
 
 const ApplicationTable: React.FC<ApplicationTableProps> = ({

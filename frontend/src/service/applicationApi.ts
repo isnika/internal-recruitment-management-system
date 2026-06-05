@@ -111,6 +111,10 @@ const applicationApi = {
       data
     );
   },
+
+  getAllForAdmin(): Promise<Application[]> {
+    return axiosClient.get("/api/applications/admin/all");
+  },
 };
 
 export default applicationApi;
