@@ -45,18 +45,18 @@ public class Application {
 
     private LocalDate startDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "job_id")
     private Job job;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "cv_id")
     private Cv cv;
 
-    @OneToOne(mappedBy = "application", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "application")
     private Interview interview;
 }

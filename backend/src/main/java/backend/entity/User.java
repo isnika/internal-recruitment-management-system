@@ -69,19 +69,19 @@ public class User {
   private LocalDateTime updatedAt;
 
   // Quan hệ
-  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "user")
   private List<Application> applications;
 
-  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "user")
   private List<Cv> cvs;
 
-  @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
+  @OneToOne(mappedBy = "user")
   private CandidateProfile profile;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne
   @JoinColumn(name = "company_id")
   private Company company;
 
-  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+  @OneToMany
   private List<Notification> notifications;
 }

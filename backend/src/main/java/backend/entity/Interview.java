@@ -42,7 +42,7 @@ public class Interview {
   @Column(columnDefinition = "TEXT")
   private String note;
 
-  @OneToOne(fetch = FetchType.LAZY)
+  @OneToOne
   @JoinColumn(name = "application_id")
   private Application application;
 

@@ -70,15 +70,15 @@ public class Job {
   private LocalDateTime updatedAt;
 
   // FK
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "company_id")
+  @ManyToOne
+  @JoinColumn
   private Company company;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne
   @JoinColumn(name = "category_id")
   private Category category;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne
   @JoinColumn(name = "experience_level_id")
   private ExperienceLevel experienceLevel;
 

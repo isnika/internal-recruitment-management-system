@@ -39,7 +39,7 @@ public class CandidateProfile {
   private String socialLink;
   private String bankAccountName;
 
-  @OneToOne(fetch = FetchType.LAZY)
+  @OneToOne
   @JoinColumn(name = "user_id")
   private User user;
 }

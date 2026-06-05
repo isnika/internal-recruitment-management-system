@@ -49,6 +49,6 @@ public class Company {
   private LocalDateTime updatedAt;
 
   @JsonIgnore
-  @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "company")
   private List<Job> jobs;
 }

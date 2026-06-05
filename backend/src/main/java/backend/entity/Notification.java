@@ -34,12 +34,12 @@ public class Notification {
   private NotificationType type;
 
   // người nhận
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne
   @JoinColumn(name = "user_id")
   private User user;
 
   // người gửi
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne
   @JoinColumn(name = "sender_id")
   private User sender;
 }

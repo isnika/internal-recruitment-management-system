@@ -38,6 +38,6 @@ public class ExperienceLevel {
   private String name;
 
   @JsonIgnore
-  @OneToMany(mappedBy = "experienceLevel", fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "experienceLevel")
   private List<Job> jobs;
 }
