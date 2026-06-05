@@ -2,6 +2,7 @@ package backend.service.Impl;
 
 import backend.DTO.interview.CreateInterviewRequest;
 import backend.DTO.interview.InterviewResponse;
+import backend.service.EmailService;
 import backend.DTO.interview.UpdateInterviewResultRequest;
 import backend.DTO.interview.UpdateInterviewScheduleRequest;
 import backend.DTO.interview.UpdateInterviewStatusRequest;
@@ -36,6 +37,7 @@ public class InterviewServiceImpl implements InterviewService {
     private final ApplicationRepository applicationRepository;
     private final UserRepository userRepository;
     private final NotificationService notificationService;
+    private final EmailService emailService;
 
     // ================= HELPER =================
 
@@ -237,7 +239,34 @@ public class InterviewServiceImpl implements InterviewService {
                 application.getUser().getId(),
                 "Bạn có lịch phỏng vấn mới",
                 "/api/interviews/" + saved.getId(),
-                NotificationType.INTERVIEW, true);
+                NotificationType.INTERVIEW,
+                true);
+
+        emailService.sendSimpleMail(
+                application.getUser().getEmail(),
+                "Thư mời phỏng vấn",
+                """
+                Xin chào %s,
+        
+                Bạn đã được mời tham gia phỏng vấn.
+        
+                Vị trí: %s
+                Thời gian: %s
+                Địa điểm: %s
+        
+                Ghi chú:
+                %s
+        
+                Trân trọng.
+                """
+                        .formatted(
+                                application.getUser().getFirstName()+" "+application.getUser().getLastName(),
+                                application.getJob().getTitle(),
+                                saved.getScheduleTime(),
+                                saved.getLocation(),
+                                saved.getNote() == null ? "" : saved.getNote()
+                        )
+        );
 
         return InterviewMapper.toResponse(saved);
     }
@@ -285,6 +314,26 @@ public class InterviewServiceImpl implements InterviewService {
         interview.setStatus(newStatus);
         Interview saved = interviewRepository.save(interview);
 
+        if (newStatus == InterviewStatus.CANCELLED) {
+
+            emailService.sendSimpleMail(
+                    saved.getApplication().getUser().getEmail(),
+                    "Thông báo hủy phỏng vấn",
+                    """
+                    Xin chào %s,
+        
+                    Buổi phỏng vấn cho vị trí %s đã bị hủy.
+        
+                    Vui lòng theo dõi hệ thống để nhận thông báo mới.
+        
+                    Trân trọng.
+                    """
+                            .formatted(
+                                    saved.getApplication().getUser().getFirstName(),
+                                    saved.getApplication().getJob().getTitle()
+                            )
+            );
+        }
         if (newStatus == InterviewStatus.CANCELLED || newStatus == InterviewStatus.COMPLETED) {
             String msg = switch (newStatus) {
                 case CANCELLED -> "Lịch phỏng vấn của bạn đã bị HỦY";
@@ -323,6 +372,34 @@ public class InterviewServiceImpl implements InterviewService {
 
         Interview saved = interviewRepository.save(interview);
 
+        String emailContent;
+
+        switch (saved.getResult().toUpperCase()) {
+
+            case "PASSED" ->
+                    emailContent =
+                            "Chúc mừng! Bạn đã vượt qua vòng phỏng vấn cho vị trí "
+                                    + saved.getApplication().getJob().getTitle();
+
+            case "FAILED" ->
+                    emailContent =
+                            "Rất tiếc, bạn chưa vượt qua vòng phỏng vấn cho vị trí "
+                                    + saved.getApplication().getJob().getTitle();
+
+            case "ON_HOLD" ->
+                    emailContent =
+                            "Kết quả phỏng vấn của bạn hiện đang được xem xét.";
+
+            default ->
+                    emailContent =
+                            "Kết quả phỏng vấn của bạn đã được cập nhật.";
+        }
+
+        emailService.sendSimpleMail(
+                saved.getApplication().getUser().getEmail(),
+                "Kết quả phỏng vấn",
+                emailContent
+        );
         String candidateMsg = switch (saved.getResult().toUpperCase()) {
             case "PASSED"  -> "Chúc mừng! Bạn đã PASSED buổi phỏng vấn";
             case "FAILED"  -> "Rất tiếc, bạn chưa vượt qua buổi phỏng vấn lần này";
@@ -362,6 +439,26 @@ public class InterviewServiceImpl implements InterviewService {
 
         interview.setStatus(InterviewStatus.PENDING);
         Interview saved = interviewRepository.save(interview);
+
+        emailService.sendSimpleMail(
+                saved.getApplication().getUser().getEmail(),
+                "Cập nhật lịch phỏng vấn",
+                """
+                Xin chào %s,
+        
+                Lịch phỏng vấn của bạn đã được thay đổi.
+        
+                Thời gian mới: %s
+                Địa điểm mới: %s
+        
+                Vui lòng đăng nhập hệ thống để xem chi tiết.
+                """
+                        .formatted(
+                                saved.getApplication().getUser().getFirstName() + " " + saved.getApplication().getUser().getLastName(),
+                                saved.getScheduleTime(),
+                                saved.getLocation()
+                        )
+        );
 
         notificationService.createNotification(
                 saved.getApplication().getUser().getId(),
