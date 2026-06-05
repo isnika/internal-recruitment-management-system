@@ -2,9 +2,10 @@ package backend.controller;
 
 import backend.DTO.ApiResponse;
 import backend.DTO.interview.CreateInterviewRequest;
+import backend.DTO.interview.InterviewResponse;
 import backend.DTO.interview.UpdateInterviewResultRequest;
+import backend.DTO.interview.UpdateInterviewScheduleRequest;
 import backend.DTO.interview.UpdateInterviewStatusRequest;
-import backend.entity.Interview;
 import backend.service.InterviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,6 @@ public class InterviewController {
 
     private final InterviewService interviewService;
 
-    // ================= WRAPPER =================
     private <T> ApiResponse<T> wrap(T data, String message, int status) {
         return ApiResponse.<T>builder()
                 .status(status)
@@ -29,80 +29,77 @@ public class InterviewController {
                 .build();
     }
 
+    // ================= ADMIN =================
+
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<List<InterviewResponse>>> getAllInterviews() {
+        return ResponseEntity.ok(
+                wrap(interviewService.getAllInterviews(), "Get all interviews success", 200));
+    }
+
     // ================= CANDIDATE =================
 
     @GetMapping("/me")
-    public ResponseEntity<ApiResponse<List<Interview>>> getMyInterviews() {
+    public ResponseEntity<ApiResponse<List<InterviewResponse>>> getMyInterviews() {
         return ResponseEntity.ok(
-                wrap(interviewService.getMyInterviews(),
-                        "Get my interviews success",
-                        200)
-        );
-    }
-
-    @PostMapping("/{id}/accept")
-    public ResponseEntity<ApiResponse<Interview>> acceptInterview(@PathVariable Long id) {
-        return ResponseEntity.ok(
-                wrap(interviewService.acceptInterview(id),
-                        "Accept interview success",
-                        200)
-        );
-    }
-
-    @PostMapping("/{id}/reject")
-    public ResponseEntity<ApiResponse<Interview>> rejectInterview(@PathVariable Long id) {
-        return ResponseEntity.ok(
-                wrap(interviewService.rejectInterview(id),
-                        "Reject interview success",
-                        200)
-        );
+                wrap(interviewService.getMyInterviews(), "Get my interviews success", 200));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Interview>> getInterviewById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<InterviewResponse>> getInterviewById(@PathVariable Long id) {
         return ResponseEntity.ok(
-                wrap(interviewService.getInterviewById(id),
-                        "Get interview success",
-                        200)
-        );
+                wrap(interviewService.getInterviewById(id), "Get interview success", 200));
+    }
+
+    @PostMapping("/{id}/accept")
+    public ResponseEntity<ApiResponse<InterviewResponse>> acceptInterview(@PathVariable Long id) {
+        return ResponseEntity.ok(
+                wrap(interviewService.acceptInterview(id), "Accept interview success", 200));
+    }
+
+    @PostMapping("/{id}/reject")
+    public ResponseEntity<ApiResponse<InterviewResponse>> rejectInterview(@PathVariable Long id) {
+        return ResponseEntity.ok(
+                wrap(interviewService.rejectInterview(id), "Reject interview success", 200));
     }
 
     // ================= RECRUITER =================
 
     @PostMapping
-    public ResponseEntity<ApiResponse<Interview>> createInterview(
-            @RequestBody CreateInterviewRequest request
-    ) {
+    public ResponseEntity<ApiResponse<InterviewResponse>> createInterview(
+            @RequestBody CreateInterviewRequest request) {
         return ResponseEntity.ok(
-                wrap(interviewService.createInterview(request),
-                        "Create interview success",
-                        201)
-        );
+                wrap(interviewService.createInterview(request), "Create interview success", 201));
     }
 
     @PatchMapping("/{id}/status")
-    @PreAuthorize("hasAnyRole('RECRUITER', 'ADMIN')")
-    public ResponseEntity<ApiResponse<Interview>> updateInterviewStatus(
+    @PreAuthorize("hasAnyRole('RECRUITER','ADMIN')")
+    public ResponseEntity<ApiResponse<InterviewResponse>> updateInterviewStatus(
             @PathVariable Long id,
-            @RequestBody UpdateInterviewStatusRequest request
-    ) {
+            @RequestBody UpdateInterviewStatusRequest request) {
         return ResponseEntity.ok(
                 wrap(interviewService.updateInterviewStatus(id, request),
-                        "Update interview status success",
-                        200)
-        );
+                        "Update interview status success", 200));
     }
 
     @PatchMapping("/{id}/result")
-    @PreAuthorize("hasAnyRole('RECRUITER', 'ADMIN')")
-    public ResponseEntity<ApiResponse<Interview>> updateInterviewResult(
+    @PreAuthorize("hasAnyRole('RECRUITER','ADMIN')")
+    public ResponseEntity<ApiResponse<InterviewResponse>> updateInterviewResult(
             @PathVariable Long id,
-            @RequestBody UpdateInterviewResultRequest request
-    ) {
+            @RequestBody UpdateInterviewResultRequest request) {
         return ResponseEntity.ok(
                 wrap(interviewService.updateInterviewResult(id, request),
-                        "Update interview result success",
-                        200)
-        );
+                        "Update interview result success", 200));
+    }
+
+    @PatchMapping("/{id}/schedule")
+    @PreAuthorize("hasAnyRole('RECRUITER','ADMIN')")
+    public ResponseEntity<ApiResponse<InterviewResponse>> updateInterviewSchedule(
+            @PathVariable Long id,
+            @RequestBody UpdateInterviewScheduleRequest request) {
+        return ResponseEntity.ok(
+                wrap(interviewService.updateInterviewSchedule(id, request),
+                        "Reschedule interview success", 200));
     }
 }

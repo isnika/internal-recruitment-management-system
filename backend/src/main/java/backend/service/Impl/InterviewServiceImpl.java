@@ -1,7 +1,9 @@
 package backend.service.Impl;
 
 import backend.DTO.interview.CreateInterviewRequest;
+import backend.DTO.interview.InterviewResponse;
 import backend.DTO.interview.UpdateInterviewResultRequest;
+import backend.DTO.interview.UpdateInterviewScheduleRequest;
 import backend.DTO.interview.UpdateInterviewStatusRequest;
 import backend.Enum.InterviewStatus;
 import backend.Enum.NotificationType;
@@ -11,6 +13,7 @@ import backend.entity.Interview;
 import backend.entity.User;
 import backend.exception.BadRequestException;
 import backend.exception.ResourceNotFoundException;
+import backend.mapper.InterviewMapper;
 import backend.repository.ApplicationRepository;
 import backend.repository.InterviewRepository;
 import backend.repository.UserRepository;
@@ -23,7 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +37,8 @@ public class InterviewServiceImpl implements InterviewService {
     private final UserRepository userRepository;
     private final NotificationService notificationService;
 
-    // ================= USER =================
+    // ================= HELPER =================
+
     private User getCurrentUser() {
         Object principal = SecurityContextHolder.getContext()
                 .getAuthentication()
@@ -50,27 +54,45 @@ public class InterviewServiceImpl implements InterviewService {
 
     private void checkRole(User user, UserRole... roles) {
         for (UserRole role : roles) {
-            if (user.getRole() == role) {
-                return;
-            }
+            if (user.getRole() == role) return;
         }
         throw new BadRequestException("Không có quyền truy cập");
+    }
+
+    private void validateOwnership(User user, Interview interview) {
+        if (interview.getApplication() == null ||
+                interview.getApplication().getUser() == null ||
+                !interview.getApplication().getUser().getId().equals(user.getId())) {
+            throw new BadRequestException("Không có quyền");
+        }
+    }
+
+    private User findRecruiterByCompany(Long companyId) {
+        return userRepository.findAll().stream()
+                .filter(u -> u.getRole() == UserRole.RECRUITER)
+                .filter(u -> u.getCompany() != null)
+                .filter(u -> u.getCompany().getId().equals(companyId))
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy recruiter"));
     }
 
     // ================= CANDIDATE =================
 
     @Override
-    public List<Interview> getMyInterviews() {
+    @Transactional(readOnly = true)
+    public List<InterviewResponse> getMyInterviews() {
         User user = getCurrentUser();
         checkRole(user, UserRole.CANDIDATE);
 
-        return interviewRepository.findByApplication_User_Id(user.getId());
+        return interviewRepository.findByApplication_User_Id(user.getId())
+                .stream()
+                .map(InterviewMapper::toResponse)
+                .toList();
     }
 
-    @Transactional
     @Override
-    public Interview acceptInterview(Long id) {
-
+    @Transactional
+    public InterviewResponse acceptInterview(Long id) {
         User user = getCurrentUser();
         checkRole(user, UserRole.CANDIDATE, UserRole.ADMIN);
 
@@ -87,47 +109,29 @@ public class InterviewServiceImpl implements InterviewService {
 
         interview.setStatus(InterviewStatus.ACCEPTED);
         interview.setResult("CANDIDATE_ACCEPTED");
-
         Interview saved = interviewRepository.save(interview);
 
-
-        Long companyId = interview.getApplication()
-                .getJob()
-                .getCompany()
-                .getId();
-
-        User recruiter = userRepository.findAll()
-                .stream()
-                .filter(u -> u.getRole() == UserRole.RECRUITER)
-                .filter(u -> u.getCompany() != null)
-                .filter(u -> u.getCompany().getId().equals(companyId))
-                .findFirst()
-                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy user nhận"));
+        Long companyId = saved.getApplication().getJob().getCompany().getId();
+        User recruiter = findRecruiterByCompany(companyId);
 
         notificationService.createNotification(
                 recruiter.getId(),
                 "Ứng viên đã CHẤP NHẬN lịch phỏng vấn",
                 "/api/interviews/" + saved.getId(),
-                NotificationType.INTERVIEW,
-                true
-        );
-
+                NotificationType.INTERVIEW, true);
 
         notificationService.createNotification(
-                interview.getApplication().getUser().getId(),
+                saved.getApplication().getUser().getId(),
                 "Bạn đã CHẤP NHẬN lịch phỏng vấn thành công",
                 "/api/interviews/" + saved.getId(),
-                NotificationType.INTERVIEW,
-                false
-        );
+                NotificationType.INTERVIEW, false);
 
-        return saved;
+        return InterviewMapper.toResponse(saved);
     }
 
-    @Transactional
     @Override
-    public Interview rejectInterview(Long id) {
-
+    @Transactional
+    public InterviewResponse rejectInterview(Long id) {
         User user = getCurrentUser();
         checkRole(user, UserRole.CANDIDATE, UserRole.ADMIN);
 
@@ -144,91 +148,66 @@ public class InterviewServiceImpl implements InterviewService {
 
         interview.setStatus(InterviewStatus.REJECTED);
         interview.setResult("CANDIDATE_REJECTED");
-
         Interview saved = interviewRepository.save(interview);
 
-        Long companyId = interview.getApplication()
-                .getJob()
-                .getCompany()
-                .getId();
-
-        User recruiter = userRepository.findAll()
-                .stream()
-                .filter(u -> u.getRole() == UserRole.RECRUITER)
-                .filter(u -> u.getCompany() != null)
-                .filter(u -> u.getCompany().getId().equals(companyId))
-                .findFirst()
-                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy user nhận"));
-
+        Long companyId = saved.getApplication().getJob().getCompany().getId();
+        User recruiter = findRecruiterByCompany(companyId);
 
         notificationService.createNotification(
                 recruiter.getId(),
                 "Ứng viên đã TỪ CHỐI lịch phỏng vấn",
                 "/api/interviews/" + saved.getId(),
-                NotificationType.INTERVIEW,
-                true
-        );
-
+                NotificationType.INTERVIEW, true);
 
         notificationService.createNotification(
-                interview.getApplication().getUser().getId(),
+                saved.getApplication().getUser().getId(),
                 "Bạn đã TỪ CHỐI lịch phỏng vấn thành công",
                 "/api/interviews/" + saved.getId(),
-                NotificationType.INTERVIEW,
-                false
-        );
+                NotificationType.INTERVIEW, false);
 
-        return saved;
+        return InterviewMapper.toResponse(saved);
     }
 
     @Override
-    public Interview getInterviewById(Long id) {
-
+    @Transactional(readOnly = true)
+    public InterviewResponse getInterviewById(Long id) {
         User user = getCurrentUser();
 
         Interview interview = interviewRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy interview"));
 
-        // ===== CANDIDATE =====
         if (user.getRole() == UserRole.CANDIDATE) {
-
             if (interview.getApplication() == null ||
                     interview.getApplication().getUser() == null ||
                     !interview.getApplication().getUser().getId().equals(user.getId())) {
-
                 throw new BadRequestException("Không có quyền");
             }
         }
 
-        // ===== RECRUITER =====
         if (user.getRole() == UserRole.RECRUITER) {
-
             if (!interview.getApplication().getJob().getCompany().getId()
                     .equals(user.getCompany().getId())) {
-
                 throw new BadRequestException("Không có quyền");
             }
         }
-        return interview;
+
+        return InterviewMapper.toResponse(interview);
     }
 
     // ================= RECRUITER =================
 
     @Override
-    public Interview createInterview(CreateInterviewRequest request) {
-
+    @Transactional
+    public InterviewResponse createInterview(CreateInterviewRequest request) {
         User user = getCurrentUser();
         checkRole(user, UserRole.RECRUITER);
 
         Application application = applicationRepository.findById(request.getApplicationId())
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy application"));
 
-
-        if (!application.getJob().getCompany().getId()
-                .equals(user.getCompany().getId())) {
+        if (!application.getJob().getCompany().getId().equals(user.getCompany().getId())) {
             throw new BadRequestException("Không có quyền");
         }
-
 
         if (interviewRepository.findByApplicationId(application.getId()).isPresent()) {
             throw new BadRequestException("Application đã có lịch phỏng vấn");
@@ -249,17 +228,14 @@ public class InterviewServiceImpl implements InterviewService {
                 application.getUser().getId(),
                 "Bạn có lịch phỏng vấn mới",
                 "/api/interviews/" + saved.getId(),
-                NotificationType.INTERVIEW,
-                true
-        );
+                NotificationType.INTERVIEW, true);
 
-        return saved;
+        return InterviewMapper.toResponse(saved);
     }
 
-    @Transactional
     @Override
-    public Interview updateInterviewStatus(Long id, UpdateInterviewStatusRequest request) {
-
+    @Transactional
+    public InterviewResponse updateInterviewStatus(Long id, UpdateInterviewStatusRequest request) {
         User user = getCurrentUser();
         checkRole(user, UserRole.RECRUITER, UserRole.ADMIN);
 
@@ -282,17 +258,16 @@ public class InterviewServiceImpl implements InterviewService {
             newStatus = InterviewStatus.valueOf(request.getStatus().toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new BadRequestException("Status không hợp lệ: " + request.getStatus()
-                    + ". Các giá trị hợp lệ: scheduled, in_progress, completed, cancelled, no_show");
+                    + ". Các giá trị hợp lệ: SCHEDULED, IN_PROGRESS, COMPLETED, CANCELLED, NO_SHOW");
         }
 
-        // Chỉ cho phép các status hợp lệ qua endpoint này
-        java.util.Set<InterviewStatus> allowed = java.util.Set.of(
+        Set<InterviewStatus> allowed = Set.of(
                 InterviewStatus.SCHEDULED,
                 InterviewStatus.IN_PROGRESS,
                 InterviewStatus.COMPLETED,
                 InterviewStatus.CANCELLED,
-                InterviewStatus.NO_SHOW
-        );
+                InterviewStatus.NO_SHOW);
+
         if (!allowed.contains(newStatus)) {
             throw new BadRequestException("Status không được phép cập nhật qua endpoint này");
         }
@@ -300,7 +275,6 @@ public class InterviewServiceImpl implements InterviewService {
         interview.setStatus(newStatus);
         Interview saved = interviewRepository.save(interview);
 
-        // Thông báo cho ứng viên khi trạng thái thay đổi đáng kể
         if (newStatus == InterviewStatus.CANCELLED || newStatus == InterviewStatus.COMPLETED) {
             String msg = switch (newStatus) {
                 case CANCELLED -> "Lịch phỏng vấn của bạn đã bị HỦY";
@@ -311,25 +285,21 @@ public class InterviewServiceImpl implements InterviewService {
                     saved.getApplication().getUser().getId(),
                     msg,
                     "/api/interviews/" + saved.getId(),
-                    NotificationType.INTERVIEW,
-                    true
-            );
+                    NotificationType.INTERVIEW, true);
         }
 
-        return saved;
+        return InterviewMapper.toResponse(saved);
     }
 
-    @Transactional
     @Override
-    public Interview updateInterviewResult(Long id, UpdateInterviewResultRequest request) {
-
+    @Transactional
+    public InterviewResponse updateInterviewResult(Long id, UpdateInterviewResultRequest request) {
         User user = getCurrentUser();
         checkRole(user, UserRole.RECRUITER, UserRole.ADMIN);
 
         Interview interview = interviewRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy interview"));
 
-        // RECRUITER chỉ cập nhật được interview thuộc công ty của mình
         if (user.getRole() == UserRole.RECRUITER) {
             if (!interview.getApplication().getJob().getCompany().getId()
                     .equals(user.getCompany().getId())) {
@@ -337,16 +307,11 @@ public class InterviewServiceImpl implements InterviewService {
             }
         }
 
-        if (request.getResult() != null) {
-            interview.setResult(request.getResult());
-        }
-        if (request.getNote() != null) {
-            interview.setNote(request.getNote());
-        }
+        if (request.getResult() != null) interview.setResult(request.getResult());
+        if (request.getNote() != null)   interview.setNote(request.getNote());
 
         Interview saved = interviewRepository.save(interview);
 
-        // Thông báo cho ứng viên biết kết quả
         String candidateMsg = switch (saved.getResult().toUpperCase()) {
             case "PASSED"  -> "Chúc mừng! Bạn đã PASSED buổi phỏng vấn";
             case "FAILED"  -> "Rất tiếc, bạn chưa vượt qua buổi phỏng vấn lần này";
@@ -358,20 +323,54 @@ public class InterviewServiceImpl implements InterviewService {
                 saved.getApplication().getUser().getId(),
                 candidateMsg,
                 "/api/interviews/" + saved.getId(),
-                NotificationType.INTERVIEW,
-                true
-        );
+                NotificationType.INTERVIEW, true);
 
-        return saved;
+        return InterviewMapper.toResponse(saved);
     }
 
-    // ================= PRIVATE =================
+    // ================= ADMIN =================
 
-    private void validateOwnership(User user, Interview interview) {
-        if (interview.getApplication() == null ||
-                interview.getApplication().getUser() == null ||
-                !interview.getApplication().getUser().getId().equals(user.getId())) {
-            throw new BadRequestException("Không có quyền");
+    @Override
+    @Transactional(readOnly = true)
+    public List<InterviewResponse> getAllInterviews() {
+        User user = getCurrentUser();
+        checkRole(user, UserRole.ADMIN);
+
+        return interviewRepository.findAll()
+                .stream()
+                .map(InterviewMapper::toResponse)
+                .toList();
+    }
+
+    @Override
+    @Transactional
+    public InterviewResponse updateInterviewSchedule(Long id, UpdateInterviewScheduleRequest request) {
+        User user = getCurrentUser();
+        checkRole(user, UserRole.RECRUITER, UserRole.ADMIN);
+
+        Interview interview = interviewRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy interview"));
+
+        if (user.getRole() == UserRole.RECRUITER) {
+            if (!interview.getApplication().getJob().getCompany().getId()
+                    .equals(user.getCompany().getId())) {
+                throw new BadRequestException("Không có quyền dời lịch interview này");
+            }
         }
+
+        if (request.getScheduleTime() != null) interview.setScheduleTime(request.getScheduleTime());
+        if (request.getLocation() != null)     interview.setLocation(request.getLocation());
+        if (request.getNote() != null)         interview.setNote(request.getNote());
+
+        interview.setStatus(InterviewStatus.PENDING);
+        Interview saved = interviewRepository.save(interview);
+
+        notificationService.createNotification(
+                saved.getApplication().getUser().getId(),
+                "Lịch phỏng vấn của bạn đã được thay đổi. Vui lòng kiểm tra lịch mới.",
+                "/api/interviews/" + saved.getId(),
+                NotificationType.INTERVIEW, true);
+
+        return InterviewMapper.toResponse(saved);
     }
 }

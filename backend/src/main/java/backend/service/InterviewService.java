@@ -1,27 +1,33 @@
 package backend.service;
 
 import backend.DTO.interview.CreateInterviewRequest;
+import backend.DTO.interview.InterviewResponse;
 import backend.DTO.interview.UpdateInterviewResultRequest;
+import backend.DTO.interview.UpdateInterviewScheduleRequest;
 import backend.DTO.interview.UpdateInterviewStatusRequest;
-import backend.entity.Interview;
 
 import java.util.List;
 
 public interface InterviewService {
 
     // ==================== CANDIDATE ====================
-    List<Interview> getMyInterviews();
+    List<InterviewResponse> getMyInterviews();
 
-    Interview acceptInterview(Long id);
+    InterviewResponse acceptInterview(Long id);
 
-    Interview rejectInterview(Long id);
+    InterviewResponse rejectInterview(Long id);
 
-    Interview getInterviewById(Long id);
+    InterviewResponse getInterviewById(Long id);
 
     // ==================== RECRUITER ====================
-    Interview createInterview(CreateInterviewRequest request);
+    InterviewResponse createInterview(CreateInterviewRequest request);
 
-    Interview updateInterviewStatus(Long id, UpdateInterviewStatusRequest request);
+    InterviewResponse updateInterviewStatus(Long id, UpdateInterviewStatusRequest request);
 
-    Interview updateInterviewResult(Long id, UpdateInterviewResultRequest request);
+    InterviewResponse updateInterviewResult(Long id, UpdateInterviewResultRequest request);
+
+    // ==================== ADMIN ====================
+    List<InterviewResponse> getAllInterviews();
+
+    InterviewResponse updateInterviewSchedule(Long id, UpdateInterviewScheduleRequest request);
 }
