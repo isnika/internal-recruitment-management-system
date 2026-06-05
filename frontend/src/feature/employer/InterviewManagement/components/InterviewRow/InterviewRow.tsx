@@ -31,13 +31,21 @@ export default function InterviewRow({
   };
 
   // ======================
-  // SAFE DATA ACCESS
+  // SAFE DATA ACCESS (Support both Nested and Flattened structures)
   // ======================
-  const firstName = item.application?.user?.firstName ?? "";
-  const lastName = item.application?.user?.lastName ?? "";
+  
+  // Flattened from backend InterviewResponse
+  const flatCandidateName = (item as any).candidateName;
+  const flatJobTitle = (item as any).jobTitle;
 
-  const candidateName = `${firstName} ${lastName}`.trim();
-  const jobTitle = item.application?.job?.title ?? "N/A";
+  // Nested from old frontend mock/type
+  const nestedFirstName = item.application?.user?.firstName ?? "";
+  const nestedLastName = item.application?.user?.lastName ?? "";
+  const nestedCandidateName = `${nestedFirstName} ${nestedLastName}`.trim();
+  const nestedJobTitle = item.application?.job?.title;
+
+  const candidateName = flatCandidateName || nestedCandidateName || "Unknown";
+  const jobTitle = flatJobTitle || nestedJobTitle || "N/A";
 
   // ======================
   // DATE FORMAT (OPTIMIZED)

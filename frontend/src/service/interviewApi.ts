@@ -88,6 +88,11 @@ export const interviewApi = {
     return request.get<ApiResponse<Interview[]>>(`${ENDPOINT}/me`);
   },
 
+  // GET ALL INTERVIEWS (Admin)
+  getAll: () => {
+    return request.get<ApiResponse<Interview[]>>(ENDPOINT);
+  },
+
   // GET BY ID
   getById: (id: number) => {
     return request.get<ApiResponse<Interview>>(`${ENDPOINT}/${id}`);
@@ -120,6 +125,14 @@ export const interviewApi = {
     return request.patch<ApiResponse<Interview>>(
       `${ENDPOINT}/${id}/result`,
       body
+    );
+  },
+
+  // RESCHEDULE
+  reschedule: (id: number, scheduleTime: string, location: string, note?: string) => {
+    return request.patch<ApiResponse<Interview>>(
+      `${ENDPOINT}/${id}/schedule`,
+      { scheduleTime, location, note }
     );
   },
 };

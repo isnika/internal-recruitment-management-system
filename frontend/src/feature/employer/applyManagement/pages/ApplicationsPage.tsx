@@ -8,6 +8,7 @@ import React, {
 import applicationApi, {
   type Application,
 } from "../../../../service/applicationApi";
+import CreateInterviewModal from "../../InterviewManagement/components/CreateInterviewModal/CreateInterviewModal";
 
 import styles from "./ApplicationsPage.module.css";
 
@@ -30,12 +31,13 @@ const ApplicationsPage: React.FC = () => {
   const [jobId, setJobId] = useState("");
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<"ALL" | Status>("ALL");
+  const [showInterviewModal, setShowInterviewModal] = useState<number | null>(null);
 
   // ================= FETCH DATA =================
   const fetchApplications = useCallback(async () => {
     try {
       setLoading(true);
-      setError(null);
+      setError("");
       let result: Application[] = [];
 
       switch (viewMode) {
@@ -50,6 +52,8 @@ const ApplicationsPage: React.FC = () => {
           result = await applicationApi.getByJob(Number(jobId));
           break;
       }
+
+      // Theo như BE đã đổi status y hệt FE, ta không cần map nữa
       setApplications(result);
     } catch (err: any) {
       console.error(err);
@@ -117,7 +121,7 @@ const ApplicationsPage: React.FC = () => {
     try {
       // 1. Gọi API cập nhật lên Back-end
       await applicationApi.updateStatus(id, {
-        status: newStatus,
+        status: newStatus as any,
       });
 
       // 2. Cập nhật trực tiếp State dựa trên status mới (Giao diện sẽ thay đổi ngay lập tức)
@@ -127,6 +131,10 @@ const ApplicationsPage: React.FC = () => {
         )
       );
 
+      // 3. Nếu chuyển sang INTERVIEWING, mở Modal lên lịch phỏng vấn
+      if (newStatus === "INTERVIEWING") {
+        setShowInterviewModal(id);
+      }
     } catch (err: any) {
       console.error(err);
       alert(err?.message || "Cập nhật trạng thái thất bại.");
@@ -314,6 +322,18 @@ const ApplicationsPage: React.FC = () => {
           </tbody>
         </table>
       </div>
+
+      {/* INTERVIEW SCHEDULE MODAL */}
+      {showInterviewModal !== null && (
+        <CreateInterviewModal
+          applicationId={showInterviewModal}
+          onClose={() => setShowInterviewModal(null)}
+          onSuccess={() => {
+            setShowInterviewModal(null);
+            alert("Lên lịch phỏng vấn thành công!");
+          }}
+        />
+      )}
     </div>
   );
 };
