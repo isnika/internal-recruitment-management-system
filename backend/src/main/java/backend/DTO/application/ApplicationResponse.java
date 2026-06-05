@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import backend.DTO.Cv.CvResponse;
+import backend.DTO.interview.InterviewResponse;
 import backend.DTO.job.JobResponse;
 import backend.DTO.user.UserResponse;
 import lombok.AllArgsConstructor;
@@ -28,4 +29,5 @@ public class ApplicationResponse {
   private UserResponse user;
   private JobResponse job;
   private CvResponse cv;
+  private InterviewResponse interview;
 }

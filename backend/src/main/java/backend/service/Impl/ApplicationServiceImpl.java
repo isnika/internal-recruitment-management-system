@@ -12,6 +12,7 @@ import backend.DTO.application.ApplicationResponse;
 import backend.DTO.application.CreateApplicationRequest;
 import backend.DTO.application.UpdateApplicationStatusRequest;
 import backend.Enum.ApplicationStatus;
+import backend.Enum.UserRole;
 import backend.entity.Application;
 import backend.entity.Cv;
 import backend.entity.Job;
@@ -82,18 +83,33 @@ public class ApplicationServiceImpl implements ApplicationService {
                         .toList();
         }
 
+
         @Override
         @Transactional(readOnly = true)
-        public List<ApplicationResponse> getAllApplications() {
-                User recruiter = getCurrentAuthenticatedUser();
+        public List<ApplicationResponse> getAllApplications(Long companyId) {
+                User user = getCurrentAuthenticatedUser();
 
-                if (recruiter.getCompany() == null) {
+                if (user.getRole() == UserRole.ADMIN) {
+                        if (companyId != null) {
+                                // Admin lọc theo công ty cụ thể
+                                return applicationRepository.findByJobCompanyId(companyId)
+                                        .stream()
+                                        .map(ApplicationMapper::toResponse)
+                                        .toList();
+                        }
+                        // Admin xem tất cả
+                        return applicationRepository.findAll()
+                                .stream()
+                                .map(ApplicationMapper::toResponse)
+                                .toList();
+                }
+
+                // RECRUITER: luôn dùng companyId của chính mình, bỏ qua param
+                if (user.getCompany() == null) {
                         throw new UnauthorizedException("Recruiter chưa được gán vào công ty nào");
                 }
 
-                Long companyId = recruiter.getCompany().getId();
-
-                return applicationRepository.findByJobCompanyId(companyId)
+                return applicationRepository.findByJobCompanyId(user.getCompany().getId())
                         .stream()
                         .map(ApplicationMapper::toResponse)
                         .toList();
@@ -108,50 +124,54 @@ public class ApplicationServiceImpl implements ApplicationService {
                         .toList();
         }
 
-        /**
-         * Recruiter: trả về đơn theo jobId,
-         * chỉ cho phép xem job thuộc công ty của mình.
-         */
+
         @Override
         @Transactional(readOnly = true)
         public List<ApplicationResponse> getApplicationsByJob(Long jobId) {
-                User recruiter = getCurrentAuthenticatedUser();
-
-                if (recruiter.getCompany() == null) {
-                        throw new UnauthorizedException("Recruiter chưa được gán vào công ty nào");
-                }
+                User user = getCurrentAuthenticatedUser();
 
                 Job job = jobRepository.findById(jobId)
                         .orElseThrow(() -> new ResourceNotFoundException("Job not found"));
 
-                if (!job.getCompany().getId().equals(recruiter.getCompany().getId())) {
+                if (user.getRole() == UserRole.ADMIN) {
+                        return applicationRepository.findByJobId(jobId)
+                                .stream()
+                                .map(ApplicationMapper::toResponse)
+                                .toList();
+                }
+
+                // RECRUITER
+                if (user.getCompany() == null) {
+                        throw new UnauthorizedException("Recruiter chưa được gán vào công ty nào");
+                }
+
+                if (!job.getCompany().getId().equals(user.getCompany().getId())) {
                         throw new UnauthorizedException("Bạn không có quyền xem đơn của job này");
                 }
 
-                return applicationRepository.findByJobIdAndCompanyId(jobId, recruiter.getCompany().getId())
+                return applicationRepository.findByJobIdAndCompanyId(jobId, user.getCompany().getId())
                         .stream()
                         .map(ApplicationMapper::toResponse)
                         .toList();
         }
 
-        /**
-         * Recruiter: cập nhật trạng thái đơn,
-         * chỉ cho phép thao tác trên đơn thuộc công ty của mình.
-         */
         @Override
+        @Transactional
         public ApplicationResponse updateStatus(Long applicationId, UpdateApplicationStatusRequest request) {
                 if (request == null || request.getStatus() == null || request.getStatus().isBlank()) {
                         throw new BadRequestException("Status is required");
                 }
 
-                User recruiter = getCurrentAuthenticatedUser();
+                User user = getCurrentAuthenticatedUser();
 
                 Application application = applicationRepository.findById(applicationId)
                         .orElseThrow(() -> new ResourceNotFoundException("Application not found"));
 
-                if (recruiter.getCompany() == null ||
-                        !application.getJob().getCompany().getId().equals(recruiter.getCompany().getId())) {
-                        throw new UnauthorizedException("Bạn không có quyền cập nhật đơn này");
+                if (user.getRole() != UserRole.ADMIN) {
+                        if (user.getCompany() == null ||
+                                !application.getJob().getCompany().getId().equals(user.getCompany().getId())) {
+                                throw new UnauthorizedException("Bạn không có quyền cập nhật đơn này");
+                        }
                 }
 
                 ApplicationStatus status;

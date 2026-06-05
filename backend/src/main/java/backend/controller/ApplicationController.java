@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import backend.DTO.application.ApplicationResponse;
@@ -42,22 +43,25 @@ public class ApplicationController {
   }
 
 
+
   @GetMapping
-  @PreAuthorize("hasRole('RECRUITER')")
-  public ResponseEntity<List<ApplicationResponse>> getAllApplications() {
-    return ResponseEntity.ok(applicationService.getAllApplications());
+  @PreAuthorize("hasAnyRole('RECRUITER','ADMIN')")
+  public ResponseEntity<List<ApplicationResponse>> getAllApplications(
+          @RequestParam(required = false) Long companyId) {
+    return ResponseEntity.ok(applicationService.getAllApplications(companyId));
   }
 
   @GetMapping("/job/{jobId}")
-  @PreAuthorize("hasRole('RECRUITER')")
+  @PreAuthorize("hasAnyRole('RECRUITER','ADMIN')")
   public ResponseEntity<List<ApplicationResponse>> getApplicationsByJob(
-          @PathVariable Long jobId) {
-    return ResponseEntity.ok(applicationService.getApplicationsByJob(jobId));
+          @PathVariable String jobId) {
+    Long parsedJobId = Long.parseLong(jobId.trim());
+    return ResponseEntity.ok(applicationService.getApplicationsByJob(parsedJobId));
   }
 
 
   @PatchMapping("/{id}/status")
-  @PreAuthorize("hasRole('RECRUITER')")
+  @PreAuthorize("hasAnyRole('RECRUITER','ADMIN')")
   public ResponseEntity<ApplicationResponse> updateApplicationStatus(
           @PathVariable Long id,
           @Valid @RequestBody UpdateApplicationStatusRequest request) {

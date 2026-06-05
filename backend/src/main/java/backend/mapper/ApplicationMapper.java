@@ -43,6 +43,7 @@ public final class ApplicationMapper {
             .user(UserMapper.toResponse(application.getUser()))
             .job(JobMapper.toResponse(application.getJob()))
             .cv(CvMapper.toResponse(application.getCv()))
+            .interview(InterviewMapper.toResponse(application.getInterview()))
             .build();
   }
 }

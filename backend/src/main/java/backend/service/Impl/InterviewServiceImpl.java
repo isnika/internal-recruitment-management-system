@@ -176,6 +176,11 @@ public class InterviewServiceImpl implements InterviewService {
         Interview interview = interviewRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy interview"));
 
+        // ADMIN: xem được tất cả
+        if (user.getRole() == UserRole.ADMIN) {
+            return InterviewMapper.toResponse(interview);
+        }
+
         if (user.getRole() == UserRole.CANDIDATE) {
             if (interview.getApplication() == null ||
                     interview.getApplication().getUser() == null ||
@@ -194,20 +199,24 @@ public class InterviewServiceImpl implements InterviewService {
         return InterviewMapper.toResponse(interview);
     }
 
-    // ================= RECRUITER =================
+    // ================= RECRUITER / ADMIN =================
+
 
     @Override
     @Transactional
     public InterviewResponse createInterview(CreateInterviewRequest request) {
         User user = getCurrentUser();
-        checkRole(user, UserRole.RECRUITER);
+        checkRole(user, UserRole.RECRUITER, UserRole.ADMIN);
 
         Application application = applicationRepository.findById(request.getApplicationId())
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy application"));
 
-        if (!application.getJob().getCompany().getId().equals(user.getCompany().getId())) {
-            throw new BadRequestException("Không có quyền");
+        if (user.getRole() == UserRole.RECRUITER) {
+            if (!application.getJob().getCompany().getId().equals(user.getCompany().getId())) {
+                throw new BadRequestException("Không có quyền");
+            }
         }
+        // ADMIN: không giới hạn companyId
 
         if (interviewRepository.findByApplicationId(application.getId()).isPresent()) {
             throw new BadRequestException("Application đã có lịch phỏng vấn");
@@ -248,6 +257,7 @@ public class InterviewServiceImpl implements InterviewService {
                 throw new BadRequestException("Không có quyền cập nhật interview này");
             }
         }
+        // ADMIN: không giới hạn companyId
 
         if (request.getStatus() == null || request.getStatus().isBlank()) {
             throw new BadRequestException("Status không được để trống");
@@ -306,6 +316,7 @@ public class InterviewServiceImpl implements InterviewService {
                 throw new BadRequestException("Không có quyền cập nhật interview này");
             }
         }
+        // ADMIN: không giới hạn companyId
 
         if (request.getResult() != null) interview.setResult(request.getResult());
         if (request.getNote() != null)   interview.setNote(request.getNote());
@@ -328,20 +339,6 @@ public class InterviewServiceImpl implements InterviewService {
         return InterviewMapper.toResponse(saved);
     }
 
-    // ================= ADMIN =================
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<InterviewResponse> getAllInterviews() {
-        User user = getCurrentUser();
-        checkRole(user, UserRole.ADMIN);
-
-        return interviewRepository.findAll()
-                .stream()
-                .map(InterviewMapper::toResponse)
-                .toList();
-    }
-
     @Override
     @Transactional
     public InterviewResponse updateInterviewSchedule(Long id, UpdateInterviewScheduleRequest request) {
@@ -357,6 +354,7 @@ public class InterviewServiceImpl implements InterviewService {
                 throw new BadRequestException("Không có quyền dời lịch interview này");
             }
         }
+        // ADMIN: không giới hạn companyId
 
         if (request.getScheduleTime() != null) interview.setScheduleTime(request.getScheduleTime());
         if (request.getLocation() != null)     interview.setLocation(request.getLocation());
@@ -372,5 +370,19 @@ public class InterviewServiceImpl implements InterviewService {
                 NotificationType.INTERVIEW, true);
 
         return InterviewMapper.toResponse(saved);
+    }
+
+    // ================= ADMIN =================
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<InterviewResponse> getAllInterviews() {
+        User user = getCurrentUser();
+        checkRole(user, UserRole.ADMIN);
+
+        return interviewRepository.findAll()
+                .stream()
+                .map(InterviewMapper::toResponse)
+                .toList();
     }
 }
