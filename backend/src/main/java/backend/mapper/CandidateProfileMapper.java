@@ -2,6 +2,7 @@ package backend.mapper;
 
 import backend.DTO.candidateProdile.CandidateProfileResponse;
 import backend.DTO.candidateProdile.CreateCandidateProfileRquest;
+import backend.DTO.candidateProdile.UpdateCandidateProfileRequest;
 import backend.entity.CandidateProfile;
 import backend.entity.User;
 import lombok.AccessLevel;
@@ -49,14 +50,25 @@ public final class CandidateProfileMapper {
         .email(profile.getUser() != null ? profile.getUser().getEmail() : null)
         .firstName(profile.getUser() != null ? profile.getUser().getFirstName() : null)
         .lastName(profile.getUser() != null ? profile.getUser().getLastName() : null)
-        .status(profile.getUser() != null && profile.getUser().getStatus() != null ? profile.getUser().getStatus().name() : null)
+        .status(
+            profile.getUser() != null && profile.getUser().getStatus() != null ? profile.getUser().getStatus().name()
+                : null)
         .avatarUrl(profile.getUser() != null ? profile.getUser().getAvatarUrl() : null)
         .build();
   }
 
-  public static void updateEntity(CandidateProfile profile, CreateCandidateProfileRquest request) {
+  public static void updateEntity(CandidateProfile profile, UpdateCandidateProfileRequest request) {
     if (profile == null || request == null) {
       return;
+    }
+
+    if (profile.getUser() != null) {
+      if (request.getFirstName() != null && !request.getFirstName().trim().isEmpty()) {
+        profile.getUser().setFirstName(request.getFirstName().trim());
+      }
+      if (request.getLastName() != null && !request.getLastName().trim().isEmpty()) {
+        profile.getUser().setLastName(request.getLastName().trim());
+      }
     }
 
     profile.setGender(request.getGender());

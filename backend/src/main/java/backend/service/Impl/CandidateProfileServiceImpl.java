@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import backend.DTO.candidateProdile.CandidateProfileResponse;
 import backend.DTO.candidateProdile.CreateCandidateProfileRquest;
+import backend.DTO.candidateProdile.UpdateCandidateProfileRequest;
 import backend.entity.CandidateProfile;
 import backend.entity.User;
 import backend.exception.BadRequestException;
@@ -72,7 +73,7 @@ public class CandidateProfileServiceImpl implements CandidateProfileService {
 
   @Override
   @Transactional
-  public CandidateProfileResponse updateMyProfile(CreateCandidateProfileRquest request) {
+  public CandidateProfileResponse updateMyProfile(UpdateCandidateProfileRequest request) {
     validateRequest(request);
 
     User currentUser = getCurrentAuthenticatedUser();
@@ -80,6 +81,7 @@ public class CandidateProfileServiceImpl implements CandidateProfileService {
         .orElseThrow(() -> new ResourceNotFoundException("Ban chua tao ho so ca nhan"));
 
     CandidateProfileMapper.updateEntity(profile, request);
+    userRepository.save(currentUser);
     return CandidateProfileMapper.toResponse(candidateProfileRepository.save(profile));
   }
 
@@ -94,7 +96,8 @@ public class CandidateProfileServiceImpl implements CandidateProfileService {
 
     FileStorageService.UploadResult uploadResult = fileStorageService.uploadCandidateAvatar(file);
 
-    fileStorageService.deleteCandidateAvatar(currentUser.getAvatarStoragePublicId(), currentUser.getAvatarStorageResourceType());
+    fileStorageService.deleteCandidateAvatar(currentUser.getAvatarStoragePublicId(),
+        currentUser.getAvatarStorageResourceType());
     currentUser.setAvatarUrl(uploadResult.fileUrl());
     currentUser.setAvatarStoragePublicId(uploadResult.publicId());
     currentUser.setAvatarStorageResourceType(uploadResult.resourceType());
@@ -122,6 +125,15 @@ public class CandidateProfileServiceImpl implements CandidateProfileService {
   }
 
   private void validateRequest(CreateCandidateProfileRquest request) {
+    if (request == null) {
+      throw new BadRequestException("Request khong hop le");
+    }
+    if (isBlank(request.getGender()) || isBlank(request.getPhone()) || isBlank(request.getAddress())) {
+      throw new BadRequestException("Gender, phone va address khong duoc de trong");
+    }
+  }
+
+  private void validateRequest(UpdateCandidateProfileRequest request) {
     if (request == null) {
       throw new BadRequestException("Request khong hop le");
     }

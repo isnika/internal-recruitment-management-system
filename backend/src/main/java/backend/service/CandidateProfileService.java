@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import backend.DTO.candidateProdile.CandidateProfileResponse;
 import backend.DTO.candidateProdile.CreateCandidateProfileRquest;
+import backend.DTO.candidateProdile.UpdateCandidateProfileRequest;
 
 public interface CandidateProfileService {
 
@@ -17,7 +18,7 @@ public interface CandidateProfileService {
 
   List<CandidateProfileResponse> getAllProfiles();
 
-  CandidateProfileResponse updateMyProfile(CreateCandidateProfileRquest request);
+  CandidateProfileResponse updateMyProfile(UpdateCandidateProfileRequest request);
 
   CandidateProfileResponse updateMyAvatar(MultipartFile file);
 }

@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import backend.DTO.candidateProdile.CandidateProfileResponse;
 import backend.DTO.candidateProdile.CreateCandidateProfileRquest;
+import backend.DTO.candidateProdile.UpdateCandidateProfileRequest;
 import backend.service.CandidateProfileService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -60,7 +61,7 @@ public class CandidateProfileController {
   @PutMapping("/profile")
   @PreAuthorize("hasRole('CANDIDATE')")
   public ResponseEntity<CandidateProfileResponse> updateMyProfile(
-      @Valid @RequestBody CreateCandidateProfileRquest request) {
+      @Valid @RequestBody UpdateCandidateProfileRequest request) {
     return ResponseEntity.ok(candidateProfileService.updateMyProfile(request));
   }
 
