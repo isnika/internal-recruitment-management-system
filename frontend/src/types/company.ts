@@ -5,7 +5,8 @@ export interface Company {
   address: string;
   website: string;
   logoUrl: string;
-  status: "ACTIVE" | "INACTIVE";
+  status: "ACTIVE" | "INACTIVE" | "BLOCKED" | "VERIFIED" | "UNVERIFIED" | string;
+  verified?: boolean; // Keep for backward compatibility temporarily
 }
 
 export interface CreateCompanyRequest {
@@ -13,7 +14,7 @@ export interface CreateCompanyRequest {
   description: string;
   address: string;
   website: string;
-  status: "ACTIVE" | "INACTIVE";
+  status: "ACTIVE" | "INACTIVE" | "BLOCKED" | "VERIFIED" | "UNVERIFIED" | string;
 }
 
 export interface UpdateCompanyRequest {
@@ -21,5 +22,5 @@ export interface UpdateCompanyRequest {
   description: string;
   address: string;
   website: string;
-  status: "ACTIVE" | "INACTIVE";
+  status: "ACTIVE" | "INACTIVE" | "BLOCKED" | "VERIFIED" | "UNVERIFIED" | string;
 }

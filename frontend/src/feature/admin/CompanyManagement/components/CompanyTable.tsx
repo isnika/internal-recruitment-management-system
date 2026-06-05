@@ -81,13 +81,13 @@ const CompanyTable: React.FC<CompanyTableProps> = ({
                   )}
                   <button
                     className={`${styles.actionBtnVerify} ${
-                      c.verified ? styles.verifiedBtnActive : ""
+                      c.status === "VERIFIED" ? styles.verifiedBtnActive : ""
                     }`}
                     onClick={() => onVerify(c.id)}
-                    title={c.verified ? "Remove Verification" : "Verify Company"}
-                    aria-label={c.verified ? `Remove verification for ${c.name}` : `Verify ${c.name}`}
+                    title={c.status === "VERIFIED" ? "Remove Verification" : "Verify Company"}
+                    aria-label={c.status === "VERIFIED" ? `Remove verification for ${c.name}` : `Verify ${c.name}`}
                   >
-                    <FiShield /> {c.verified ? "Unverify" : "Verify"}
+                    <FiShield /> {c.status === "VERIFIED" ? "Unverify" : "Verify"}
                   </button>
                 </div>
               </td>
