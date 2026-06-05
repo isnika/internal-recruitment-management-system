@@ -19,15 +19,15 @@ public interface InterviewService {
 
     InterviewResponse getInterviewById(Long id);
 
-    // ==================== RECRUITER ====================
+    // ==================== RECRUITER / ADMIN ====================
     InterviewResponse createInterview(CreateInterviewRequest request);
 
     InterviewResponse updateInterviewStatus(Long id, UpdateInterviewStatusRequest request);
 
     InterviewResponse updateInterviewResult(Long id, UpdateInterviewResultRequest request);
 
+    InterviewResponse updateInterviewSchedule(Long id, UpdateInterviewScheduleRequest request);
+
     // ==================== ADMIN ====================
     List<InterviewResponse> getAllInterviews();
-
-    InterviewResponse updateInterviewSchedule(Long id, UpdateInterviewScheduleRequest request);
 }

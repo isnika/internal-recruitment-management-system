@@ -12,8 +12,8 @@ public interface ApplicationService {
 
   List<ApplicationResponse> getMyApplications();
 
-  // Giữ nguyên tên cũ để Controller gốc không bị lỗi compile
-  List<ApplicationResponse> getAllApplications();
+
+  List<ApplicationResponse> getAllApplications(Long companyId);
 
   List<ApplicationResponse> getAllApplicationsForAdmin();
 

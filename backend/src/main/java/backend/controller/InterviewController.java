@@ -64,9 +64,10 @@ public class InterviewController {
                 wrap(interviewService.rejectInterview(id), "Reject interview success", 200));
     }
 
-    // ================= RECRUITER =================
+    // ================= RECRUITER / ADMIN =================
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('RECRUITER','ADMIN')")
     public ResponseEntity<ApiResponse<InterviewResponse>> createInterview(
             @RequestBody CreateInterviewRequest request) {
         return ResponseEntity.ok(
