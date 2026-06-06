@@ -118,6 +118,24 @@ export default function PersonalSection({
     }
   };
 
+  const resetToUser = () => {
+    if (!user) return;
+
+    setFirstName(user.firstName || "");
+    setLastName(user.lastName || "");
+    setAddress(user.address || "");
+    setPhone(user.phone || "");
+    setGender(user.gender || "");
+
+    const parts = user?.dateOfBirth?.split("-") ?? ["", "", ""];
+
+    setDob({
+      year: parts[0] || "",
+      month: parts[1] || "",
+      day: parts[2] || "",
+    });
+  };
+
   // =========================
   // SAVE PROFILE
   // =========================
@@ -136,6 +154,8 @@ export default function PersonalSection({
           : null;
 
       await onSave({
+        firstName,
+        lastName,
         address,
         phone,
         gender,
@@ -145,6 +165,10 @@ export default function PersonalSection({
       setEditPersonal(false);
     } catch (error) {
       console.error("Update profile failed:", error);
+
+      // RESET khi fail
+      resetToUser();
+      setEditPersonal(false);
     } finally {
       setSaving(false);
     }
@@ -153,6 +177,7 @@ export default function PersonalSection({
   if (!user) {
     return <div>Loading...</div>;
   }
+
 
   // =========================
   // UI
@@ -227,12 +252,20 @@ export default function PersonalSection({
           <div className={styles.rowTwo}>
             <div className={styles.formGroup}>
               <label>First Name</label>
-              <input value={firstName} readOnly />
+              <input
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                disabled={!editPersonal}
+              />
             </div>
 
             <div className={styles.formGroup}>
               <label>Last Name</label>
-              <input value={lastName} readOnly />
+              <input
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                disabled={!editPersonal}
+              />
             </div>
           </div>
 
@@ -323,12 +356,20 @@ export default function PersonalSection({
 
       <div className={styles.headerActions}>
         <button onClick={handleSave} disabled={saving}>
-          {saving
-            ? "Saving..."
-            : editPersonal
-            ? "Save Personal"
-            : "Edit Personal"}
+          {saving ? "Saving..." : editPersonal ? "Save Personal" : "Edit Personal"}
         </button>
+
+        {editPersonal && (
+          <button
+            type="button"
+            onClick={() => {
+              resetToUser();
+              setEditPersonal(false);
+            }}
+          >
+            Cancel
+          </button>
+        )}
       </div>
     </div>
   );
