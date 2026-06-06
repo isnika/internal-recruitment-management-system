@@ -24,8 +24,10 @@ const MailDropdown = ({ user }: Props) => {
 
     const fetchMails = async () => {
       try {
-        const data = await notificationApi.getMyNotifications();
-        setMails(data || []);
+        const res = await notificationApi.getAll(0, 10);
+
+        // FIX: Spring Page -> content
+        setMails(res.data.content || []);
       } catch (err) {
         console.error("Load notifications error:", err);
       }
@@ -64,7 +66,6 @@ const MailDropdown = ({ user }: Props) => {
       }
     }
 
-    // redirect nếu có
     if (mail.redirectUrl) {
       navigate(mail.redirectUrl);
     }
