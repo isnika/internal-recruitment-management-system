@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styles from './ForgotPassW.module.css';
 
 const ForgotPassW: React.FC = () => {
-  // Quản lý các bước: 'email' (nhập email) hoặc 'reset' (nhập code và pass mới)
+  // Manage steps: 'email' (enter email) or 'reset' (enter code and new password)
   const [step, setStep] = useState<'email' | 'reset'>('email');
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
@@ -12,7 +12,7 @@ const ForgotPassW: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
 
-  // Bước 1: Gửi yêu cầu quên mật khẩu
+  // Step 1: Send forgot password request
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
@@ -21,7 +21,6 @@ const ForgotPassW: React.FC = () => {
     setMessage({ type: '', text: '' });
 
     try {
-      // Gọi API /api/auth/forgot-password
       const response = await fetch('/api/auth/forgot-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -29,24 +28,24 @@ const ForgotPassW: React.FC = () => {
       });
 
       if (response.ok) {
-        setMessage({ type: 'success', text: 'Mã xác thực đã được gửi đến Email của bạn!' });
-        setStep('reset'); // Chuyển sang bước nhập code và pass mới
+        setMessage({ type: 'success', text: 'Verification code has been sent to your email!' });
+        setStep('reset');
       } else {
         const data = await response.json();
-        setMessage({ type: 'error', text: data.message || 'Có lỗi xảy ra, vui lòng thử lại.' });
+        setMessage({ type: 'error', text: data.message || 'Something went wrong, please try again.' });
       }
     } catch (error) {
-      setMessage({ type: 'error', text: 'Lỗi kết nối hệ thống.' });
+      setMessage({ type: 'error', text: 'System connection error.' });
     } finally {
       setLoading(false);
     }
   };
 
-  // Bước 2: Đặt lại mật khẩu mới
+  // Step 2: Reset new password
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newPassword !== confirmPassword) {
-      setMessage({ type: 'error', text: 'Mật khẩu xác nhận không trùng khớp!' });
+      setMessage({ type: 'error', text: 'Confirm password does not match!' });
       return;
     }
 
@@ -54,7 +53,6 @@ const ForgotPassW: React.FC = () => {
     setMessage({ type: '', text: '' });
 
     try {
-      // Gọi API /api/auth/reset-password
       const response = await fetch('/api/auth/reset-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -62,14 +60,14 @@ const ForgotPassW: React.FC = () => {
       });
 
       if (response.ok) {
-        setMessage({ type: 'success', text: 'Đặt lại mật khẩu thành công! Bạn có thể đăng nhập ngay.' });
-        // Xóa form hoặc chuyển hướng người dùng về trang login tại đây
+        setMessage({ type: 'success', text: 'Password reset successful! You can log in now.' });
+        // Clear form or redirect to login page here
       } else {
         const data = await response.json();
-        setMessage({ type: 'error', text: data.message || 'Mã xác thực không đúng hoặc đã hết hạn.' });
+        setMessage({ type: 'error', text: data.message || 'Verification code is invalid or expired.' });
       }
     } catch (error) {
-      setMessage({ type: 'error', text: 'Lỗi kết nối hệ thống.' });
+      setMessage({ type: 'error', text: 'System connection error.' });
     } finally {
       setLoading(false);
     }
@@ -79,12 +77,12 @@ const ForgotPassW: React.FC = () => {
     <div className={styles.container}>
       <div className={styles.card}>
         <h2 className={styles.title}>
-          {step === 'email' ? 'Quên Mật Khẩu?' : 'Đặt Lại Mật Khẩu'}
+          {step === 'email' ? 'Forgot Password?' : 'Reset Password'}
         </h2>
         <p className={styles.subtitle}>
           {step === 'email'
-            ? 'Nhập email của bạn để nhận mã xác thực đặt lại mật khẩu.'
-            : `Nhập mã code được gửi đến ${email} và mật khẩu mới.`}
+            ? 'Enter your email to receive a verification code to reset your password.'
+            : `Enter the code sent to ${email} and your new password.`}
         </p>
 
         {message.text && (
@@ -94,7 +92,7 @@ const ForgotPassW: React.FC = () => {
         )}
 
         {step === 'email' ? (
-          /* FORM BƯỚC 1: NHẬP EMAIL */
+          /* STEP 1 FORM: ENTER EMAIL */
           <form onSubmit={handleForgotPassword} className={styles.form}>
             <div className={styles.inputGroup}>
               <label htmlFor="email">Email</label>
@@ -108,60 +106,60 @@ const ForgotPassW: React.FC = () => {
               />
             </div>
             <button type="submit" className={styles.btn} disabled={loading}>
-              {loading ? 'Đang gửi...' : 'Gửi mã xác thực'}
+              {loading ? 'Sending...' : 'Send verification code'}
             </button>
           </form>
         ) : (
-          /* FORM BƯỚC 2: NHẬP CODE & PASS MỚI */
+          /* STEP 2 FORM: ENTER CODE & NEW PASSWORD */
           <form onSubmit={handleResetPassword} className={styles.form}>
             <div className={styles.inputGroup}>
-              <label htmlFor="code">Mã Xác Thực (Code)</label>
+              <label htmlFor="code">Verification Code</label>
               <input
                 type="text"
                 id="code"
-                placeholder="Nhập mã code"
+                placeholder="Enter code"
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
                 required
               />
             </div>
             <div className={styles.inputGroup}>
-              <label htmlFor="newPassword">Mật khẩu mới</label>
+              <label htmlFor="newPassword">New Password</label>
               <input
                 type="password"
                 id="newPassword"
-                placeholder="Tối thiểu 6 ký tự"
+                placeholder="Minimum 6 characters"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 required
               />
             </div>
             <div className={styles.inputGroup}>
-              <label htmlFor="confirmPassword">Xác nhận mật khẩu</label>
+              <label htmlFor="confirmPassword">Confirm Password</label>
               <input
                 type="password"
                 id="confirmPassword"
-                placeholder="Nhập lại mật khẩu"
+                placeholder="Re-enter password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
               />
             </div>
             <button type="submit" className={styles.btn} disabled={loading}>
-              {loading ? 'Đang xử lý...' : 'Xác nhận đổi mật khẩu'}
+              {loading ? 'Processing...' : 'Confirm password change'}
             </button>
             <button
               type="button"
               className={styles.btnLink}
               onClick={() => setStep('email')}
             >
-              Quay lại nhập Email
+              Back to Email
             </button>
           </form>
         )}
 
         <div className={styles.footer}>
-          Quay lại <a href="/login" className={styles.link}>Đăng nhập</a>
+          Back to <a href="/login" className={styles.link}>Login</a>
         </div>
       </div>
     </div>
