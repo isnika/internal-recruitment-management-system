@@ -25,8 +25,6 @@ const MailDropdown = ({ user }: Props) => {
     const fetchMails = async () => {
       try {
         const res = await notificationApi.getAll(0, 10);
-
-        // FIX: Spring Page -> content
         setMails(res.data.content || []);
       } catch (err) {
         console.error("Load notifications error:", err);
@@ -90,15 +88,19 @@ const MailDropdown = ({ user }: Props) => {
 
       {open && (
         <div className={styles.dropdown}>
+          {/* HEADER */}
           <div className={styles.dropHeader}>
-            <h3>Thông báo hệ thống</h3>
-            {unreadCount > 0 && <span>{unreadCount} chưa đọc</span>}
+            <h3>Notifications</h3>
+            {unreadCount > 0 && (
+              <span>{unreadCount} unread</span>
+            )}
           </div>
 
+          {/* BODY */}
           <div className={styles.dropBody}>
             {!user ? (
               <div className={styles.emptyState}>
-                <p>Vui lòng đăng nhập để xem thông báo</p>
+                <p>Please log in to view notifications</p>
                 <button
                   className={styles.loginBtn}
                   onClick={() => {
@@ -106,44 +108,49 @@ const MailDropdown = ({ user }: Props) => {
                     navigate("/login");
                   }}
                 >
-                  Đăng nhập ngay
+                  Log in
                 </button>
               </div>
             ) : mails.length === 0 ? (
               <div className={styles.emptyState}>
-                <p>Hộp thư của bạn đang trống</p>
+                <p>Your inbox is empty</p>
               </div>
             ) : (
-              mails.map((mail) => (
-                <div
-                  key={mail.id}
-                  className={`${styles.item} ${
-                    !mail.isRead ? styles.unread : ""
-                  }`}
-                  onClick={() => handleClickMail(mail)}
-                >
-                  <div className={styles.avatar}>HR</div>
+              <>
+                {mails.map((mail) => (
+                  <div
+                    key={mail.id}
+                    className={`${styles.item} ${
+                      !mail.isRead ? styles.unread : ""
+                    }`}
+                    onClick={() => handleClickMail(mail)}
+                  >
+                    <div className={styles.avatar}>HR</div>
 
-                  <div className={styles.content}>
-                    <div className={styles.topRow}>
-                      <span className={styles.title}>
-                        {mail.content}
-                      </span>
-                      <span className={styles.time}>
-                        {new Date(mail.createdAt).toLocaleString()}
-                      </span>
+                    <div className={styles.content}>
+                      <div className={styles.topRow}>
+                        <span className={styles.title}>
+                          {mail.content}
+                        </span>
+                        <span className={styles.time}>
+                          {new Date(mail.createdAt).toLocaleString()}
+                        </span>
+                      </div>
+
+                      <p className={styles.desc}>{mail.type}</p>
                     </div>
 
-                    <p className={styles.desc}>
-                      {mail.type}
-                    </p>
+                    {!mail.isRead && (
+                      <span className={styles.unreadDot} />
+                    )}
                   </div>
+                ))}
 
-                  {!mail.isRead && (
-                    <span className={styles.unreadDot} />
-                  )}
+                {/* FUTURE FEATURE */}
+                <div className={styles.futureFeature}>
+                  Coming soon
                 </div>
-              ))
+              </>
             )}
           </div>
         </div>
