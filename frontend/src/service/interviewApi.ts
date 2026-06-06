@@ -21,37 +21,25 @@ export interface ApiResponse<T> {
 
 export interface Interview {
   id: number;
+
   scheduleTime: string;
   location: string;
 
-  status: InterviewStatus;
+  status: string;
+  result?: string;
 
-  result?: InterviewResult;
   note?: string;
 
-  application: {
-    id: number;
-    status: string;
-    appliedAt: string;
+  applicationId: number;
+  applicationStatus: string;
 
-    user: {
-      id: number;
-      email: string;
-      firstName: string;
-      lastName: string;
-    };
+  candidateId: number;
+  candidateName: string;
+  candidateEmail: string;
 
-    job: {
-      id: number;
-      title: string;
-      description: string;
-    };
-
-    cv?: {
-      id: number;
-      fileUrl: string;
-    };
-  };
+  jobId: number;
+  jobTitle: string;
+  companyName: string;
 }
 
 export interface InterviewCreateRequest {
@@ -88,6 +76,11 @@ export const interviewApi = {
     return request.get<ApiResponse<Interview[]>>(`${ENDPOINT}/me`);
   },
 
+  // GET ALL INTERVIEWS (Admin)
+  getAll: () => {
+    return request.get<ApiResponse<Interview[]>>(ENDPOINT);
+  },
+
   // GET BY ID
   getById: (id: number) => {
     return request.get<ApiResponse<Interview>>(`${ENDPOINT}/${id}`);
@@ -120,6 +113,14 @@ export const interviewApi = {
     return request.patch<ApiResponse<Interview>>(
       `${ENDPOINT}/${id}/result`,
       body
+    );
+  },
+
+  // RESCHEDULE
+  reschedule: (id: number, scheduleTime: string, location: string, note?: string) => {
+    return request.patch<ApiResponse<Interview>>(
+      `${ENDPOINT}/${id}/schedule`,
+      { scheduleTime, location, note }
     );
   },
 };

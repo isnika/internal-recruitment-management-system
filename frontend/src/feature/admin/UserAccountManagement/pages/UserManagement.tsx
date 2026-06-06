@@ -30,6 +30,8 @@ const UserManagement: React.FC = () => {
 
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editRole, setEditRole] = useState("");
+  const [editCompanyId, setEditCompanyId] = useState<number | null>(null);
+  const [companies, setCompanies] = useState<any[]>([]);
 
   const [selectedUser, setSelectedUser] = useState<UserRow | null>(null);
   const [openModal, setOpenModal] = useState(false);
@@ -37,40 +39,33 @@ const UserManagement: React.FC = () => {
 
   // ================= FETCH =================
   useEffect(() => {
-    fetchUsers();
+    fetchUsersAndCompanies();
   }, []);
 
-  const fetchUsers = async () => {
+  const fetchUsersAndCompanies = async () => {
     try {
-      const [usersRes, profilesRes] = await Promise.all([
+      const [usersRes, companiesRes] = await Promise.all([
         userApi.getAllUsers(),
-        userApi.getAllCandidateProfiles(),
+        userApi.getAllCompanies()
       ]);
 
       const users = usersRes?.data || usersRes;
-      const profiles = profilesRes?.data || profilesRes;
+      const comps = companiesRes?.data || companiesRes;
+      setCompanies(comps);
 
-      const profileMap = new Map(
-        profiles.map((p: any) => [Number(p.id), p])
-      );
+      const merged = users.map((u: any) => ({
+        id: u.id,
+        email: u.email,
+        role: u.role,
+        status: (u.status || "ACTIVE").toUpperCase(),
 
-      const merged = users.map((u: any) => {
-        const profile = profileMap.get(Number(u.id));
+        firstName: u.firstName || "",
+        lastName: u.lastName || "",
 
-        return {
-          id: u.id,
-          email: u.email,
-          role: u.role,
-          status: (u.status || "ACTIVE").toUpperCase(),
+        phone: u.phone || "",
+      }));
 
-          firstName: u.firstName || "",
-          lastName: u.lastName || "",
-
-          phone: profile?.phone || "",
-        };
-      });
-
-      console.log("MERGED USERS:", merged);
+      console.log("USERS:", merged);
       setUsersList(merged);
     } catch (err) {
       console.error(err);
@@ -134,11 +129,21 @@ const UserManagement: React.FC = () => {
   const handleStartEditRole = (user: UserRow) => {
     setEditingId(user.id);
     setEditRole(user.role || "");
+    setEditCompanyId(null);
   };
 
   const handleSaveRole = async (id: number) => {
     try {
-      await userApi.updateUser(id, { role: editRole });
+      const payload: any = { role: editRole };
+      if (editRole === "RECRUITER") {
+        if (!editCompanyId) {
+          toast.error("Vui lòng chọn công ty cho Employer");
+          return;
+        }
+        payload.companyId = editCompanyId;
+      }
+
+      await userApi.updateUser(id, payload);
 
       setUsersList((prev) =>
         prev.map((u) =>
@@ -147,6 +152,7 @@ const UserManagement: React.FC = () => {
       );
 
       setEditingId(null);
+      setEditCompanyId(null);
       toast.success("Role updated");
     } catch {
       toast.error("Update failed");
@@ -218,9 +224,12 @@ const UserManagement: React.FC = () => {
       <UserTable
         filteredUsers={filtered}
         totalCount={usersList.length}
+        companies={companies}
         editingId={editingId}
         editRole={editRole}
         setEditRole={setEditRole}
+        editCompanyId={editCompanyId}
+        setEditCompanyId={setEditCompanyId}
         onStartEditRole={handleStartEditRole}
         onSaveRole={handleSaveRole}
         onToggleStatus={onToggleStatus}

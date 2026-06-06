@@ -54,7 +54,9 @@ export default function InterviewManagement() {
       setLoading(true);
 
       const res = await interviewApi.getAll();
-      const interviews = res.data?.data ?? [];
+      // axiosClient already unwraps response.data, so res IS the ApiResponse
+      // We just need res.data to get the array
+      const interviews = (res as any).data ?? [];
 
       setData(interviews);
     } catch (err) {
@@ -94,9 +96,16 @@ export default function InterviewManagement() {
   // ======================
   // UPDATE LOCAL STATE
   // ======================
-  const updateInterview = (updated: Interview) => {
+  const updateInterview = (updated: Partial<Interview> & { id: number }) => {
     setData((prev) =>
-      prev.map((i) => (i.id === updated.id ? updated : i))
+      prev.map((i) =>
+        i.id === updated.id
+          ? {
+              ...i,
+              ...updated,
+            }
+          : i
+      )
     );
   };
 
@@ -109,7 +118,7 @@ export default function InterviewManagement() {
   ) => {
     try {
       const res = await interviewApi.updateStatus(id, status);
-      const updated = res.data?.data;
+      const updated = (res as any).data;
 
       if (updated) updateInterview(updated);
     } catch (err) {
@@ -126,19 +135,46 @@ export default function InterviewManagement() {
     note?: string;
   }) => {
     try {
-      const res = await interviewApi.updateResult(
-        body.id,
-        body.result,
-        body.note
-      );
+      const res = await interviewApi.updateResult(body.id, {
+        result: body.result,
+        note: body.note,
+      });
 
-      const updated = res.data?.data;
+      const updated = (res as any).data;
 
       if (updated) updateInterview(updated);
 
       setOpenUpdate(false);
     } catch (err) {
       console.error("Update result failed:", err);
+    }
+  };
+
+  // ======================
+  // RESCHEDULE
+  // ======================
+  const handleReschedule = async (body: {
+    id: number;
+    scheduleTime: string;
+  }) => {
+    try {
+      if (!selected) return;
+      const res = await interviewApi.reschedule(
+        body.id,
+        body.scheduleTime,
+        selected.location,
+        selected.note
+      );
+
+      const updated = (res as any).data;
+
+      if (updated) updateInterview(updated);
+
+      setOpenReschedule(false);
+      alert("Đã đổi lịch phỏng vấn thành công!");
+    } catch (err) {
+      console.error("Reschedule failed:", err);
+      alert("Đổi lịch thất bại.");
     }
   };
 
@@ -267,7 +303,7 @@ export default function InterviewManagement() {
         open={openReschedule}
         onClose={() => setOpenReschedule(false)}
         data={selected}
-        onSave={(d) => console.log("reschedule:", d)}
+        onSave={handleReschedule}
       />
 
       <UpdateResultModal

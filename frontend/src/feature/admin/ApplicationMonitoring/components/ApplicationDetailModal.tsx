@@ -1,10 +1,10 @@
 import React from "react";
 import { FiX } from "react-icons/fi";
 import styles from "../pages/ApplicationMonitoring.module.css";
-import type { ApplicationMock } from "../../../../dataMock/adminMock";
+import type { AdminApplicationRecord } from "../pages/ApplicationMonitoring";
 
 interface ApplicationDetailModalProps {
-  auditingApp: ApplicationMock;
+  auditingApp: AdminApplicationRecord;
   onClose: () => void;
   auditNotes: string;
   setAuditNotes: (val: string) => void;

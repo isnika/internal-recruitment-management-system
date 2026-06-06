@@ -1,11 +1,12 @@
 import styles from "./Register.module.css";
 
 import { FcGoogle } from "react-icons/fc";
-import { FaFacebook } from "react-icons/fa";
-import { FaRegEye } from "react-icons/fa";
+import { FaFacebook, FaRegEye } from "react-icons/fa";
+
 import { register, sendCode } from "../../../../service/authApi";
 
 import { useState, ChangeEvent, FormEvent } from "react";
+import { useNavigate } from "react-router-dom";
 
 type FormData = {
   email: string;
@@ -28,6 +29,8 @@ type FormData = {
 };
 
 const Register = () => {
+  const navigate = useNavigate();
+
   const [form, setForm] = useState<FormData>({
     email: "",
     phone: "",
@@ -45,6 +48,8 @@ const Register = () => {
   });
 
   const [showPassword, setShowPassword] = useState(false);
+  const [sendingOtp, setSendingOtp] = useState(false);
+  const [registering, setRegistering] = useState(false);
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -57,34 +62,112 @@ const Register = () => {
     }));
   };
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-
-    if (form.password !== form.confirmPassword) {
-      alert("Mật khẩu không khớp!");
+  const handleSendOtp = async () => {
+    if (!form.email.trim()) {
+      alert("Vui lòng nhập email");
       return;
     }
 
     try {
+      setSendingOtp(true);
+
+      const res = await sendCode({
+        email: form.email.trim(),
+      });
+
+      alert(res?.data?.message || "Đã gửi mã xác thực");
+    } catch (error: any) {
+      console.error(error);
+
+      alert(
+        error?.response?.data?.message ||
+          "Không thể gửi mã xác thực"
+      );
+    } finally {
+      setSendingOtp(false);
+    }
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+
+    if (!form.email.trim()) {
+      alert("Vui lòng nhập email");
+      return;
+    }
+
+    if (!form.phone.trim()) {
+      alert("Vui lòng nhập số điện thoại");
+      return;
+    }
+
+    if (!form.firstName.trim()) {
+      alert("Vui lòng nhập họ");
+      return;
+    }
+
+    if (!form.lastName.trim()) {
+      alert("Vui lòng nhập tên");
+      return;
+    }
+
+    if (!form.year || !form.month || !form.day) {
+      alert("Vui lòng nhập ngày sinh");
+      return;
+    }
+
+    if (!form.gender) {
+      alert("Vui lòng chọn giới tính");
+      return;
+    }
+
+    if (!form.password) {
+      alert("Vui lòng nhập mật khẩu");
+      return;
+    }
+
+    if (form.password.length < 6) {
+      alert("Mật khẩu phải có ít nhất 6 ký tự");
+      return;
+    }
+
+    if (form.password !== form.confirmPassword) {
+      alert("Mật khẩu không khớp");
+      return;
+    }
+
+    if (!form.code.trim()) {
+      alert("Vui lòng nhập mã xác thực");
+      return;
+    }
+
+    try {
+      setRegistering(true);
+
+      const dateOfBirth = `${form.year}-${form.month.padStart(
+        2,
+        "0"
+      )}-${form.day.padStart(2, "0")}`;
+
       const res = await register({
-        email: form.email,
+        email: form.email.trim(),
         password: form.password,
         confirmPassword: form.confirmPassword,
-        firstName: form.firstName,
-        lastName: form.lastName,
-        phone: form.phone,
+        firstName: form.firstName.trim(),
+        lastName: form.lastName.trim(),
+        phone: form.phone.trim(),
         gender: form.gender,
-        dateOfBirth: `${form.year}-${form.month.padStart(
-          2,
-          "0"
-        )}-${form.day.padStart(2, "0")}`,
-        code: form.code,
+        dateOfBirth,
+        code: form.code.trim(),
         role: "CANDIDATE",
         companyId: null,
       });
 
-      alert(res.data.message || "Đăng ký thành công");
-      console.log(res.data);
+      alert(res?.data?.message || "Đăng ký thành công");
+
+      console.log(res?.data);
+
+      navigate("/login");
     } catch (error: any) {
       console.error(error);
 
@@ -92,33 +175,14 @@ const Register = () => {
         error?.response?.data?.message ||
           "Đăng ký thất bại"
       );
+    } finally {
+      setRegistering(false);
     }
   };
-const handleSendOtp = async () => {
-  if (!form.email) {
-    alert("Vui lòng nhập email");
-    return;
-  }
-
-  try {
-    const res = await sendCode({
-      email: form.email,
-    });
-
-    alert(res.data.message || "Đã gửi mã xác thực");
-  } catch (error: any) {
-    alert(
-      error?.response?.data?.message ||
-        "Không thể gửi mã xác thực"
-    );
-  }
-};
 
   return (
     <div className={styles.wrapper}>
       <div className={styles.container}>
-
-        {/* logo */}
         <h2 className={styles.logoTitle}>
           Sign up to
           <span className={styles.logoBlack}> H</span>
@@ -127,79 +191,166 @@ const handleSendOtp = async () => {
           <span className={styles.logoItalic}>Careers</span>
         </h2>
 
-        {/* tabs */}
         <div className={styles.tabs}>
-          <button className={`${styles.tab} ${styles.active}`}>Candidate</button>
-          <button className={styles.tab}>Company</button>
+          <button
+            type="button"
+            className={`${styles.tab} ${styles.active}`}
+          >
+            Candidate
+          </button>
+
+          <button
+            type="button"
+            className={styles.tab}
+          >
+            Company
+          </button>
         </div>
 
-        {/* FORM */}
-        <form className={styles.form} onSubmit={handleSubmit}>
-
+        <form
+          className={styles.form}
+          onSubmit={handleSubmit}
+        >
           <label>Email</label>
           <input
-            type="text"
+            type="email"
             name="email"
             placeholder="Email"
+            value={form.email}
             onChange={handleChange}
           />
+
           <label>Phone</label>
-          <input name="phone" placeholder="Phone" onChange={handleChange} />
+          <input
+            name="phone"
+            placeholder="Phone"
+            value={form.phone}
+            onChange={handleChange}
+          />
 
           <label>Full name</label>
+
           <div className={styles.row}>
-            <input name="firstName" placeholder="First name" onChange={handleChange}/>
-            <input name="lastName" placeholder="Last name" onChange={handleChange}/>
+            <input
+              name="firstName"
+              placeholder="First name"
+              value={form.firstName}
+              onChange={handleChange}
+            />
+
+            <input
+              name="lastName"
+              placeholder="Last name"
+              value={form.lastName}
+              onChange={handleChange}
+            />
           </div>
 
           <label>Year of birth</label>
-          <div className={styles.row}>
-            <input name="year" placeholder="Year" onChange={handleChange}/>
 
-            <select name="month" onChange={handleChange}>
+          <div className={styles.row}>
+            <input
+              name="year"
+              placeholder="Year"
+              value={form.year}
+              onChange={handleChange}
+            />
+
+            <select
+              name="month"
+              value={form.month}
+              onChange={handleChange}
+            >
               <option value="">Month</option>
+
               {[...Array(12)].map((_, i) => (
-                <option key={i}>{i + 1}</option>
+                <option
+                  key={i}
+                  value={String(i + 1)}
+                >
+                  {i + 1}
+                </option>
               ))}
             </select>
 
-            <select name="day" onChange={handleChange}>
+            <select
+              name="day"
+              value={form.day}
+              onChange={handleChange}
+            >
               <option value="">Day</option>
+
               {[...Array(31)].map((_, i) => (
-                <option key={i}>{i + 1}</option>
+                <option
+                  key={i}
+                  value={String(i + 1)}
+                >
+                  {i + 1}
+                </option>
               ))}
             </select>
           </div>
 
           <label>Gender</label>
-          <select name="gender" onChange={handleChange}>
-            <option value="">Select gender</option>
-            <option value="MALE">Male</option>
-            <option value="FEMALE">Female</option>
-            <option value="OTHER">Other</option>
+
+          <select
+            name="gender"
+            value={form.gender}
+            onChange={handleChange}
+          >
+            <option value="">
+              Select gender
+            </option>
+
+            <option value="MALE">
+              Male
+            </option>
+
+            <option value="FEMALE">
+              Female
+            </option>
+
+            <option value="OTHER">
+              Other
+            </option>
           </select>
 
-          {/* Password */}
           <label>Password</label>
+
           <div className={styles.inputIcon}>
             <input
-              type={showPassword ? "text" : "password"}
+              type={
+                showPassword
+                  ? "text"
+                  : "password"
+              }
               name="password"
               placeholder="Password"
+              value={form.password}
               onChange={handleChange}
             />
+
             <FaRegEye
               className={styles.eye}
-              onClick={() => setShowPassword(!showPassword)}
+              onClick={() =>
+                setShowPassword(
+                  (prev) => !prev
+                )
+              }
             />
           </div>
 
-          {/* Confirm */}
           <label>Confirm Password</label>
+
           <input
-            type={showPassword ? "text" : "password"}
+            type={
+              showPassword
+                ? "text"
+                : "password"
+            }
             name="confirmPassword"
             placeholder="Confirm Password"
+            value={form.confirmPassword}
             onChange={handleChange}
           />
 
@@ -209,6 +360,7 @@ const handleSendOtp = async () => {
             <input
               name="code"
               placeholder="Enter OTP"
+              value={form.code}
               onChange={handleChange}
             />
 
@@ -216,32 +368,53 @@ const handleSendOtp = async () => {
               type="button"
               className={styles.otpButton}
               onClick={handleSendOtp}
+              disabled={sendingOtp}
             >
-              Get OTP
+              {sendingOtp
+                ? "Sending..."
+                : "Get OTP"}
             </button>
           </div>
 
-          <button type="submit">Sign up</button>
+          <button
+            type="submit"
+            disabled={registering}
+          >
+            {registering
+              ? "Signing up..."
+              : "Sign up"}
+          </button>
         </form>
 
-        {/* divider */}
         <div className={styles.divider}>
           <span></span>
           <p>or</p>
           <span></span>
         </div>
 
-        {/* social */}
         <button className={styles.social}>
-          <FcGoogle size={20} /> Sign up with Google
+          <FcGoogle size={20} />
+          Sign up with Google
         </button>
 
         <button className={styles.social}>
-          <FaFacebook size={20} color="#1877f2" /> Sign up with Facebook
+          <FaFacebook
+            size={20}
+            color="#1877f2"
+          />
+          Sign up with Facebook
         </button>
 
         <p className={styles.signup}>
-          Do you already have an account? <span>Sign in now</span>
+          Do you already have an account?{" "}
+          <span
+            style={{ cursor: "pointer" }}
+            onClick={() =>
+              navigate("/login")
+            }
+          >
+            Sign in now
+          </span>
         </p>
       </div>
     </div>

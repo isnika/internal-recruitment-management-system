@@ -17,9 +17,13 @@ interface UserTableProps {
   filteredUsers: UserRow[];
   totalCount: number;
 
+  companies: any[];
+
   editingId: number | null;
   editRole: string;
   setEditRole: (val: string) => void;
+  editCompanyId: number | null;
+  setEditCompanyId: (val: number | null) => void;
 
   onStartEditRole: (user: UserRow) => void;
   onSaveRole: (id: number) => void;
@@ -33,9 +37,12 @@ interface UserTableProps {
 const UserTable: React.FC<UserTableProps> = ({
   filteredUsers,
   totalCount,
+  companies,
   editingId,
   editRole,
   setEditRole,
+  editCompanyId,
+  setEditCompanyId,
   onStartEditRole,
   onSaveRole,
   onToggleStatus,
@@ -118,19 +125,35 @@ const UserTable: React.FC<UserTableProps> = ({
                   {/* ROLE */}
                   <td>
                     {editingId === user.id ? (
-                      <div style={{ display: "flex", gap: 8 }}>
-                        <select
-                          value={editRole}
-                          onChange={(e) => setEditRole(e.target.value)}
-                        >
-                          <option value="CANDIDATE">Candidate</option>
-                          <option value="RECRUITER">Employer</option>
-                          <option value="ADMIN">Admin</option>
-                        </select>
+                      <div style={{ display: "flex", gap: 8, flexDirection: "column" }}>
+                        <div style={{ display: "flex", gap: 8 }}>
+                          <select
+                            value={editRole}
+                            onChange={(e) => setEditRole(e.target.value)}
+                          >
+                            <option value="CANDIDATE">Candidate</option>
+                            <option value="RECRUITER">Employer</option>
+                            <option value="ADMIN">Admin</option>
+                          </select>
 
-                        <button onClick={() => onSaveRole(user.id)}>
-                          Save
-                        </button>
+                          <button onClick={() => onSaveRole(user.id)}>
+                            Save
+                          </button>
+                        </div>
+                        
+                        {editRole === "RECRUITER" && (
+                          <select
+                            value={editCompanyId || ""}
+                            onChange={(e) => setEditCompanyId(Number(e.target.value))}
+                          >
+                            <option value="" disabled>Chọn công ty...</option>
+                            {companies.map((c: any) => (
+                              <option key={c.id} value={c.id}>
+                                {c.name}
+                              </option>
+                            ))}
+                          </select>
+                        )}
                       </div>
                     ) : (
                       <span className={getRoleClass(user.role)}>

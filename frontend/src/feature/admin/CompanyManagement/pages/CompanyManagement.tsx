@@ -61,9 +61,26 @@ const CompanyManagement: React.FC = () => {
     }
   };
 
-  const onVerify = (id: number) => {
-    // API does not support verifying currently, toggle locally for demo
-    setCompanies(prev => prev.map(c => c.id === id ? { ...c, verified: !c.verified } : c));
+  const onVerify = async (id: number) => {
+    try {
+      const companyToUpdate = companies.find((c) => c.id === id);
+      if (!companyToUpdate) return;
+      
+      const newStatus = companyToUpdate.status === "VERIFIED" ? "UNVERIFIED" : "VERIFIED";
+      
+      await userApi.updateCompany(id, {
+        name: companyToUpdate.name,
+        description: companyToUpdate.description,
+        address: companyToUpdate.address,
+        website: companyToUpdate.website,
+        status: newStatus
+      });
+      
+      setCompanies(prev => prev.map(c => c.id === id ? { ...c, status: newStatus } : c));
+      toast.success(`Company ${newStatus === "VERIFIED" ? "verified" : "unverified"} successfully`);
+    } catch (error) {
+      toast.error("Failed to update company verification status");
+    }
   };
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");

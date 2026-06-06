@@ -23,11 +23,19 @@ export interface SendNotificationRequest {
   sendEmail: boolean;
 }
 
-// Generic API Response wrapper (backend của bạn đang dùng format này)
 export interface ApiResponse<T> {
   status: number;
   message: string;
   data: T;
+}
+
+// Spring Page wrapper
+export interface PageResponse<T> {
+  content: T[];
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number;
 }
 
 // =========================
@@ -37,14 +45,14 @@ export interface ApiResponse<T> {
 const ENDPOINT = "/api/notifications";
 
 export const notificationApi = {
-  // GET ALL NOTIFICATIONS
-  getAll: (): Promise<ApiResponse<Notification[]>> => {
-    return request.get(ENDPOINT);
+  // GET ALL (MY NOTIFICATIONS)
+  getAll: (page = 0, size = 10): Promise<PageResponse<Notification>> => {
+    return request.get(`${ENDPOINT}?page=${page}&size=${size}`);
   },
 
-  // GET UNREAD NOTIFICATIONS
-  getUnread: (): Promise<ApiResponse<Notification[]>> => {
-    return request.get(`${ENDPOINT}/unread`);
+  // GET UNREAD
+  getUnread: (page = 0, size = 10): Promise<PageResponse<Notification>> => {
+    return request.get(`${ENDPOINT}/unread?page=${page}&size=${size}`);
   },
 
   // GET UNREAD COUNT
@@ -68,13 +76,11 @@ export const notificationApi = {
   },
 
   // SEND NOTIFICATION
-  send: (
-    data: SendNotificationRequest
-  ): Promise<ApiResponse<string>> => {
+  send: (data: SendNotificationRequest): Promise<ApiResponse<string>> => {
     return request.post(`${ENDPOINT}/send`, data);
   },
 
-  // DELETE NOTIFICATION
+  // DELETE
   delete: (id: number): Promise<ApiResponse<string>> => {
     return request.delete(`${ENDPOINT}/${id}`);
   },

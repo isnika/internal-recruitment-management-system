@@ -8,6 +8,7 @@ import MainLayoutManagement from "../layout/layoutManagement/MainLayoutManagemen
 import Home from "../feature/home/pages/Home/Home";
 import Login from "../feature/auth/pages/Login/Login";
 import Register from "../feature/auth/pages/Register/Register";
+import ForgotPassW from "../feature/auth/pages/ForgotPassW/ForgotPassW";
 import Companies from"../feature/companies/pages/companiesPage";
 import JobPage from "../feature/jobPage/pages/JobPage";
 import SalaryGuidePage from "../feature/salaryGuidePage/pages/SalaryGuidePage";
@@ -59,6 +60,7 @@ export default function AppRoutes() {
       <Route element={<AuthLayout />}>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/forgotPassW" element={<ForgotPassW/>} />
       </Route>
 
       {/* USER */}
