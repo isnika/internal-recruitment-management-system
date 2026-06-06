@@ -14,48 +14,52 @@ interface MessageState {
 }
 
 export default function ChangePassword(): React.ReactElement {
+  const { user } = useAuth();
+
   const [step, setStep] = useState<1 | 2 | 3>(1);
 
-  const [email, setEmail] = useState<string>("");
+  const [emailInput, setEmailInput] = useState<string>(""); // only for guest
   const [otp, setOtp] = useState<string>("");
   const [newPassword, setNewPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
 
   const [loading, setLoading] = useState<boolean>(false);
 
-  const { user } = useAuth();
-  const userEmail = user?.email || "";
-
   const [message, setMessage] = useState<MessageState>({
     type: "",
     text: ""
   });
 
+  // FINAL EMAIL LOGIC
+  const finalEmail = user?.email || emailInput;
+
   // ================= STEP 1 =================
   const handleSendOtp = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!email) {
-      setMessage({ type: "error", text: "Please enter your email address!" });
+    if (!finalEmail) {
+      setMessage({
+        type: "error",
+        text: "Please provide email!"
+      });
       return;
     }
 
     try {
       setLoading(true);
 
-      // ✔ ONLY ONE CALL (IMPORTANT FIX)
-      await forgotPassword({ email });
+      await forgotPassword({ email: finalEmail });
 
       setMessage({
         type: "success",
-        text: `Verification code sent to ${email}`
+        text: `OTP sent to ${finalEmail}`
       });
 
       setStep(2);
-    } catch (err) {
+    } catch (err: any) {
       setMessage({
         type: "error",
-        text: "Failed to send verification code"
+        text: err?.response?.data?.message || "Failed to send OTP"
       });
     } finally {
       setLoading(false);
@@ -67,13 +71,13 @@ export default function ChangePassword(): React.ReactElement {
     e.preventDefault();
 
     if (!otp) {
-      setMessage({ type: "error", text: "Please enter the OTP code!" });
+      setMessage({ type: "error", text: "Please enter OTP!" });
       return;
     }
 
     setMessage({
       type: "success",
-      text: "OTP verified successfully!"
+      text: "OTP verified"
     });
 
     setStep(3);
@@ -84,12 +88,18 @@ export default function ChangePassword(): React.ReactElement {
     e.preventDefault();
 
     if (!newPassword || !confirmPassword) {
-      setMessage({ type: "error", text: "Please fill all fields!" });
+      setMessage({
+        type: "error",
+        text: "Please fill all fields!"
+      });
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      setMessage({ type: "error", text: "Passwords do not match!" });
+      setMessage({
+        type: "error",
+        text: "Passwords do not match!"
+      });
       return;
     }
 
@@ -97,7 +107,7 @@ export default function ChangePassword(): React.ReactElement {
       setLoading(true);
 
       await resetPassword({
-        email,
+        email: finalEmail,
         code: otp,
         newPassword
       });
@@ -109,16 +119,17 @@ export default function ChangePassword(): React.ReactElement {
 
       setTimeout(() => {
         setStep(1);
-        setEmail("");
+        setEmailInput("");
         setOtp("");
         setNewPassword("");
         setConfirmPassword("");
         setMessage({ type: "", text: "" });
       }, 1500);
-    } catch (err) {
+
+    } catch (err: any) {
       setMessage({
         type: "error",
-        text: "Reset password failed!"
+        text: err?.response?.data?.message || "Reset password failed!"
       });
     } finally {
       setLoading(false);
@@ -130,7 +141,7 @@ export default function ChangePassword(): React.ReactElement {
     <div className={styles.section}>
       <div className={styles.sectionHeader}>
         <h3>Forgot Password</h3>
-        <p>Secure password reset via email OTP verification.</p>
+        <p>Secure password reset via OTP verification</p>
       </div>
 
       {/* STEP INDICATOR */}
@@ -155,17 +166,31 @@ export default function ChangePassword(): React.ReactElement {
         </div>
       )}
 
-      {/* STEP 1 */}
+      {/* ================= STEP 1 ================= */}
       {step === 1 && (
         <form onSubmit={handleSendOtp} className={styles.formStack}>
           <div className={styles.formGroup}>
             <label>Email</label>
-            <input
-              type="email"
-              value={userEmail}
-              disabled
-              className={styles.input}
-            />
+
+            {user?.email ? (
+              <input
+                type="email"
+                value={user.email}
+                className={styles.input}
+                disabled
+              />
+            ) : (
+              <input
+                type="email"
+                value={emailInput}
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  setEmailInput(e.target.value)
+                }
+                className={styles.input}
+                placeholder="Enter your email"
+                required
+              />
+            )}
           </div>
 
           <button className={styles.primaryBtn} disabled={loading}>
@@ -174,7 +199,7 @@ export default function ChangePassword(): React.ReactElement {
         </form>
       )}
 
-      {/* STEP 2 */}
+      {/* ================= STEP 2 ================= */}
       {step === 2 && (
         <form onSubmit={handleVerifyOtp} className={styles.formStack}>
           <div className={styles.formGroup}>
@@ -211,7 +236,7 @@ export default function ChangePassword(): React.ReactElement {
         </form>
       )}
 
-      {/* STEP 3 */}
+      {/* ================= STEP 3 ================= */}
       {step === 3 && (
         <form onSubmit={handleResetPassword} className={styles.formStack}>
           <div className={styles.formGroup}>
@@ -254,4 +279,3 @@ export default function ChangePassword(): React.ReactElement {
     </div>
   );
 }
-

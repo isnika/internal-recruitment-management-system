@@ -1,6 +1,6 @@
 import { request } from "./axiosClient";
 
-//     TYPES    
+//     TYPES
 
 export type AuthResponse<T> = {
   status: number;
@@ -52,7 +52,7 @@ export type UpdateRecruitmentInfoReq = {
   jobTitle: string;
 };
 
-//     AUTH APIs    
+//     AUTH APIs
 
 // LOGIN
 export const login = (data: LoginReq) => request.post<AuthResponse<LoginRes>>("/api/auth/login", data);
@@ -75,7 +75,7 @@ export const sendCode = (data: SendCodeReq) => request.post<AuthResponse<{ email
 // GOOGLE LOGIN
 export const loginWithGoogle = (data: GoogleLoginReq) => request.post<AuthResponse<LoginRes>>("/api/auth/google", data);
 
-//     ME (PROFILE)    
+//     ME (PROFILE)
 
 // UPDATE PROFILE
 export const updateMyProfile = (data: UpdateProfileReq) => request.patch<AuthResponse<UserProfile>>("/api/auth/me/profile", data);
