@@ -32,7 +32,7 @@ export default function InterviewMe() {
 
       const res = await interviewApi.getMyInterviews();
 
-      setInterviews(res.data.data ?? []);
+      setInterviews(res.data ?? []);
     } catch (error) {
       console.error(error);
     } finally {

@@ -93,6 +93,47 @@ const StatisticalReport: React.FC = () => {
       </div>
     );
   }
+  const handleExport = () => {
+    let csvContent = "data:text/csv;charset=utf-8,\uFEFF"; // Add BOM for UTF-8
+    let filename = "";
+
+    if (activeTab === "recruiters") {
+      filename = "recruiters_performance.csv";
+      csvContent += "Recruiter ID,Recruiter Name,Total Jobs Managed,Total Candidates Handled,Total Hired,Avg Time To Fill (Days),Success Rate (%)\n";
+      recruiters.forEach(r => {
+        csvContent += `"${r.recruiterId}","${r.recruiterName}",${r.totalJobsManaged},${r.totalCandidatesHandled},${r.totalHired},${r.avgTimeToFillDays},${r.successRate}\n`;
+      });
+    } else if (activeTab === "departments") {
+      filename = "departments_overview.csv";
+      csvContent += "Department Name,Total Jobs,Total Candidates,Total Hired,Avg Time To Hire (Days),Open Headcount\n";
+      departments.forEach(d => {
+        csvContent += `"${d.departmentName}",${d.totalJobs},${d.totalCandidates},${d.totalHired},${d.avgTimeToHireDays},${d.openHeadcount}\n`;
+      });
+    } else if (activeTab === "jobs") {
+      filename = "jobs_analytics.csv";
+      csvContent += "Job ID,Job Title,Total Applied,Total CV Passed,Total Interviewed,Total Offered,Total Hired\n";
+      jobs.forEach(j => {
+        csvContent += `"${j.jobId}","${j.jobTitle}",${j.totalApplied},${j.totalCvPassed},${j.totalInterviewed},${j.totalOffered},${j.totalHired}\n`;
+      });
+    } else if (activeTab === "candidates") {
+      filename = "candidate_analytics.csv";
+      csvContent += "Total Candidates,By Source,By Status\n";
+      if (candidateAnalytics) {
+        const bySource = Object.entries(candidateAnalytics.bySource || {}).map(([k, v]) => `${k}: ${v}`).join('; ');
+        const byStatus = Object.entries(candidateAnalytics.byStatus || {}).map(([k, v]) => `${k}: ${v}`).join('; ');
+        csvContent += `${candidateAnalytics.totalCandidates},"${bySource}","${byStatus}"\n`;
+      }
+    }
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", filename);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className={styles.page}>
       <div className={styles.pageHeader}>
@@ -104,9 +145,7 @@ const StatisticalReport: React.FC = () => {
         </div>
         <button
           className={styles.btnExport}
-          onClick={() => {
-            alert("Export functionality will trigger a CSV/Excel download from backend.");
-          }}
+          onClick={handleExport}
         >
           <FiDownload /> Export Reports
         </button>
