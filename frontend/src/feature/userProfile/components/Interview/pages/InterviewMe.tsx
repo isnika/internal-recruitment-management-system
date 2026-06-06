@@ -11,16 +11,14 @@ import {
   FiAlertCircle,
 } from "react-icons/fi";
 
-import interviewApi, { type
-  Interview,
+import interviewApi, {
+  type Interview,
 } from "../../../../../service/interviewApi";
 
 export default function InterviewMe() {
   const [interviews, setInterviews] = useState<Interview[]>([]);
   const [loading, setLoading] = useState(true);
-
-  const [filterStatus, setFilterStatus] =
-    useState<string>("ALL");
+  const [filterStatus, setFilterStatus] = useState<string>("ALL");
 
   useEffect(() => {
     loadInterviews();
@@ -29,9 +27,7 @@ export default function InterviewMe() {
   const loadInterviews = async () => {
     try {
       setLoading(true);
-
       const res = await interviewApi.getMyInterviews();
-
       setInterviews(res.data ?? []);
     } catch (error) {
       console.error(error);
@@ -43,7 +39,6 @@ export default function InterviewMe() {
   const handleAccept = async (id: number) => {
     try {
       await interviewApi.accept(id);
-
       await loadInterviews();
     } catch (error) {
       console.error(error);
@@ -53,7 +48,6 @@ export default function InterviewMe() {
   const handleReject = async (id: number) => {
     try {
       await interviewApi.reject(id);
-
       await loadInterviews();
     } catch (error) {
       console.error(error);
@@ -64,9 +58,7 @@ export default function InterviewMe() {
     switch (status) {
       case "ACCEPTED":
         return (
-          <span
-            className={`${styles.badge} ${styles.badgeAccepted}`}
-          >
+          <span className={`${styles.badge} ${styles.badgeAccepted}`}>
             <FiCheckCircle />
             Accepted
           </span>
@@ -74,9 +66,7 @@ export default function InterviewMe() {
 
       case "REJECTED":
         return (
-          <span
-            className={`${styles.badge} ${styles.badgeRejected}`}
-          >
+          <span className={`${styles.badge} ${styles.badgeRejected}`}>
             <FiXCircle />
             Rejected
           </span>
@@ -84,9 +74,7 @@ export default function InterviewMe() {
 
       default:
         return (
-          <span
-            className={`${styles.badge} ${styles.badgePending}`}
-          >
+          <span className={`${styles.badge} ${styles.badgePending}`}>
             <FiAlertCircle />
             Pending
           </span>
@@ -94,45 +82,30 @@ export default function InterviewMe() {
     }
   };
 
-  const filteredInterviews = interviews.filter(
-    (item) => {
-      if (filterStatus === "ALL") return true;
-
-      return item.status === filterStatus;
-    }
-  );
+  const filteredInterviews = interviews.filter((item) => {
+    if (filterStatus === "ALL") return true;
+    return item.status === filterStatus;
+  });
 
   if (loading) {
-    return (
-      <div className={styles.container}>
-        Loading interviews...
-      </div>
-    );
+    return <div className={styles.container}>Loading interviews...</div>;
   }
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.pageTitle}>
-        My Interviews
-      </h2>
+      <h2 className={styles.pageTitle}>My Interviews</h2>
 
       <p className={styles.subtitle}>
         Manage and track your interviews.
       </p>
 
+      {/* FILTER */}
       <div className={styles.tabsContainer}>
-        {[
-          "ALL",
-          "PENDING",
-          "ACCEPTED",
-          "REJECTED",
-        ].map((tab) => (
+        {["ALL", "PENDING", "ACCEPTED", "REJECTED"].map((tab) => (
           <button
             key={tab}
             className={`${styles.tabBtn} ${
-              filterStatus === tab
-                ? styles.activeTab
-                : ""
+              filterStatus === tab ? styles.activeTab : ""
             }`}
             onClick={() => setFilterStatus(tab)}
           >
@@ -141,6 +114,7 @@ export default function InterviewMe() {
         ))}
       </div>
 
+      {/* LIST */}
       <div className={styles.interviewList}>
         {filteredInterviews.length === 0 ? (
           <div className={styles.emptyState}>
@@ -148,208 +122,126 @@ export default function InterviewMe() {
           </div>
         ) : (
           filteredInterviews.map((interview) => {
-            const date = new Date(
-              interview.scheduleTime
-            );
+            const date = new Date(interview.scheduleTime);
 
             const isOnline =
-              interview.location.startsWith(
-                "http"
-              ) ||
-              interview.location.includes(
-                "meet.google"
-              ) ||
-              interview.location.includes(
-                "zoom"
-              );
+              interview.location?.startsWith("http") ||
+              interview.location?.includes("meet.google") ||
+              interview.location?.includes("zoom");
 
             return (
-              <div
-                key={interview.id}
-                className={styles.interviewCard}
-              >
+              <div key={interview.id} className={styles.interviewCard}>
+                {/* HEADER */}
                 <div className={styles.cardHeader}>
                   <div>
                     <h3 className={styles.jobTitle}>
                       {interview.jobTitle}
                     </h3>
 
-                    <p
-                      className={
-                        styles.companyName
-                      }
-                    >
+                    <p className={styles.companyName}>
                       {interview.companyName}
                     </p>
                   </div>
 
-                  {renderStatusBadge(
-                    interview.status
-                  )}
+                  {renderStatusBadge(interview.status)}
                 </div>
 
+                {/* BODY */}
                 <div className={styles.cardBody}>
-                  <div
-                    className={styles.metaGrid}
-                  >
-                    <div
-                      className={styles.metaItem}
-                    >
-                      <FiCalendar
-                        className={
-                          styles.icon
-                        }
-                      />
-
+                  <div className={styles.metaGrid}>
+                    <div className={styles.metaItem}>
+                      <FiCalendar className={styles.icon} />
                       <span>
                         Date:
                         <strong>
                           {" "}
-                          {date.toLocaleDateString(
-                            "vi-VN"
-                          )}
+                          {date.toLocaleDateString("vi-VN")}
                         </strong>
                       </span>
                     </div>
 
-                    <div
-                      className={styles.metaItem}
-                    >
-                      <FiClock
-                        className={
-                          styles.icon
-                        }
-                      />
-
+                    <div className={styles.metaItem}>
+                      <FiClock className={styles.icon} />
                       <span>
                         Time:
                         <strong>
                           {" "}
-                          {date.toLocaleTimeString(
-                            "vi-VN",
-                            {
-                              hour:
-                                "2-digit",
-                              minute:
-                                "2-digit",
-                            }
-                          )}
+                          {date.toLocaleTimeString("vi-VN", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
                         </strong>
                       </span>
                     </div>
 
-                    <div
-                      className={styles.metaItem}
-                    >
+                    <div className={styles.metaItem}>
                       {isOnline ? (
-                        <FiVideo
-                          className={
-                            styles.iconOnline
-                          }
-                        />
+                        <FiVideo className={styles.iconOnline} />
                       ) : (
-                        <FiMapPin
-                          className={
-                            styles.iconOffline
-                          }
-                        />
+                        <FiMapPin className={styles.iconOffline} />
                       )}
 
                       <span>
                         Type:
                         <strong>
                           {" "}
-                          {isOnline
-                            ? "ONLINE"
-                            : "OFFLINE"}
+                          {isOnline ? "ONLINE" : "OFFLINE"}
                         </strong>
                       </span>
                     </div>
                   </div>
 
-                  <div
-                    className={
-                      styles.locationBlock
-                    }
-                  >
-                    <span
-                      className={
-                        styles.locationLabel
-                      }
-                    >
+                  {/* LOCATION */}
+                  <div className={styles.locationBlock}>
+                    <span className={styles.locationLabel}>
                       Location / Link:
                     </span>
 
-                    {isOnline &&
-                    interview.status ===
-                      "ACCEPTED" ? (
+                    {isOnline && interview.status === "ACCEPTED" ? (
                       <a
-                        href={
-                          interview.location
-                        }
+                        href={interview.location}
                         target="_blank"
                         rel="noreferrer"
-                        className={
-                          styles.meetLink
-                        }
+                        className={styles.meetLink}
                       >
                         Join Interview
                       </a>
                     ) : (
-                      <span
-                        className={
-                          styles.locationText
-                        }
-                      >
+                      <span className={styles.locationText}>
                         {interview.location}
                       </span>
                     )}
                   </div>
 
+                  {/* NOTE */}
                   {interview.note && (
-                    <div
-                      className={
-                        styles.noteBox
-                      }
-                    >
-                      <strong>
-                        Note:
-                      </strong>{" "}
-                      {interview.note}
+                    <div className={styles.noteBox}>
+                      <strong>Note:</strong> {interview.note}
+                    </div>
+                  )}
+
+                  {/* RESULT FIX HERE */}
+                  {interview.result && (
+                    <div className={styles.noteBox}>
+                      <strong>Result:</strong> {interview.result}
                     </div>
                   )}
                 </div>
 
-                {interview.status ===
-                  "PENDING" && (
-                  <div
-                    className={
-                      styles.cardActions
-                    }
-                  >
+                {/* ACTIONS */}
+                {interview.status === "PENDING" && (
+                  <div className={styles.cardActions}>
                     <button
-                      className={
-                        styles.rejectBtn
-                      }
-                      onClick={() =>
-                        handleReject(
-                          interview.id
-                        )
-                      }
+                      className={styles.rejectBtn}
+                      onClick={() => handleReject(interview.id)}
                     >
                       <FiXCircle />
                       Reject
                     </button>
 
                     <button
-                      className={
-                        styles.acceptBtn
-                      }
-                      onClick={() =>
-                        handleAccept(
-                          interview.id
-                        )
-                      }
+                      className={styles.acceptBtn}
+                      onClick={() => handleAccept(interview.id)}
                     >
                       <FiCheckCircle />
                       Accept

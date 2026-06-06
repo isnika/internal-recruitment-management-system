@@ -40,6 +40,7 @@ export default function InterviewTable({
             <th>Location</th>
             <th>Schedule</th>
             <th>Status</th>
+            <th>Result</th>
             <th>Action</th>
           </tr>
         </thead>

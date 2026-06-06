@@ -96,9 +96,16 @@ export default function InterviewManagement() {
   // ======================
   // UPDATE LOCAL STATE
   // ======================
-  const updateInterview = (updated: Interview) => {
+  const updateInterview = (updated: Partial<Interview> & { id: number }) => {
     setData((prev) =>
-      prev.map((i) => (i.id === updated.id ? updated : i))
+      prev.map((i) =>
+        i.id === updated.id
+          ? {
+              ...i,
+              ...updated,
+            }
+          : i
+      )
     );
   };
 
