@@ -84,6 +84,10 @@ export default function InterviewRow({
         </span>
       </td>
 
+      <td>
+        {item.result || "-"}
+      </td>
+
       {/* ACTIONS */}
       <td className={styles.actions}>
         <button onClick={() => onView(item)}>View</button>
